@@ -52,3 +52,6 @@ Route::apiResource('/api-reimbursements', App\Http\Controllers\Api\Reimbursement
 
 //shifts
 Route::apiResource('/api-shifts', App\Http\Controllers\Api\ShiftController::class)->middleware('auth:sanctum');
+
+//overtimes
+Route::apiResource('/api-overtimes', App\Http\Controllers\Api\OvertimeController::class)->middleware('auth:sanctum');
