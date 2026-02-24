@@ -17,6 +17,7 @@
                 <h1>Dashboard</h1>
             </div>
             <div class="row">
+                @if(in_array(auth()->user()->role, ['admin', 'super admin', 'hrd', 'supervisor']))
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
                         <div class="card-icon bg-primary">
@@ -47,6 +48,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
                 <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                     <div class="card card-statistic-1">
                         <div class="card-icon bg-warning">
@@ -82,7 +84,11 @@
                 <div class="col-lg-8 col-md-12 col-12 col-sm-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Latest Attendances</h4>
+                            @if(in_array(auth()->user()->role, ['admin', 'super admin', 'hrd', 'supervisor']))
+                                <h4>Latest Attendances</h4>
+                            @else
+                                <h4>My Latest Attendances</h4>
+                            @endif
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
@@ -113,7 +119,11 @@
                 <div class="col-lg-4 col-md-12 col-12 col-sm-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Latest Permissions</h4>
+                            @if(in_array(auth()->user()->role, ['admin', 'super admin', 'hrd', 'supervisor']))
+                                <h4>Latest Permissions</h4>
+                            @else
+                                <h4>My Latest Permissions</h4>
+                            @endif
                         </div>
                         <div class="card-body">
                              <ul class="list-unstyled list-unstyled-border">

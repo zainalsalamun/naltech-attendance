@@ -35,7 +35,8 @@
                             </div>
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary">Generate</button>
+                            <a href="{{ route('qr_absens.index') }}" class="btn btn-secondary">Cancel</a>
+                            <button class="btn btn-primary ml-2">Generate</button>
                         </div>
                     </form>
                 </div>

@@ -50,7 +50,8 @@
 
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary">Submit</button>
+                            <a href="{{ route('shifts.index') }}" class="btn btn-secondary">Cancel</a>
+                            <button class="btn btn-primary ml-2">Submit</button>
                         </div>
                     </form>
                 </div>

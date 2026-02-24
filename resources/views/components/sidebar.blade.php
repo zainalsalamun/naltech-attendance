@@ -52,6 +52,13 @@
             </li>
 
             <li class="nav-item">
+                <a href="{{ route('overtimes.index') }}" class="nav-link">
+                    <i class="fas fa-business-time"></i>
+                    <span>Overtime</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a href="{{ route('qr_absens.index') }}" class="nav-link">
                     <i class="fas fa-qrcode"></i>
                     <span>QR Absen</span>

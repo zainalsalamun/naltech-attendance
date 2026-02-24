@@ -114,8 +114,8 @@
                                 @enderror
                             </div>
                             <div class="form-group">
-                                <label>Shift</label>
-                                <select class="form-control selectric" name="shift_id">
+                                <label>Shift / Jam Kerja</label>
+                                <select class="form-control select2" name="shift_id">
                                     <option value="">Select Shift</option>
                                     @foreach ($shifts as $shift)
                                         <option value="{{ $shift->id }}" {{ $user->shift_id == $shift->id ? 'selected' : '' }}>
@@ -133,6 +133,16 @@
                                         <span class="selectgroup-button">Admin</span>
                                     </label>
                                     <label class="selectgroup-item">
+                                        <input type="radio" name="role" value="super admin" class="selectgroup-input"
+                                            @if ($user->role == 'super admin') checked @endif>
+                                        <span class="selectgroup-button">Super Admin</span>
+                                    </label>
+                                    <label class="selectgroup-item">
+                                        <input type="radio" name="role" value="hrd" class="selectgroup-input"
+                                            @if ($user->role == 'hrd') checked @endif>
+                                        <span class="selectgroup-button">HRD</span>
+                                    </label>
+                                    <label class="selectgroup-item">
                                         <input type="radio" name="role" value="supervisor" class="selectgroup-input"
                                             @if ($user->role == 'supervisor') checked @endif>
                                         <span class="selectgroup-button">Supervisor</span>
@@ -147,7 +157,8 @@
                             </div>
                         </div>
                         <div class="card-footer text-right">
-                            <button class="btn btn-primary">Submit</button>
+                            <a href="{{ route('users.index') }}" class="btn btn-secondary">Cancel</a>
+                            <button class="btn btn-primary ml-2">Update</button>
                         </div>
                     </form>
                 </div>
@@ -158,4 +169,14 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('library/select2/dist/js/select2.full.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Pilih Shift...",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
 @endpush
