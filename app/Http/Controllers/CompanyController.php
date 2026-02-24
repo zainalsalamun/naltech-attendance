@@ -34,6 +34,7 @@ class CompanyController extends Controller
             'time_in' => 'required',
             'time_out' => 'required',
             'attendance_type' => 'required',
+            'overtime_rate' => 'nullable|numeric',
         ]);
 
         $company->update([
@@ -46,6 +47,7 @@ class CompanyController extends Controller
             'time_in' => $request->time_in,
             'time_out' => $request->time_out,
             'attendance_type' => $request->attendance_type,
+            'overtime_rate' => $request->overtime_rate ?? 0,
         ]);
 
         return redirect()->route('companies.show', 1)->with('success', 'Company updated successfully');
