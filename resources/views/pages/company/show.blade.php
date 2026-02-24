@@ -75,6 +75,10 @@
                                         <label>Tipe Absensi</label>
                                         <p>{{ $company->attendance_type }}</p>
                                     </div>
+                                    <div class="form-group col-md-6 col-12">
+                                        <label>Tarif Lembur per Jam (Rp)</label>
+                                        <p>Rp {{ number_format($company->overtime_rate ?? 0, 0, ',', '.') }}</p>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-footer text-right">

@@ -86,7 +86,8 @@
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                    <a href="{{ route('permissions.index') }}" class="btn btn-secondary">Batal</a>
+                                    <button type="submit" class="btn btn-primary ml-2">Simpan Perubahan</button>
                                 </div>
                             </form>
                         </div>

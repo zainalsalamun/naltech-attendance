@@ -100,7 +100,6 @@
                                                         No Shift
                                                     @endif
                                                 </td>
-
                                                 <td>
                                                     <div class="d-flex justify-content-center">
                                                         <a href='{{ route('attendances.edit', $attendance->id) }}'

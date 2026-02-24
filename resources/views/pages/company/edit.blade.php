@@ -108,12 +108,18 @@
                                                     None</option>
                                             </select>
                                         </div>
+                                        <div class="form-group col-md-6 col-12">
+                                            <label>Tarif Lembur per Jam (Rp)</label>
+                                            <input type="number" name="overtime_rate" class="form-control"
+                                                value="{{ $company->overtime_rate ?? 0 }}">
+                                        </div>
 
 
                                     </div>
                                 </div>
                                 <div class="card-footer text-right">
-                                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                                    <a href="{{ route('companies.show', $company->id) }}" class="btn btn-secondary">Batal</a>
+                                    <button type="submit" class="btn btn-primary ml-2">Simpan Perubahan</button>
                                 </div>
                             </form>
                         </div>

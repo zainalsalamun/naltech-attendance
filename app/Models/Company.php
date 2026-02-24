@@ -19,5 +19,6 @@ class Company extends Model
         'time_in',
         'time_out',
         'attendance_type',
+        'overtime_rate',
     ];
 }
