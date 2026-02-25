@@ -26,7 +26,7 @@ class OvertimeController extends Controller
             });
         }
 
-        $overtimes = $query->orderBy('date', 'desc')->paginate(10);
+        $overtimes = $query->orderBy('date', 'desc')->paginate(5);
         return view('pages.overtime.index', compact('overtimes'));
     }
 

@@ -65,7 +65,7 @@
                                                     </td>
                                                     <td>
                                                         @if($overtime->status == 'pending')
-                                                            <div class="badge badge-warning">Pending</div>
+                                                            <div class="badge badge-primary">Pending</div>
                                                         @elseif($overtime->status == 'approved')
                                                             <div class="badge badge-success">Approved</div>
                                                         @else
