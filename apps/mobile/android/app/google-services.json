@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "509108111948",
+    "project_id": "naltech-project",
+    "storage_bucket": "naltech-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509108111948:android:87d55b8696ea2c6e09c2e9",
+        "android_client_info": {
+          "package_name": "com.example.edc_technician_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX7nvv1bGXWH_JB-j7oHoHKv-mcmY5XTw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509108111948:android:67bdf80af1378f2309c2e9",
+        "android_client_info": {
+          "package_name": "com.naltech.attendance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX7nvv1bGXWH_JB-j7oHoHKv-mcmY5XTw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

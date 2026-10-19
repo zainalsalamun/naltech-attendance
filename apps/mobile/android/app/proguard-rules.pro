@@ -1,0 +1,10 @@
+-keep class org.tensorflow.** { *; }
+-dontwarn org.tensorflow.**
+-keep class com.google.mlkit.** { *; }
+-dontwarn com.google.mlkit.**
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+-keep class com.google.android.play.** { *; }
+-dontwarn com.google.android.play.**
