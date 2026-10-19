@@ -127,9 +127,9 @@ class _SplashPageState extends State<SplashPage> {
           ),
           const SpaceHeight(40.0),
           // App Title
-          Text(
+          const Text(
             Variables.appName,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.white,
               fontSize: 36.0,
               fontWeight: FontWeight.bold,

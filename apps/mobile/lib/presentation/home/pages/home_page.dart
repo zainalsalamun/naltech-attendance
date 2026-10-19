@@ -561,10 +561,10 @@ class _HomePageState extends State<HomePage> {
                             ),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(24.0),
-                              gradient: LinearGradient(
+                              gradient: const LinearGradient(
                                 colors: [
                                   AppColors.primary,
-                                  const Color(0xFF2E5BFF),
+                                  Color(0xFF2E5BFF),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -873,7 +873,8 @@ class _HomePageState extends State<HomePage> {
         ));
         return;
       default:
-        _showWarningDialog('Metode absensi belum tersedia. Muat ulang data perusahaan.');
+        _showWarningDialog(
+            'Metode absensi belum tersedia. Muat ulang data perusahaan.');
     }
   }
 

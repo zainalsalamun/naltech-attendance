@@ -11,7 +11,7 @@ class CheckQrBloc extends Bloc<CheckQrEvent, CheckQrState> {
   final QrAbsenRemoteDatasource qrAbsenRemoteDatasource;
   CheckQrBloc(
     this.qrAbsenRemoteDatasource,
-  ) : super(_Initial()) {
+  ) : super(const _Initial()) {
     on<_CheckQr>((event, emit) async {
       emit(const _Loading());
       try {

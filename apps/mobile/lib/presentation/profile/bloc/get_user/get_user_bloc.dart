@@ -12,10 +12,10 @@ class GetUserBloc extends Bloc<GetUserEvent, GetUserState> {
   final UserRemoteDatasource datasource;
   GetUserBloc(
     this.datasource,
-  ) : super(_Initial()) {
+  ) : super(const _Initial()) {
     on<_GetUser>(
       (event, emit) async {
-        emit(_Loading());
+        emit(const _Loading());
 
         final result = await datasource.getUser();
         result.fold(

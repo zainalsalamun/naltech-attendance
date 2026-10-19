@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SpaceHeight(16),
-                  Text(
+                  const Text(
                     'Naltech Attendance',
                     style: TextStyle(
                       fontSize: 28,

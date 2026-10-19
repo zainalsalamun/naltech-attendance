@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/core.dart';
 import '../../bloc/get_reimbursements/get_reimbursements_bloc.dart';
 import 'add_reimbursement_page.dart';
-import '../../../../../core/constants/variables.dart';
 import 'package:intl/intl.dart';
 
 class ReimbursementPage extends StatefulWidget {

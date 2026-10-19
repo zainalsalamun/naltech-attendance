@@ -70,7 +70,7 @@ class _RecognitionResultPageState extends State<AttendanceResultPage> {
       appBar: AppBar(
         title: Text(
           'Proses Presensi - ${widget.attendanceType == 'None' ? 'Manual' : widget.attendanceType}',
-          style: TextStyle(fontSize: 20),
+          style: const TextStyle(fontSize: 20),
         ),
       ),
       body: Center(
@@ -84,7 +84,7 @@ class _RecognitionResultPageState extends State<AttendanceResultPage> {
             ),
             Text(
               widget.isCheckin ? 'Checkin' : 'Checkout',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12.0,
                 fontWeight: FontWeight.bold,
               ),
@@ -254,15 +254,16 @@ class _RecognitionResultPageState extends State<AttendanceResultPage> {
                                     isCheckedIn: widget.isCheckin,
                                   )));
                     },
-                    child: Text('Ambil Wajah Lagi'),
+                    child: const Text('Ambil Wajah Lagi'),
                   )
                 : const SizedBox(),
             widget.attendanceType == 'QR'
                 ? ElevatedButton(
                     onPressed: () {
-                      context.pushReplacement(ScannerPage(isCheckin: widget.isCheckin));
+                      context.pushReplacement(
+                          ScannerPage(isCheckin: widget.isCheckin));
                     },
-                    child: Text('Scan QR Code Lagi'),
+                    child: const Text('Scan QR Code Lagi'),
                   )
                 : const SizedBox(),
           ],

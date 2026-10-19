@@ -237,8 +237,10 @@ class _ScannerPageState extends State<ScannerPage> with WidgetsBindingObserver {
                       ));
                       context
                           .read<GetQrcodeCheckinBloc>()
-                          .add(GetQrcodeCheckinEvent.started());
-                      context.read<CheckQrBloc>().add(CheckQrEvent.started());
+                          .add(const GetQrcodeCheckinEvent.started());
+                      context
+                          .read<CheckQrBloc>()
+                          .add(const CheckQrEvent.started());
                     },
                     success: (isValid) {
                       context.pushReplacement(AttendanceResultPage(

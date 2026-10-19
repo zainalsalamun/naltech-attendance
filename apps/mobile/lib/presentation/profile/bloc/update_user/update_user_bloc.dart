@@ -14,10 +14,10 @@ class UpdateUserBloc extends Bloc<UpdateUserEvent, UpdateUserState> {
   final UserRemoteDatasource datasource;
   UpdateUserBloc(
     this.datasource,
-  ) : super(_Initial()) {
+  ) : super(const _Initial()) {
     on<_UpdateUser>(
       (event, emit) async {
-        emit(_Loading());
+        emit(const _Loading());
 
         final result = await datasource.updateProfile(event.model, event.id);
         result.fold(

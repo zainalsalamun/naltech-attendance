@@ -1,12 +1,8 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_absensi_app/core/assets/assets.gen.dart';
-import 'package:flutter_absensi_app/core/components/spaces.dart';
-import 'package:flutter_absensi_app/core/constants/colors.dart';
 import 'package:flutter_absensi_app/core/ml/recognition_embedding.dart';
 import 'package:flutter_absensi_app/core/ml/recognizer.dart';
 import 'package:flutter_absensi_app/data/datasources/auth_local_datasource.dart';

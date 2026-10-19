@@ -33,14 +33,14 @@ class _ProfilePageState extends State<ProfilePage> {
               child: BlocBuilder<GetUserBloc, GetUserState>(
                 builder: (context, state) {
                   return state.maybeWhen(orElse: () {
-                    return Center(
+                    return const Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.error_outline,
+                          Icon(Icons.error_outline,
                               size: 48, color: AppColors.red),
-                          const SpaceHeight(16),
-                          const Text('Gagal memuat profil',
+                          SpaceHeight(16),
+                          Text('Gagal memuat profil',
                               style: TextStyle(fontSize: 16)),
                         ],
                       ),
@@ -84,26 +84,26 @@ class _ProfilePageState extends State<ProfilePage> {
                                 )
                               : null,
                         ),
-                        SpaceHeight(24),
+                        const SpaceHeight(24),
                         CustomTextField(
                           readOnly: true,
                           label: 'Name',
                           controller: TextEditingController(text: user.name),
                         ),
-                        SpaceHeight(16),
+                        const SpaceHeight(16),
                         CustomTextField(
                           readOnly: true,
                           label: 'Email',
                           controller: TextEditingController(text: user.email),
                         ),
-                        SpaceHeight(16),
+                        const SpaceHeight(16),
                         CustomTextField(
                           readOnly: true,
                           label: 'Phone',
                           controller:
                               TextEditingController(text: user.phone ?? '-'),
                         ),
-                        SpaceHeight(24),
+                        const SpaceHeight(24),
                         Button.outlined(
                           onPressed: () {
                             context.push(UpdateProfilePage(user: user));
@@ -112,7 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontSize: 16.0,
                           height: 48,
                         ),
-                        SpaceHeight(16),
+                        const SpaceHeight(16),
                       ],
                     );
                   });

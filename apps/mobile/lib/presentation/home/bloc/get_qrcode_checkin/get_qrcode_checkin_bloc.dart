@@ -5,8 +5,9 @@ part 'get_qrcode_checkin_event.dart';
 part 'get_qrcode_checkin_state.dart';
 part 'get_qrcode_checkin_bloc.freezed.dart';
 
-class GetQrcodeCheckinBloc extends Bloc<GetQrcodeCheckinEvent, GetQrcodeCheckinState> {
-  GetQrcodeCheckinBloc() : super(_Initial()) {
+class GetQrcodeCheckinBloc
+    extends Bloc<GetQrcodeCheckinEvent, GetQrcodeCheckinState> {
+  GetQrcodeCheckinBloc() : super(const _Initial()) {
     on<_GetQrcodeCheckin>((event, emit) {
       emit(const _Loading());
       emit(_Success(event.barcode, event.isCheckedIn));

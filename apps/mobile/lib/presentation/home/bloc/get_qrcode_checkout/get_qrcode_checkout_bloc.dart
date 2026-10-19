@@ -7,7 +7,7 @@ part 'get_qrcode_checkout_bloc.freezed.dart';
 
 class GetQrcodeCheckoutBloc
     extends Bloc<GetQrcodeCheckoutEvent, GetQrcodeCheckoutState> {
-  GetQrcodeCheckoutBloc() : super(_Initial()) {
+  GetQrcodeCheckoutBloc() : super(const _Initial()) {
     on<_GetQrcodeCheckout>((event, emit) {
       emit(const _Loading());
       emit(_Success(event.barcode));

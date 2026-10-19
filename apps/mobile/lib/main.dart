@@ -123,7 +123,7 @@ class MyApp extends StatelessWidget {
           ),
           appBarTheme: AppBarTheme(
             centerTitle: true,
-            color: AppColors.white,
+            backgroundColor: AppColors.white,
             elevation: 0,
             titleTextStyle: GoogleFonts.kumbhSans(
               color: AppColors.black,

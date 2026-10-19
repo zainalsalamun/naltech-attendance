@@ -401,7 +401,9 @@ class _CameraViewState extends State<CameraViewAttendancePage> {
 
     if (format == null ||
         (Platform.isAndroid && format != InputImageFormat.nv21) ||
-        (Platform.isIOS && format != InputImageFormat.bgra8888)) return null;
+        (Platform.isIOS && format != InputImageFormat.bgra8888)) {
+      return null;
+    }
 
     if (image.planes.length != 1) return null;
     final plane = image.planes.first;
