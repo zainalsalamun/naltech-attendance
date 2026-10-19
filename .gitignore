@@ -1,0 +1,47 @@
+# Local settings and credentials
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+**/auth.json
+**/*.key
+**/*.pem
+**/*.p12
+**/*.jks
+**/*.keystore
+
+# Dependencies and generated output
+**/node_modules/
+**/vendor/
+**/build/
+**/.dart_tool/
+**/.pub/
+**/.pub-cache/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.phpunit.cache/
+**/.phpunit.result.cache
+**/.gradle/
+**/Pods/
+**/DerivedData/
+**/local.properties
+
+# Runtime data
+apps/backend/public/hot
+apps/backend/public/storage
+apps/backend/storage/logs/*
+apps/backend/storage/framework/cache/data/*
+apps/backend/storage/framework/sessions/*
+apps/backend/storage/framework/views/*
+apps/backend/storage/app/private/*
+apps/backend/storage/app/public/*
+**/*.sqlite
+**/*.sqlite-*
+**/*.log
+
+# OS and editor state
+**/.DS_Store
+**/.idea/
+**/.fleet/
+**/*.iml
+**/*.swp
