@@ -4,6 +4,8 @@ Terakhir diperbarui: 19 Oktober 2026
 
 ## Tujuan dan status
 
+**Urutan proyek: implementasi dan review Dashboard web terlebih dahulu, kemudian mobile.** Lihat `dashboard-ui-implementation-checklist.md` untuk prioritas pengerjaan saat ini. Checklist mobile ini disimpan sebagai tahap berikutnya.
+
 Menerapkan rancangan mobile yang sudah disetujui ke `apps/mobile`, dengan identitas visual yang selaras dengan Dashboard Workspace. Implementasi dimulai dari fondasi tema dan Beranda, dilanjutkan layar lain setelah hasil awal dapat dicoba.
 
 Status saat dokumen dibuat: **desain awal disetujui; implementasi UI Flutter belum dimulai**. Preview berisi data ilustrasi, bukan bukti fitur telah terhubung atau lolos pengujian.
