@@ -12,8 +12,9 @@
 
 # Dependencies and generated output
 **/node_modules/
-**/vendor/
-**/build/
+/apps/backend/vendor/
+/apps/backend/public/build/
+/apps/mobile/build/
 **/.dart_tool/
 **/.pub/
 **/.pub-cache/
@@ -25,6 +26,28 @@
 **/Pods/
 **/DerivedData/
 **/local.properties
+**/key.properties
+
+# Machine-specific hosting, Firebase and service-account configuration
+**/.vercel/
+**/.wrangler/
+**/.dev.vars
+**/.dev.vars.*
+!**/.dev.vars.example
+**/google-services.json
+**/GoogleService-Info.plist
+/apps/mobile/lib/firebase_options.dart
+**/*firebase-adminsdk*.json
+**/*service-account*.json
+**/*service_account*.json
+
+# Release archives and local database exports
+**/*.zip
+**/*.apk
+**/*.aab
+**/*.ipa
+/backups/
+/apps/backend/backups/
 
 # Runtime data
 apps/backend/public/hot

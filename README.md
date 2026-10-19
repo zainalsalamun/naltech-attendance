@@ -28,6 +28,10 @@ make mobile-install
 
 Environment lokal dari folder sumber disalin bila tersedia dan diabaikan Git. Untuk checkout baru, salin `apps/backend/.env.example` menjadi `apps/backend/.env`, sesuaikan koneksi database, lalu jalankan `php artisan key:generate` dari folder backend. Buat `apps/mobile/.env` sesuai kebutuhan aplikasi; nilainya tidak boleh dimasukkan ke Git.
 
+Konfigurasi Firebase juga bersifat lokal. Sebelum menjalankan mobile dari checkout baru, jalankan `flutterfire configure` di `apps/mobile` dengan proyek Firebase milik lingkungan tersebut. Perintah ini menyiapkan `lib/firebase_options.dart` serta konfigurasi platform yang dipilih, termasuk `android/app/google-services.json` dan `ios/Runner/GoogleService-Info.plist`. Untuk CI, sediakan file konfigurasi melalui pengaturan rahasia pipeline. File yang sudah ada pada komputer pengembang tetap dipertahankan.
+
+Library CSS/JavaScript di `apps/backend/public/library` adalah aset dashboard yang sengaja disimpan dalam repositori. Folder `vendor` atau `build` di dalam source library tidak diperlakukan sebagai dependency PHP atau hasil build aplikasi. Salinan `node_modules` dan arsip ZIP bawaan library tidak disimpan.
+
 Migrasi database **tidak dijalankan otomatis** saat penyusunan monorepo. Tinjau [panduan stabilisasi](apps/backend/docs/ATTENDANCE_HARDENING.md) sebelum menjalankannya. Panduan tersebut menjelaskan penanganan absensi ganda serta keanggotaan perusahaan lama.
 
 ## Menjalankan
