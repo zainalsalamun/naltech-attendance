@@ -1,0 +1,299 @@
+/* Modern Custom Theme */
+
+/* Import Google Font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #4361ee;
+    --primary-light: #4895ef;
+    --secondary-color: #3f37c9;
+    --success-color: #4cc9f0;
+    --danger-color: #f72585;
+    --warning-color: #fca311;
+    --info-color: #4895ef;
+    --dark-color: #212529;
+    --light-color: #f8f9fa;
+    --card-shadow: 0 10px 30px 0 rgba(172, 180, 255, 0.43);
+    --card-radius: 15px;
+}
+
+body {
+    background-color: #f4f6f9;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Typography Overrides */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+    color: #34395e;
+}
+
+/* Primary Color Overrides */
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+a {
+    color: var(--primary-color);
+}
+
+a:hover {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+/* Button Modernization */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 0.55rem 1.5rem;
+    box-shadow: 0 2px 6px #fd9b4d45;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 20px rgba(67, 97, 238, 0.6) !important;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    box-shadow: 0 5px 15px rgba(247, 37, 133, 0.4);
+}
+
+.btn-danger:hover {
+    background-color: #d61c70 !important;
+    border-color: #d61c70 !important;
+}
+
+/* Card Modernization */
+.card {
+    border-radius: var(--card-radius);
+    border: none;
+    box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1);
+    transition: all 0.3s;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px 0 rgba(34, 41, 47, 0.15);
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid #f2f4f6;
+    padding: 20px 25px;
+}
+
+.card-header h4 {
+    color: var(--primary-color);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Profile Widget modern override */
+.profile-widget {
+    margin-top: 35px;
+    overflow: visible;
+}
+
+.profile-widget .profile-widget-picture {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+    float: left;
+    width: 100px;
+    margin: -35px -5px 0 30px;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-widget .profile-widget-header {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.profile-widget .profile-widget-items {
+    display: flex;
+    position: relative;
+    flex: 1;
+    /* allow full width minus picture space */
+    padding-left: 20px;
+}
+
+.profile-widget .profile-widget-items .profile-widget-item {
+    flex: 1;
+    /* restore flex */
+    text-align: center;
+    border-right: 1px solid #f2f2f6;
+    padding: 10px 0;
+}
+
+.profile-widget .profile-widget-items .profile-widget-item:last-child {
+    border-right: none;
+}
+
+.profile-widget .profile-widget-items .profile-widget-item .profile-widget-item-label {
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    color: #34395e;
+}
+
+.profile-widget .profile-widget-items .profile-widget-item .profile-widget-item-value {
+    color: #000;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.profile-widget .profile-widget-description {
+    padding: 20px;
+    line-height: 26px;
+    clear: both;
+}
+
+.profile-widget .profile-widget-description .profile-widget-name {
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+/* Sidebar Modernization */
+.main-sidebar {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
+    border-right: none;
+}
+
+.sidebar-brand {
+    background-color: #fff;
+}
+
+.sidebar-menu li a {
+    border-radius: 8px;
+    margin: 0 10px;
+    transition: all 0.3s;
+}
+
+.sidebar-menu li.active a {
+    background-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+}
+
+.sidebar-menu li.active a:hover {
+    background-color: var(--primary-color);
+}
+
+.sidebar-menu li a:hover {
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--primary-color);
+}
+
+/* Table Modernization */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(67, 97, 238, 0.02);
+}
+
+.table th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-top: none;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Form Controls */
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #e4e6fc;
+    padding: 10px 15px;
+    height: auto;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+.input-group-text {
+    border-radius: 8px;
+}
+
+/* Login Page Styling */
+.section-body {
+    padding-top: 20px;
+}
+
+/* Badges */
+.badge {
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.badge-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.badge-danger {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.badge-warning {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+.badge-primary {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+
+/* Navbar */
+.navbar-bg {
+    background-color: var(--primary-color);
+    height: 115px;
+}
+
+/* Pagination */
+.page-item .page-link {
+    border-radius: 8px;
+    margin: 0 3px;
+    border: none;
+    color: #6c757d;
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 6px rgba(67, 97, 238, 0.4);
+    color: white;
+}
