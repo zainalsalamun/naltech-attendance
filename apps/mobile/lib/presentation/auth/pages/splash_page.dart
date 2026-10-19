@@ -138,7 +138,7 @@ class _SplashPageState extends State<SplashPage> {
           ),
           const SpaceHeight(10.0),
           const Text(
-            'Smart Attendance System',
+            'Naltech Attendance',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppColors.lightSheet,

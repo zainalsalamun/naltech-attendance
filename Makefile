@@ -1,7 +1,7 @@
 .PHONY: help backend-install mobile-install web-install backend-serve mobile-run web-dev backend-test mobile-test mobile-analyze
 
 help:
-	@echo "Smart Attendance: backend-install mobile-install web-install backend-serve mobile-run web-dev backend-test mobile-test mobile-analyze"
+	@echo "Naltech Attendance: backend-install mobile-install web-install backend-serve mobile-run web-dev backend-test mobile-test mobile-analyze"
 
 backend-install:
 	composer --working-dir=apps/backend install

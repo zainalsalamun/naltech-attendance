@@ -1,4 +1,4 @@
-# 📱 Smart Attendance System
+# Naltech Attendance — Mobile
 
 Aplikasi Presensi cerdas berbasis Flutter yang menggunakan teknologi Face Detection (Pengenalan Wajah) dan validasi titik lokasi Radius (GPS) untuk mendata kehadiran karyawan secara *real-time* dan mencegah kecurangan.
 

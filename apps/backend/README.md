@@ -1,4 +1,4 @@
-# Attendance Management System (Absensi Online)
+# Naltech Attendance — Backend & Dashboard
 
 Sistem Manajemen Absensi Karyawan berbasis Laravel (Backend/Dashboard) dan Flutter (Mobile App). Sistem ini dirancang untuk memudahkan pencatatan kehadiran dengan validasi lokasi (Geofencing), pendeteksi wajah, dan perhitungan lembur otomatis.
 

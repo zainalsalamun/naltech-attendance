@@ -1,11 +1,13 @@
-# Smart Attendance — Monorepo
+# Naltech Attendance
 
 Aplikasi absensi karyawan: Flutter untuk mobile, Laravel untuk API dan dashboard admin.
+
+Produk Naltech Studio · https://studio.naltech.web.id/
 
 ## Struktur
 
 ```text
-absensi-monorepo/
+naltech-attendance/
 ├── apps/
 │   ├── mobile/     # Asal: flutter_absensi_app-dev
 │   └── backend/    # Asal: laravel-absensi-backend-master
@@ -67,6 +69,6 @@ Check-in/out dilindungi dari duplikasi, lokasi divalidasi di server, dan query o
 
 ## Git
 
-Jalankan perintah Git dari root ini. Branch utama bernama `main`. Remote GitHub belum dikonfigurasi dan tidak ada kode yang di-push. Riwayat sumber dapat ditelusuri melalui parent merge commit impor.
+Jalankan perintah Git dari root ini. Branch kerja bernama `naltech`. Remote GitHub belum dikonfigurasi dan tidak ada kode yang di-push. Riwayat sumber dapat ditelusuri melalui parent merge commit impor.
 
 Path pada dokumentasi lama di dalam aplikasi mungkin masih memakai nama folder sumber. Gunakan `apps/mobile` dan `apps/backend` sebagai lokasi aktif.
