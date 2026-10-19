@@ -5,10 +5,8 @@ import 'package:flutter_absensi_app/core/helper/radius_calculate.dart';
 import 'package:flutter_absensi_app/data/datasources/auth_local_datasource.dart';
 import 'package:flutter_absensi_app/presentation/home/bloc/get_company/get_company_bloc.dart';
 import 'package:flutter_absensi_app/presentation/home/bloc/is_checkedin/is_checkedin_bloc.dart';
-import 'package:flutter_absensi_app/presentation/home/pages/attandences/face_detector_checkin_page.dart';
 import 'package:flutter_absensi_app/presentation/home/pages/attandences/attendance_result_page.dart';
 import 'package:flutter_absensi_app/presentation/home/pages/attandences/scanner_page.dart';
-import 'package:flutter_absensi_app/presentation/home/pages/attendance_checkout_page.dart';
 import 'package:flutter_absensi_app/presentation/home/pages/face_detector_view.dart';
 import 'package:flutter_absensi_app/presentation/home/pages/permission_page.dart';
 import 'package:geolocator/geolocator.dart';
@@ -410,7 +408,7 @@ class _HomePageState extends State<HomePage> {
                               longitudePoint,
                             );
 
-                            if (distanceKm > (radiusPoint + 0.05)) {
+                            if (distanceKm > radiusPoint) {
                               _showWarningDialog(
                                 'Anda diluar jangkauan absen ($distanceKm km dari kantor)',
                               );
@@ -420,25 +418,7 @@ class _HomePageState extends State<HomePage> {
                             if (isCheckin) {
                               _showWarningDialog('Anda sudah checkin');
                             } else {
-                              if (attendanceType == 'Face') {
-                                context.push(
-                                  const FaceDetectorCheckinPage(
-                                    isCheckedIn: true,
-                                  ),
-                                );
-                              } else if (attendanceType == 'QR') {
-                                context.push(
-                                  const ScannerPage(isCheckin: true),
-                                );
-                              } else {
-                                context.push(
-                                  AttendanceResultPage(
-                                    isCheckin: true,
-                                    isMatch: true,
-                                    attendanceType: attendanceType,
-                                  ),
-                                );
-                              }
+                              _openAttendanceFlow(true, attendanceType);
                             }
                           },
                         );
@@ -499,7 +479,7 @@ class _HomePageState extends State<HomePage> {
                               longitudePoint,
                             );
 
-                            if (distanceKm > (radiusPoint + 0.05)) {
+                            if (distanceKm > radiusPoint) {
                               _showWarningDialog(
                                 'Anda diluar jangkauan absen ($distanceKm km dari kantor)',
                               );
@@ -512,25 +492,7 @@ class _HomePageState extends State<HomePage> {
                             } else if (isCheckout) {
                               _showWarningDialog('Anda sudah checkout');
                             } else {
-                              if (attendanceType == 'Face') {
-                                context.push(
-                                  const FaceDetectorCheckinPage(
-                                    isCheckedIn: false,
-                                  ),
-                                );
-                              } else if (attendanceType == 'QR') {
-                                context.push(
-                                  const ScannerPage(isCheckin: false),
-                                );
-                              } else {
-                                context.push(
-                                  AttendanceResultPage(
-                                    isCheckin: false,
-                                    isMatch: true,
-                                    attendanceType: attendanceType,
-                                  ),
-                                );
-                              }
+                              _openAttendanceFlow(false, attendanceType);
                             }
                           },
                         );
@@ -589,6 +551,10 @@ class _HomePageState extends State<HomePage> {
                             orElse: () => 0.0,
                             success: (data) => double.parse(data.radiusKm!),
                           );
+                          final attendanceType = state.maybeWhen(
+                            orElse: () => '',
+                            success: (data) => data.attendanceType ?? 'None',
+                          );
                           return Container(
                             margin: const EdgeInsets.symmetric(
                               horizontal: 16.0,
@@ -641,9 +607,7 @@ class _HomePageState extends State<HomePage> {
                                     longitudePoint,
                                   );
 
-                                  print('jarak radius:  $distanceKm');
-
-                                  if (distanceKm > (radiusPoint + 0.05)) {
+                                  if (distanceKm > radiusPoint) {
                                     ScaffoldMessenger.of(
                                       context,
                                     ).showSnackBar(
@@ -658,15 +622,9 @@ class _HomePageState extends State<HomePage> {
                                   }
 
                                   if (!isCheckIn) {
-                                    context.push(
-                                      const FaceDetectorCheckinPage(
-                                        isCheckedIn: true,
-                                      ),
-                                    );
+                                    _openAttendanceFlow(true, attendanceType);
                                   } else if (!isCheckout) {
-                                    context.push(
-                                      const AttendanceCheckoutPage(),
-                                    );
+                                    _openAttendanceFlow(false, attendanceType);
                                   } else {
                                     ScaffoldMessenger.of(
                                       context,
@@ -893,6 +851,30 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void _openAttendanceFlow(bool isCheckin, String attendanceType) {
+    if (!mounted) return;
+    switch (attendanceType.trim().toLowerCase()) {
+      case 'face':
+        _showWarningDialog(
+          'Absensi wajah belum tersedia karena verifikasi server belum dikonfigurasi. '
+          'Hubungi admin untuk menggunakan QR atau mode manual.',
+        );
+        return;
+      case 'qr':
+        context.push(ScannerPage(isCheckin: isCheckin));
+        return;
+      case 'none':
+        context.push(AttendanceResultPage(
+          isCheckin: isCheckin,
+          isMatch: true,
+          attendanceType: 'None',
+        ));
+        return;
+      default:
+        _showWarningDialog('Metode absensi belum tersedia. Muat ulang data perusahaan.');
+    }
   }
 
   void _showWarningDialog(String message) {

@@ -260,7 +260,7 @@ class _RecognitionResultPageState extends State<AttendanceResultPage> {
             widget.attendanceType == 'QR'
                 ? ElevatedButton(
                     onPressed: () {
-                      context.pushReplacement(ScannerPage(isCheckin: true));
+                      context.pushReplacement(ScannerPage(isCheckin: widget.isCheckin));
                     },
                     child: Text('Scan QR Code Lagi'),
                   )

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Shift extends Model
 {
+    use \App\Models\Concerns\BelongsToCompany;
     protected $fillable = [
         'name',
         'time_in',

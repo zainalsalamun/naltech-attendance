@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reimbursement extends Model
 {
+    use \App\Models\Concerns\BelongsToCompanyUser;
     protected $fillable = [
         'user_id',
         'date',

@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // data dummy for company
-        \App\Models\Company::create([
+        $company = \App\Models\Company::create([
             'name' => 'PT. Sejahtera Selamanya',
             'email' => 'sejahtera@gmail.com',
             'address' => 'Jl. Raya Kedung Turi No. 20, Sleman, DIY',
@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
             'time_in' => '08:00',
             'time_out' => '17:00',
         ]);
+
+        User::whereNull('company_id')->update(['company_id' => $company->id]);
 
         $this->call([
             AttendanceSeeder::class,

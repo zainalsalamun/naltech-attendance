@@ -13,7 +13,7 @@ class QrAbsenController extends Controller
 
         $request->validate([
             'qr_code' => 'required',
-            'date' => 'required|date_format:Y-m-d',
+            'date' => 'required|date_format:Y-m-d|in:'.now()->toDateString(),
             'type_qr' => 'required|in:qr_checkin,qr_checkout',
         ]);
 

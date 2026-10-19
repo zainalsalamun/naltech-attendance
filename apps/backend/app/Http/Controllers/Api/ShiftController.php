@@ -25,6 +25,7 @@ class ShiftController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(in_array($request->user()->role, ['admin', 'super admin', 'hrd', 'supervisor'], true), 403);
         //
         $request->validate([
             'name' => 'required',
@@ -68,6 +69,7 @@ class ShiftController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        abort_unless(in_array($request->user()->role, ['admin', 'super admin', 'hrd', 'supervisor'], true), 403);
         //
         $shift = Shift::find($id);
         if ($shift) {

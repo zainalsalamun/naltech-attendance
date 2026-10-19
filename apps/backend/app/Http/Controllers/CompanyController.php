@@ -10,14 +10,14 @@ class CompanyController extends Controller
     //show
     public function show($id)
     {
-        $company = Company::find(1);
+        $company = Company::findOrFail($id);
         return view('pages.company.show', compact('company'));
     }
 
     //edit
     public function edit($id)
     {
-        $company = Company::find($id);
+        $company = Company::findOrFail($id);
         return view('pages.company.edit', compact('company'));
     }
 
@@ -28,12 +28,12 @@ class CompanyController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'address' => 'required',
-            'latitude' => 'required',
-            'longitude' => 'required',
-            'radius_km' => 'required',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'radius_km' => 'required|numeric|gt:0',
             'time_in' => 'required',
             'time_out' => 'required',
-            'attendance_type' => 'required',
+            'attendance_type' => 'required|in:None,QR',
             'overtime_rate' => 'nullable|numeric',
         ]);
 
@@ -50,6 +50,6 @@ class CompanyController extends Controller
             'overtime_rate' => $request->overtime_rate ?? 0,
         ]);
 
-        return redirect()->route('companies.show', 1)->with('success', 'Company updated successfully');
+        return redirect()->route('companies.show', $company->id)->with('success', 'Company updated successfully');
     }
 }

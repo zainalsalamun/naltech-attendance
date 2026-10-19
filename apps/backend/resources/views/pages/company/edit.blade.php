@@ -90,16 +90,16 @@
                                             <label>Is Attendance Type</label>
                                             {{-- <select name="attendance_type" class="form-control" style="height: 40px;">
                                                 <option value="Face" {{$copany->attendance_type == 'Face' ? ''}}>
-                                                    Face</option>
+                                                    Face — verifikasi server belum tersedia</option>
                                                 <option value="QR">
                                                     QR</option>
                                                 <option value="None">
                                                     None</option>
                                             </select> --}}
                                             <select name="attendance_type" class="form-control" style="height: 40px;">
-                                                <option value="Face"
+                                                <option value="Face" disabled
                                                     {{ $company->attendance_type == 'Face' ? 'selected' : '' }}>
-                                                    Face</option>
+                                                    Face — verifikasi server belum tersedia</option>
                                                 <option value="QR"
                                                     {{ $company->attendance_type == 'QR' ? 'selected' : '' }}>
                                                     QR</option>

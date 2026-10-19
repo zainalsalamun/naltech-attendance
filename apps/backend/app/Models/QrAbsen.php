@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class QrAbsen extends Model
 {
     use HasFactory;
+    use \App\Models\Concerns\BelongsToCompany;
 
     protected $fillable = [
         'date',

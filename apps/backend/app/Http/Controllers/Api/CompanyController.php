@@ -9,9 +9,9 @@ use App\Models\Company;
 class CompanyController extends Controller
 {
     //show
-    public function show()
+    public function show(Request $request)
     {
-        $company = Company::find(1);
+        $company = $request->user()->company()->firstOrFail();
         return response(['company' => $company], 200);
     }
 }

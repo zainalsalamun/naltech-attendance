@@ -19,7 +19,7 @@ Route::get('/', function () {
     return view('pages.auth.auth-login');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\EnsureCompany::class])->group(function () {
 
 
 Route::get('home', function () {
@@ -75,6 +75,7 @@ Route::get('home', function () {
         return view('pages.profile', ['type_menu' => '']);
     })->name('profile');
 
+    Route::middleware(\App\Http\Middleware\EnsureAttendanceManager::class)->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('companies', CompanyController::class);
     Route::get('/attendances/export-csv', [AttendanceController::class, 'exportCsv'])->name('attendances.export-csv');
@@ -88,4 +89,5 @@ Route::get('home', function () {
     Route::resource('overtimes', OvertimeController::class);
 
     Route::get('/qr-absens/{id}/download', [QrAbsenController::class, 'downloadPDF'])->name('qr_absens.download');
+    });
 });

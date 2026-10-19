@@ -5,10 +5,12 @@ import 'package:http/http.dart' as http;
 
 import '../../../core/constants/variables.dart';
 import '../../datasources/auth_local_datasource.dart';
+import '../../datasources/attendance_qr_proof.dart';
 
 class QrAbsenRemoteDatasource {
   Future<Either<String, bool>> checkQr(
       String code, String date, String typeQr) async {
+    AttendanceQrProof.clear();
     final authData = await AuthLocalDatasource().getAuthData();
     final url = Uri.parse('${Variables.baseUrl}/api/check-qr');
     final response = await http.post(
@@ -23,6 +25,9 @@ class QrAbsenRemoteDatasource {
 
     if (response.statusCode == 200) {
       final isValid = jsonDecode(response.body)['is_valid'] as bool;
+      if (isValid && authData?.token != null) {
+        AttendanceQrProof.remember(authData!.token!, code, typeQr);
+      }
       return Right(isValid);
     } else {
       return const Left('Failed');

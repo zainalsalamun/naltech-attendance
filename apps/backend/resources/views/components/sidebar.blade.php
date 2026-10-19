@@ -18,7 +18,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="{{ route('companies.show', 1) }}" class="nav-link">
+                <a href="{{ route('companies.show', auth()->user()->company_id) }}" class="nav-link">
                     <i class="fas fa-building"></i>
                     <span>Company</span>
                 </a>

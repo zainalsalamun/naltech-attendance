@@ -9,9 +9,10 @@ use App\Models\User;
 class UserController extends Controller
 {
     //get by user id
-    public function getUserId($id)
+    public function getUserId(Request $request, $id)
     {
-        $user = User::find($id);
+        abort_unless((int) $id === (int) $request->user()->id, 403);
+        $user = $request->user();
         return response([
             'status' => 'Success',
             'message' => 'User found',
@@ -30,7 +31,8 @@ class UserController extends Controller
                 'image_url' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
-            $user = User::find($request->id);
+            abort_unless((int) $request->id === (int) $request->user()->id, 403);
+            $user = $request->user();
             $user->name = $request->name;
             $user->email = $request->email;
             $user->phone = $request->phone;
@@ -46,6 +48,8 @@ class UserController extends Controller
                 'message' => 'Update user success',
                 'data' => $user,
             ], 200);
+        } catch (\Illuminate\Validation\ValidationException|\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            throw $e;
         } catch (\Throwable $th) {
             return response([
                 'message' => $th->getMessage(),

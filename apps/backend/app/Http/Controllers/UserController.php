@@ -34,6 +34,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:8',
+            'shift_id' => ['nullable', \Illuminate\Validation\Rule::exists('shifts', 'id')->where('company_id', $request->user()->company_id)],
         ]);
 
         User::create([
@@ -63,6 +64,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email',
+            'shift_id' => ['nullable', \Illuminate\Validation\Rule::exists('shifts', 'id')->where('company_id', $request->user()->company_id)],
         ]);
 
         $user->update([

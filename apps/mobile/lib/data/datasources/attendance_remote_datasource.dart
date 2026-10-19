@@ -8,6 +8,7 @@ import 'package:flutter_absensi_app/data/models/response/attendance_response_mod
 import 'package:flutter_absensi_app/data/models/response/checkinout_response_model.dart';
 import 'package:flutter_absensi_app/data/models/response/company_response_model.dart';
 import 'package:http/http.dart' as http;
+import 'attendance_qr_proof.dart';
 
 class AttendanceRemoteDatasource {
   Future<Either<String, CompanyResponseModel>> getCompanyProfile() async {
@@ -63,7 +64,10 @@ class AttendanceRemoteDatasource {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authData?.token}',
       },
-      body: data.toJson(),
+      body: jsonEncode({
+        ...data.toMap(),
+        'qr_code': AttendanceQrProof.codeFor(authData?.token, 'qr_checkin'),
+      }),
     );
 
     if (response.statusCode == 200) {
@@ -89,7 +93,10 @@ class AttendanceRemoteDatasource {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ${authData?.token}',
       },
-      body: data.toJson(),
+      body: jsonEncode({
+        ...data.toMap(),
+        'qr_code': AttendanceQrProof.codeFor(authData?.token, 'qr_checkout'),
+      }),
     );
 
     if (response.statusCode == 200) {
