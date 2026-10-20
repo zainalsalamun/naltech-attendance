@@ -2,105 +2,84 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Overtime;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class OvertimeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $user = auth()->user();
-        $query = Overtime::with('user');
+        $filters = $request->validate([
+            'name' => ['nullable', 'string', 'max:100'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+            'status' => ['nullable', Rule::in(['all', 'pending', 'approved', 'rejected'])],
+        ]);
+        $filters = ['name' => trim($filters['name'] ?? ''), 'date' => $filters['date'] ?? '', 'status' => $filters['status'] ?? 'all'];
+        $overtimes = Overtime::with('user')
+            ->when($filters['name'] !== '', fn ($q) => $q->whereHas('user', fn ($u) => $u->where('name', 'like', '%'.$filters['name'].'%')))
+            ->when($filters['date'] !== '', fn ($q) => $q->where('date', $filters['date']))
+            ->when($filters['status'] !== 'all', fn ($q) => $q->where('status', $filters['status']))
+            ->orderByDesc('date')->orderByDesc('id')->paginate(10)->withQueryString();
 
-        if (!in_array($user->role, ['admin', 'super admin', 'hrd', 'supervisor'])) {
-            $query->where('user_id', $user->id);
-        }
-
-        if ($request->name) {
-            $query->whereHas('user', function($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->name . '%');
-            });
-        }
-
-        $overtimes = $query->orderBy('date', 'desc')->paginate(5);
-        return view('pages.overtime.index', compact('overtimes'));
+        return view('pages.overtime.index', compact('overtimes', 'filters'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $users = User::all();
+        $users = User::orderBy('name')->get();
+
         return view('pages.overtime.create', compact('users'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    private function rules(): array
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'date' => 'required|date',
-            'duration' => 'required|integer|min:1',
-            'description' => 'nullable|string',
-        ]);
-
-        Overtime::create($request->all());
-
-        return redirect()->route('overtimes.index')->with('success', 'Overtime request created successfully.');
+        return [
+            'date' => ['required', 'date_format:Y-m-d'],
+            'duration' => ['required', 'integer', 'min:1', 'max:2147483647'],
+            'description' => ['nullable', 'string', 'max:10000'],
+        ];
     }
 
-    /**
-     * Display the specified resource.
-     */
+    public function store(Request $request)
+    {
+        $data = $request->validate($this->rules() + [
+            'user_id' => ['required', Rule::exists('users', 'id')->where('company_id', $request->user()->company_id)],
+        ]);
+        $data['status'] = 'pending';
+        Overtime::create($data);
+
+        return redirect()->route('overtimes.index')->with('success', 'Pengajuan lembur berhasil ditambahkan.');
+    }
+
     public function show(string $id)
     {
         $overtime = Overtime::with('user')->findOrFail($id);
+
         return view('pages.overtime.show', compact('overtime'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
-        $overtime = Overtime::findOrFail($id);
-        $users = User::all();
-        return view('pages.overtime.edit', compact('overtime', 'users'));
+        $overtime = Overtime::with('user')->findOrFail($id);
+
+        return view('pages.overtime.edit', compact('overtime'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'date' => 'required|date',
-            'duration' => 'required|integer|min:1',
-            'description' => 'nullable|string',
-            'status' => 'required|in:pending,approved,rejected',
-        ]);
-
         $overtime = Overtime::findOrFail($id);
-        $overtime->update($request->all());
+        $data = $request->validate($this->rules() + ['status' => ['required', Rule::in(['pending', 'approved', 'rejected'])]]);
+        $overtime->update($data);
 
-        return redirect()->route('overtimes.index')->with('success', 'Overtime updated successfully.');
+        return redirect()->route('overtimes.index')->with('success', 'Pengajuan lembur berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        $overtime = Overtime::findOrFail($id);
-        $overtime->delete();
+        Overtime::findOrFail($id)->delete();
 
-        return redirect()->route('overtimes.index')->with('success', 'Overtime deleted successfully.');
+        return redirect()->route('overtimes.index')->with('success', 'Pengajuan lembur berhasil dihapus.');
     }
 }
