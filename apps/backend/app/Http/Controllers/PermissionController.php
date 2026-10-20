@@ -2,66 +2,77 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Mail\ApprovedPermissionConfirmation;
 use App\Models\Permission;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification;
 use Resend\Laravel\Facades\Resend;
-use App\Mail\ApprovedPermissionConfirmation;
-use Carbon\Carbon;
-
-
 
 class PermissionController extends Controller
 {
     //index
     public function index(Request $request)
     {
+        $filters = $request->validate([
+            'name' => ['nullable', 'string', 'max:100'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+            'status' => ['nullable', \Illuminate\Validation\Rule::in(['all', 'approved', 'unapproved'])],
+        ]);
+        $filters = ['name' => trim($filters['name'] ?? ''), 'date' => $filters['date'] ?? '', 'status' => $filters['status'] ?? 'all'];
         $permissions = Permission::with('user')
-            ->when($request->input('name'), function ($query, $name) {
-                $query->whereHas('user', function ($query) use ($name) {
-                    $query->where('name', 'like', '%' . $name . '%');
-                });
-            })->orderBy('id', 'desc')->paginate(10);
-        return view('pages.permission.index', compact('permissions'));
+            ->when($filters['name'] !== '', fn ($query) => $query->whereHas('user', fn ($users) => $users->where('name', 'like', '%'.$filters['name'].'%')))
+            ->when($filters['date'] !== '', fn ($query) => $query->where('date_permission', $filters['date']))
+            ->when($filters['status'] !== 'all', fn ($query) => $query->where('is_approved', $filters['status'] === 'approved'))
+            ->orderByDesc('id')->paginate(10)->withQueryString();
+
+        return view('pages.permission.index', compact('permissions', 'filters'));
     }
 
     //view
     public function show($id)
     {
-        $permission = Permission::with('user')->find($id);
+        $permission = Permission::with('user')->findOrFail($id);
+
         return view('pages.permission.show', compact('permission'));
     }
 
     //edit
     public function edit($id)
     {
-        $permission = Permission::find($id);
+        $permission = Permission::with('user')->findOrFail($id);
+
         return view('pages.permission.edit', compact('permission'));
     }
 
     //update
     public function update(Request $request, $id)
     {
-        $permission = Permission::find($id);
-        $permission->is_approved = $request->is_approved;
-        $str = $request->is_approved == 1 ? 'Disetujui' : 'Ditolak';
+        $permission = Permission::with('user')->findOrFail($id);
+        $validated = $request->validate(['is_approved' => ['required', 'boolean']]);
+        $wasApproved = (bool) $permission->is_approved;
+        $permission->is_approved = $validated['is_approved'];
         $permission->save();
-        $user = User::find($permission->user_id);
-        $permission_date = $permission->date_permission;
-        $date = Carbon::parse($permission_date)->translatedFormat('d F Y');
-        $reason = $permission->reason;
-        // $this->sendNotificationToUser($permission->user_id, 'Status Izin anda adalah ' . $str);
-        if ($request->is_approved == 1) {
-            Resend::emails()->send([
-                'from' =>  'onboarding@resend.dev',
-                'to' => $user->email,
-                'subject' => 'Approved Permission - ' . $user->name,
-                'html' => (new ApprovedPermissionConfirmation($user, $date, $reason))->render(),
-            ]);
+        if (! $wasApproved && $permission->is_approved) {
+            try {
+                $user = $permission->user;
+                $date = Carbon::parse($permission->date_permission)->locale('id')->translatedFormat('d F Y');
+                Resend::emails()->send([
+                    'from' => 'onboarding@resend.dev',
+                    'to' => $user->email,
+                    'subject' => 'Approved Permission - '.$user->name,
+                    'html' => (new ApprovedPermissionConfirmation($user, $date, $permission->reason))->render(),
+                ]);
+            } catch (\Throwable $exception) {
+                // The decision is already saved. Never expose provider errors or credentials.
+                return redirect()->route('permissions.index')->with('warning',
+                    'Persetujuan tersimpan, tetapi email pemberitahuan belum terkirim. Hubungi karyawan melalui saluran kerja Anda.');
+            }
         }
-        return redirect()->route('permissions.index')->with('success', 'Permission updated successfully');
+
+        return redirect()->route('permissions.index')->with('success', 'Status izin berhasil diperbarui.');
     }
 
     public function sendNotificationToUser($userId, $message)
