@@ -10,24 +10,33 @@ class AttendanceController extends Controller
     //index
     public function index(Request $request)
     {
-        $attendances = Attendance::with('user')
-            ->when($request->input('name'), function ($query, $name) {
-                $query->whereHas('user', function ($query) use ($name) {
-                    $query->where('name', 'like', '%' . $name . '%');
-                });
-            })->orderBy('id', 'desc')->paginate(10);
-        return view('pages.absensi.index', compact('attendances'));
+        $filters = $this->filters($request);
+        $attendances = $this->filteredAttendances($filters)->orderByDesc('date')->orderByDesc('id')
+            ->paginate(10)->withQueryString();
+
+        return view('pages.absensi.index', compact('attendances', 'filters'));
     }
 
-    //export csv
+    private function filters(Request $request): array
+    {
+        $filters = $request->validate([
+            'name' => ['nullable', 'string', 'max:100'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+        ]);
+
+        return ['name' => trim($filters['name'] ?? ''), 'date' => $filters['date'] ?? ''];
+    }
+
+    private function filteredAttendances(array $filters)
+    {
+        return Attendance::with(['user.shift' => fn ($query) => $query->where('company_id', auth()->user()->company_id)])
+            ->when($filters['name'] !== '', fn ($query) => $query->whereHas('user', fn ($users) => $users->where('name', 'like', '%'.$filters['name'].'%')))
+            ->when($filters['date'] !== '', fn ($query) => $query->where('date', $filters['date']));
+    }
+
     public function exportCsv(Request $request)
     {
-        $attendances = Attendance::with('user')
-            ->when($request->input('name'), function ($query, $name) {
-                $query->whereHas('user', function ($query) use ($name) {
-                    $query->where('name', 'like', '%' . $name . '%');
-                });
-            })->orderBy('id', 'desc')->get();
+        $attendances = $this->filteredAttendances($this->filters($request))->orderByDesc('date')->orderByDesc('id')->get();
 
         $filename = 'attendances.csv';
 
@@ -51,11 +60,11 @@ class AttendanceController extends Controller
         };
 
         return response()->stream($callback, 200, [
-            "Content-type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            "Expires" => "0"
+            'Content-type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$filename",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
         ]);
     }
 
@@ -63,6 +72,7 @@ class AttendanceController extends Controller
     public function edit($id)
     {
         $attendance = Attendance::findOrFail($id);
+
         return view('pages.absensi.edit', compact('attendance'));
     }
 
@@ -84,7 +94,7 @@ class AttendanceController extends Controller
             'latlon_out' => $request->latlon_out,
         ]);
 
-        return redirect()->route('attendances.index')->with('success', 'Attendance updated successfully');
+        return redirect()->route('attendances.index')->with('success', 'Catatan kehadiran berhasil diperbarui.');
     }
 
     //destroy
@@ -93,6 +103,6 @@ class AttendanceController extends Controller
         $attendance = Attendance::findOrFail($id);
         $attendance->delete();
 
-        return redirect()->route('attendances.index')->with('success', 'Attendance deleted successfully');
+        return redirect()->route('attendances.index')->with('success', 'Catatan kehadiran berhasil dihapus.');
     }
 }
