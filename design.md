@@ -20,7 +20,7 @@ Gunakan tampilan kerja yang tenang dan padat informasi: panel putih pada light m
 | Latar | `#F5F6F8` | `#141B28` |
 | Panel | `#FFFFFF` | `#1D2635` |
 | Teks utama | `#202C40` | `#E8EDF6` |
-| Teks sekunder | `#69768A` | `#A1AEC3` |
+| Teks sekunder | `#626F83` | `#A1AEC3` |
 | Garis | `#E5E9EF` | `#344054` |
 | Aksen | `#315BCE` | `#A6BCFF` |
 | Teks pada aksen | `#FFFFFF` | `#162747` |
@@ -28,6 +28,8 @@ Gunakan tampilan kerja yang tenang dan padat informasi: panel putih pada light m
 | Sukses / hadir | `#34725B` | `#9ED2B9` |
 | Terlambat | `#B45309` | `#FBBF24` |
 | Navy merek | `#192A48` | `#192A48` |
+
+Teks sekunder light direvisi ke `#626F83` setelah pemeriksaan kontras agar memenuhi 4,5:1 pada latar halaman dan kontrol lembut.
 
 Warna Terlambat sebelumnya `#A66620` telah direvisi. Definisikan token error, nonaktif, dan fokus saat implementasi serta periksa kontrasnya. Gunakan teks/ikon bersama warna status.
 
@@ -59,3 +61,7 @@ Pertahankan navigasi Beranda, Riwayat, Profil. Beranda memprioritaskan jadwal, s
 ## Review
 
 Periksa light/dark, desktop/layar sempit, teks panjang, data kosong, filter, dan state error. Simpan screenshot dan catat perbedaan dari rancangan. Tugas dinyatakan selesai setelah fungsi terkait diperiksa dan hasil visual direview.
+
+## Perluasan lingkup web — 19 Oktober 2026
+
+Sesuai instruksi pengguna, keselarasan Workspace mencakup seluruh halaman web, bukan hanya Home. Ikuti [timeline web menyeluruh](docs/web-ui-timeline.md): Kehadiran → Karyawan → Izin → Lembur → Reimbursement → Shift → Lokasi → QR → Verifikasi → Profil/Login → QA dan review web. Mobile menunggu review web menyeluruh. Checklist Dashboard tetap khusus Home/Ringkasan; statusnya tidak mewakili modul lain.

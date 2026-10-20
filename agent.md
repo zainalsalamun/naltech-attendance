@@ -40,3 +40,7 @@ UI mengikuti `design.md`, data berasal dari perusahaan aktif, interaksi berfungs
 ## Penemuan instruksi
 
 Nama `agent.md` dipertahankan sesuai permintaan pengguna. Untuk alat yang menemukan instruksi melalui `AGENTS.md`, repositori menyediakan file pengarah terpisah. `skills.md` adalah panduan proyek, bukan instalasi skill Codex.
+
+## Perluasan lingkup web — 19 Oktober 2026
+
+Sesuai instruksi pengguna, keselarasan Workspace mencakup seluruh halaman web, bukan hanya Home. Ikuti [timeline web menyeluruh](docs/web-ui-timeline.md): Kehadiran → Karyawan → Izin → Lembur → Reimbursement → Shift → Lokasi → QR → Verifikasi → Profil/Login → QA dan review web. Mobile menunggu review web menyeluruh. Checklist Dashboard tetap khusus Home/Ringkasan; statusnya tidak mewakili modul lain.

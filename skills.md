@@ -57,3 +57,7 @@ Format hanya file Dart yang berubah. Uji perangkat/emulator yang tersedia, tema,
 ## 6. Bukti dan tracking
 
 Perbarui checklist terkait dengan status, hasil pemeriksaan, screenshot atau commit bila tersedia. Review Dashboard mendahului implementasi mobile. Commit, push, publikasi, dan deployment mengikuti instruksi pengguna pada pekerjaan terkait.
+
+## Perluasan lingkup web — 19 Oktober 2026
+
+Sesuai instruksi pengguna, keselarasan Workspace mencakup seluruh halaman web, bukan hanya Home. Ikuti [timeline web menyeluruh](docs/web-ui-timeline.md): Kehadiran → Karyawan → Izin → Lembur → Reimbursement → Shift → Lokasi → QR → Verifikasi → Profil/Login → QA dan review web. Mobile menunggu review web menyeluruh. Checklist Dashboard tetap khusus Home/Ringkasan; statusnya tidak mewakili modul lain.
