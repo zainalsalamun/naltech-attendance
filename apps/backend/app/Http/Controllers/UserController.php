@@ -2,95 +2,81 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-
 use App\Models\Shift;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    //index
-    public function index()
+    public function index(Request $request)
     {
-        //search by name, pagination 10
-        $users = User::where('name', 'like', '%' . request('name') . '%')
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-        return view('pages.users.index', compact('users'));
+        $validated = $request->validate(['name' => ['nullable', 'string', 'max:100']]);
+        $search = trim($validated['name'] ?? '');
+        $users = User::with(['shift' => fn ($query) => $query->where('company_id', $request->user()->company_id)])
+            ->when($search !== '', fn ($query) => $query->where('name', 'like', '%'.$search.'%'))
+            ->orderByDesc('id')->paginate(10)->withQueryString();
+
+        return view('pages.users.index', compact('users', 'search'));
     }
 
-    //create
     public function create()
     {
         $shifts = Shift::orderBy('name')->get();
+
         return view('pages.users.create', compact('shifts'));
     }
 
-    //store
-    public function store(Request $request)
+    private function validatedUser(Request $request, ?User $user = null): array
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8',
-            'shift_id' => ['nullable', \Illuminate\Validation\Rule::exists('shifts', 'id')->where('company_id', $request->user()->company_id)],
+        return $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user?->id)],
+            'password' => [$user ? 'nullable' : 'required', 'string', 'min:8'],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'position' => ['nullable', 'string', 'max:255'],
+            'department' => ['nullable', 'string', 'max:255'],
+            'role' => ['nullable', Rule::in(['admin', 'super admin', 'hrd', 'supervisor', 'staff'])],
+            'shift_id' => ['nullable', Rule::exists('shifts', 'id')->where('company_id', $request->user()->company_id)],
         ]);
-
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'role' => $request->role,
-            'password' => Hash::make($request->password),
-            'position' => $request->position,
-            'department' => $request->department,
-            'shift_id' => $request->shift_id,
-        ]);
-
-        return redirect()->route('users.index')->with('success', 'User created successfully');
     }
 
-    //edit
+    public function store(Request $request)
+    {
+        $data = $this->validatedUser($request);
+        $data['role'] = $data['role'] ?? 'staff';
+        $data['password'] = Hash::make($data['password']);
+        User::create($data);
+
+        return redirect()->route('users.index')->with('success', 'Karyawan berhasil ditambahkan.');
+    }
+
     public function edit(User $user)
     {
         $shifts = Shift::orderBy('name')->get();
+
         return view('pages.users.edit', compact('user', 'shifts'));
     }
 
-    //update
     public function update(Request $request, User $user)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'shift_id' => ['nullable', \Illuminate\Validation\Rule::exists('shifts', 'id')->where('company_id', $request->user()->company_id)],
-        ]);
-
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'role' => $request->role,
-            'position' => $request->position,
-            'department' => $request->department,
-            'shift_id' => $request->shift_id,
-        ]);
-
-        //if password filled
-        if ($request->password) {
-            $user->update([
-                'password' => Hash::make($request->password),
-            ]);
+        $data = $this->validatedUser($request, $user);
+        if (! empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
         }
+        $data['role'] = $data['role'] ?? $user->role;
+        $user->update($data);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully');
+        return redirect()->route('users.index')->with('success', 'Data karyawan berhasil diperbarui.');
     }
 
-    //destroy
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'User deleted successfully');
+
+        return redirect()->route('users.index')->with('success', 'Karyawan berhasil dihapus.');
     }
 }
