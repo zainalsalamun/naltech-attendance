@@ -1,0 +1,178 @@
+{
+  "date": "2026-10-20",
+  "environment": "Isolated SQLite fixture; in-app browser",
+  "desktop": [
+    {
+      "page": "Ringkasan",
+      "active": "Ringkasan",
+      "overflow": false,
+      "theme": "light",
+      "title": "Ringkasan hari ini",
+      "width": 1440
+    },
+    {
+      "page": "Kehadiran",
+      "active": "Kehadiran",
+      "overflow": false,
+      "theme": "light",
+      "title": "Catatan kehadiran",
+      "width": 1440
+    },
+    {
+      "page": "Karyawan",
+      "active": "Karyawan",
+      "overflow": false,
+      "theme": "light",
+      "title": "Karyawan",
+      "width": 1440
+    },
+    {
+      "page": "Pengajuan izin",
+      "active": "Pengajuan izin",
+      "overflow": false,
+      "theme": "light",
+      "title": "Pengajuan izin",
+      "width": 1440
+    },
+    {
+      "page": "Lembur",
+      "active": "Lembur",
+      "overflow": false,
+      "theme": "light",
+      "title": "Pengajuan lembur",
+      "width": 1440
+    },
+    {
+      "page": "Reimbursement",
+      "active": "Reimbursement",
+      "overflow": false,
+      "theme": "light",
+      "title": "Pengajuan reimbursement",
+      "width": 1440
+    },
+    {
+      "page": "Jadwal shift",
+      "active": "Jadwal shift",
+      "overflow": false,
+      "theme": "light",
+      "title": "Jadwal shift",
+      "width": 1440
+    },
+    {
+      "page": "Lokasi kerja",
+      "active": "Lokasi kerja",
+      "overflow": false,
+      "theme": "light",
+      "title": "Lokasi kerja dan perusahaan",
+      "width": 1440
+    },
+    {
+      "page": "QR absensi",
+      "active": "QR absensi",
+      "overflow": false,
+      "theme": "light",
+      "title": "QR absensi",
+      "width": 1440
+    },
+    {
+      "page": "Verifikasi pensiun",
+      "active": "Verifikasi pensiun",
+      "overflow": false,
+      "theme": "light",
+      "title": "Verifikasi pensiun",
+      "width": 1440
+    }
+  ],
+  "mobile": [
+    {
+      "page": "Ringkasan",
+      "active": "Ringkasan",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Ringkasan hari ini",
+      "width": 390
+    },
+    {
+      "page": "Kehadiran",
+      "active": "Kehadiran",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Catatan kehadiran",
+      "width": 390
+    },
+    {
+      "page": "Karyawan",
+      "active": "Karyawan",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Karyawan",
+      "width": 390
+    },
+    {
+      "page": "Pengajuan izin",
+      "active": "Pengajuan izin",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Pengajuan izin",
+      "width": 390
+    },
+    {
+      "page": "Lembur",
+      "active": "Lembur",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Pengajuan lembur",
+      "width": 390
+    },
+    {
+      "page": "Reimbursement",
+      "active": "Reimbursement",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Pengajuan reimbursement",
+      "width": 390
+    },
+    {
+      "page": "Jadwal shift",
+      "active": "Jadwal shift",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Jadwal shift",
+      "width": 390
+    },
+    {
+      "page": "Lokasi kerja",
+      "active": "Lokasi kerja",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Lokasi kerja dan perusahaan",
+      "width": 390
+    },
+    {
+      "page": "QR absensi",
+      "active": "QR absensi",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "QR absensi",
+      "width": 390
+    },
+    {
+      "page": "Verifikasi pensiun",
+      "active": "Verifikasi pensiun",
+      "menuExpanded": "false",
+      "overflow": false,
+      "theme": "dark",
+      "title": "Verifikasi pensiun",
+      "width": 390
+    }
+  ]
+}
