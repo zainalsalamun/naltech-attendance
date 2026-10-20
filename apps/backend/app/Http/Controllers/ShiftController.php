@@ -7,77 +7,70 @@ use Illuminate\Http\Request;
 
 class ShiftController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $shifts = Shift::orderBy('id', 'desc')->paginate(10);
-        return view('pages.shifts.index', compact('shifts'));
+        $validated = $request->validate(['name' => ['nullable', 'string', 'max:100']]);
+        $search = trim($validated['name'] ?? '');
+        $shifts = Shift::withCount('users')->when($search !== '', fn ($q) => $q->where('name', 'like', '%'.$search.'%'))
+            ->orderByDesc('id')->paginate(10)->withQueryString();
+
+        return view('pages.shifts.index', compact('shifts', 'search'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('pages.shifts.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    private function validatedShift(Request $request): array
     {
-        $request->validate([
-            'name' => 'required',
-            'time_in' => 'required',
-            'time_out' => 'required',
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'time_in' => ['required', 'date_format:H:i,H:i:s'],
+            'time_out' => ['required', 'date_format:H:i,H:i:s'],
         ]);
+        foreach (['time_in', 'time_out'] as $field) {
+            if (strlen($data[$field]) === 5) {
+                $data[$field] .= ':00';
+            }
+        }
+        if ($data['time_in'] === $data['time_out']) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['time_out' => 'Jam pulang harus berbeda dari jam masuk.']);
+        }
 
-        Shift::create($request->all());
-
-        return redirect()->route('shifts.index')->with('success', 'Shift created successfully');
+        return $data;
     }
 
-    /**
-     * Display the specified resource.
-     */
+    public function store(Request $request)
+    {
+        Shift::create($this->validatedShift($request));
+
+        return redirect()->route('shifts.index')->with('success', 'Shift berhasil ditambahkan.');
+    }
+
     public function show(Shift $shift)
     {
+        $shift->loadCount('users');
+
         return view('pages.shifts.show', compact('shift'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Shift $shift)
     {
         return view('pages.shifts.edit', compact('shift'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Shift $shift)
     {
-        $request->validate([
-            'name' => 'required',
-            'time_in' => 'required',
-            'time_out' => 'required',
-        ]);
+        $shift->update($this->validatedShift($request));
 
-        $shift->update($request->all());
-
-        return redirect()->route('shifts.index')->with('success', 'Shift updated successfully');
+        return redirect()->route('shifts.index')->with('success', 'Shift berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Shift $shift)
     {
         $shift->delete();
-        return redirect()->route('shifts.index')->with('success', 'Shift deleted successfully');
+
+        return redirect()->route('shifts.index')->with('success', 'Shift berhasil dihapus. Karyawan terkait kini tidak memiliki shift.');
     }
 }
