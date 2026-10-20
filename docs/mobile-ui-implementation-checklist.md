@@ -1,24 +1,24 @@
 # Tracking Implementasi UI Mobile — Naltech Attendance
 
-Terakhir diperbarui: 19 Oktober 2026
+Terakhir diperbarui: 20 Oktober 2026
 
 ## Tujuan dan status
 
-**Urutan proyek: implementasi dan review Dashboard web terlebih dahulu, kemudian mobile.** Lihat `dashboard-ui-implementation-checklist.md` untuk prioritas pengerjaan saat ini. Checklist mobile ini disimpan sebagai tahap berikutnya.
+**Urutan proyek: implementasi dan review Dashboard web terlebih dahulu, kemudian mobile.** Lihat [timeline web menyeluruh](web-ui-timeline.md) untuk prioritas pengerjaan saat ini; Home saja belum memenuhi gerbang review web. Arahan pengguna “Oke lanjutkan nextnya” setelah review teknis W12 menjadi dasar melanjutkan mobile pada 20 Oktober 2026. Batas QA web tetap tercatat; tidak berarti seluruh aturan bisnis web sudah berubah.
 
 Menerapkan rancangan mobile yang sudah disetujui ke `apps/mobile`, dengan identitas visual yang selaras dengan Dashboard Workspace. Implementasi dimulai dari fondasi tema dan Beranda, dilanjutkan layar lain setelah hasil awal dapat dicoba.
 
-Status saat dokumen dibuat: **desain awal disetujui; implementasi UI Flutter belum dimulai**. Preview berisi data ilustrasi, bukan bukti fitur telah terhubung atau lolos pengujian.
+Status terkini: **fondasi tema dan UI Login sudah diimplementasikan serta diuji widget; migrasi layar lainnya belum selesai**. Preview berisi data ilustrasi, bukan bukti fitur telah terhubung atau lolos pengujian.
 
 | Tahap | Prioritas | Status | Ketergantungan |
 | --- | --- | --- | --- |
-| 0. Audit dan baseline | P0 | Belum dimulai | — |
-| 1. Fondasi tema dan komponen | P0 | Belum dimulai | Tahap 0 |
+| 0. Audit dan baseline | P0 | Berjalan | Audit kode/SDK tersedia; baseline perangkat belum |
+| 1. Fondasi tema dan komponen | P0 | Berjalan | ThemeData dan persistensi tersedia; komponen domain menyusul |
 | 2. Navigasi dan Beranda | P0 | Belum dimulai | Tahap 1 |
 | 3. Alur absensi dan QR | P0 | Belum dimulai | Tahap 2 |
 | 4. Riwayat kehadiran | P1 | Belum dimulai | Tahap 1–3 |
 | 5. Profil dan pengaturan | P1 | Belum dimulai | Tahap 1–2 |
-| 6. Login dan sesi | P1 | Belum dimulai | Tahap 1 |
+| 6. Login dan sesi | P1 | Berjalan | UI/validasi/loading/error tersedia; sesi nyata dan splash menyusul |
 | 7. Izin dan reimbursement | P1 | Belum dimulai | Tahap 1–2, verifikasi API |
 | 8. QA dan dokumentasi hasil | P0 | Belum dimulai | Seluruh tahap terkait |
 
@@ -37,7 +37,7 @@ P0 = diperlukan untuk irisan implementasi awal yang dapat digunakan. P1 = dikerj
 | Latar | `#F5F6F8` | `#141B28` | Latar layar |
 | Panel | `#FFFFFF` | `#1D2635` | Kartu, formulir, navigasi |
 | Teks utama | `#202C40` | `#E8EDF6` | Judul dan nilai |
-| Teks sekunder | `#69768A` | `#A1AEC3` | Label dan keterangan |
+| Teks sekunder | `#626F83` | `#A1AEC3` | Label dan keterangan |
 | Garis | `#E5E9EF` | `#344054` | Pembatas dan input |
 | Aksen | `#315BCE` | `#A6BCFF` | Tombol dan navigasi aktif |
 | Teks pada aksen | `#FFFFFF` | `#162747` | Label tombol utama |
@@ -50,8 +50,8 @@ Status selalu disertai teks atau ikon. Radius kantor, jadwal, nama perusahaan, j
 
 ## 0. Audit dan baseline
 
-- [ ] Catat versi Flutter/Dart, target platform aktif, dan cara menjalankan aplikasi lokal.
-- [ ] Jalankan pemeriksaan awal; pisahkan masalah lama dari regresi implementasi.
+- [x] Catat versi Flutter/Dart, target platform aktif, dan cara menjalankan aplikasi lokal.
+- [x] Jalankan pemeriksaan awal; pisahkan masalah lama dari regresi implementasi.
 - [ ] Ambil screenshot Beranda, Riwayat, Profil, Login, QR, Izin, dan Reimbursement yang dapat diakses.
 - [ ] Petakan state Bloc, model respons, dan endpoint yang dipakai setiap layar.
 - [ ] Verifikasi field jadwal, zona waktu, status check-in/out, perusahaan, radius, serta metode absensi.
@@ -62,9 +62,9 @@ Status selalu disertai teks atau ikon. Radius kantor, jadwal, nama perusahaan, j
 
 ## 1. Fondasi tema dan komponen
 
-- [ ] Definisikan `ThemeData` light/dark dan token semantik agar layar tidak memakai warna literal berulang.
+- [x] Definisikan `ThemeData` light/dark dan token semantik agar layar tidak memakai warna literal berulang.
 - [ ] Tentukan skala tipografi, jarak, radius, garis pembatas, dan ukuran ikon.
-- [ ] Terapkan pilihan tema; simpan preferensi dan pulihkan saat aplikasi dibuka kembali.
+- [x] Terapkan pilihan tema; simpan preferensi dan pulihkan saat aplikasi dibuka kembali.
 - [ ] Periksa status bar, navigation bar sistem, keyboard, dialog, dan snackbar pada kedua tema.
 - [ ] Siapkan tombol utama/sekunder dengan state normal, loading, dan nonaktif.
 - [ ] Siapkan input dengan label, validasi, error, dan dukungan keyboard yang tepat.
@@ -132,9 +132,9 @@ Status selalu disertai teks atau ikon. Radius kantor, jadwal, nama perusahaan, j
 ## 6. Login dan sesi
 
 - [ ] Revisi splash dan login agar selaras dengan identitas Naltech tanpa jarak kosong berlebihan.
-- [ ] Gunakan label email/kata sandi, keyboard email, dan tombol tampil/sembunyikan kata sandi.
-- [ ] Tampilkan validasi dan pesan gagal login yang jelas; cegah submit ganda saat loading.
-- [ ] Pastikan layout tetap dapat digunakan saat keyboard terbuka dan teks diperbesar.
+- [x] Gunakan label email/kata sandi, keyboard email, dan tombol tampil/sembunyikan kata sandi.
+- [x] Tampilkan validasi dan pesan gagal login yang jelas; cegah submit ganda saat loading.
+- [x] Pastikan layout tetap dapat digunakan saat keyboard terbuka dan teks diperbesar.
 - [ ] Tangani sesi valid, sesi kedaluwarsa, dan akun belum terhubung perusahaan.
 - [ ] Pastikan kredensial dan token tidak dicetak ke log selama pengujian UI.
 
@@ -191,3 +191,15 @@ Setiap irisan harus dapat dicoba sebelum dilanjutkan. Perbaikan API yang diperlu
 | Tanggal | Tahap / tugas | Hasil / bukti | Hambatan / langkah berikutnya |
 | --- | --- | --- | --- |
 | 19 Oktober 2026 | Perencanaan | Desain mobile ditinjau dan checklist dibuat | Mulai audit dan fondasi tema + Beranda |
+
+
+## Log irisan M1 — Fondasi tema dan Login — 20 Oktober 2026
+
+- Dimulai atas arahan pengguna setelah review teknis web. [Timeline mobile](mobile-ui-timeline.md) menjadi urutan kerja terkini; Login dikerjakan bersama fondasi agar tema dan validasi dapat diuji tanpa data perusahaan atau akses perangkat.
+- Flutter 3.38.9 stable, Dart 3.10.8. Target tersedia menurut Flutter: macOS, Chrome dan iPhone terhubung; tidak ada instalasi/run pada perangkat pengguna. Platform proyek Android/iOS dipertahankan.
+- ThemeData light/dark Workspace memakai palet desain, input, tombol Material, dialog/snackbar dan konfigurasi system bar. Preferensi `naltech.theme` dibaca sebelum runApp, dapat diubah dari Login, dan dipulihkan pada controller baru. Pengujian system bar/keyboard native belum dilakukan. Layar lama masih memiliki warna literal dan akan dimigrasikan per modul.
+- Login menggunakan label Indonesia, keyboard email, autofill, tampil/sembunyikan kata sandi, validasi, pesan gagal, state loading dan pencegahan request ganda di Bloc. Error transport ditangani; HTTP login diberi timeout 20 detik. Email ditrim, password tidak dimodifikasi. Penyimpanan sesi ditunggu sebelum navigasi dan kegagalan penyimpanan ditampilkan. Radius/QR/metode/otorisasi server tidak diubah.
+- Tes counter bawaan gagal pada baseline karena tidak relevan dengan aplikasi absensi. Diganti tes tema dan Login yang bermakna. **6 tes lulus** termasuk 2 tes bukti QR yang sudah ada, persistensi tema, validasi/password toggle/loading/error/request ganda, kegagalan transport serta viewport 320×640, skala teks 1,8 dan inset keyboard 250 px pada widget test.
+- `flutter analyze` gagal pada SDK lokal: analysis_server AOT dipanggil melalui runtime yang tidak sesuai. Menjalankan analysis server SDK yang sama melalui `dartaotruntime` dan protokol analyzer berhasil: 133 temuan (9 warning, 124 info), tanpa error dan tanpa diagnostik pada berkas yang diubah pada pemeriksaan tersebut. Warning tersisa berada pada kamera/wajah/scanner lama. SDK/dependency tidak diedit. Dart format serta pemeriksaan whitespace dijalankan.
+- Upaya capture screenshot widget sementara tidak selesai dan dihentikan; harness sementara dibuang. Belum ada bukti visual perangkat untuk irisan ini. Tes widget bukan bukti login API nyata, pemulihan sesi kedaluwarsa, izin lokasi/kamera, atau UI semua halaman sudah sesuai tema.
+- Berikutnya M2: navigasi Beranda/Riwayat/Profil dan Beranda dengan sumber data asli; splash, profil, alur absensi dan modul lain tetap mengikuti timeline dan status masing-masing.
