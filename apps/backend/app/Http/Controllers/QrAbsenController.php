@@ -2,57 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Company;
 use App\Models\QrAbsen;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\CarbonImmutable;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
-use Carbon\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class QrAbsenController extends Controller
 {
-    protected function generateQRCodeCheckin()
+    private function generateCode(): string
     {
         do {
-            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            $code = substr(str_shuffle($characters), 0, 6);
-        } while (QrAbsen::where('qr_checkin', $code)->exists()); // Memeriksa apakah kode sudah ada
+            $code = Str::random(32);
+        } while (QrAbsen::where('qr_checkin', $code)->orWhere('qr_checkout', $code)->exists());
 
         return $code;
     }
 
-    protected function generateQRCodeCheckout()
+    private function qrImage(?string $code): ?string
     {
-        do {
-            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            $code = substr(str_shuffle($characters), 0, 6);
-        } while (QrAbsen::where('qr_checkout', $code)->exists()); // Memeriksa apakah kode sudah ada
-
-        return $code;
-    }
-
-    private function generateQrCode($data)
-    {
-        $qrCode = QrCode::create($data)
-            ->setSize(200)
-            ->setMargin(10);
-
-        $writer = new PngWriter();
-        $result = $writer->write($qrCode);
+        if (! $code) {
+            return null;
+        }
+        $result = (new PngWriter)->write(QrCode::create($code)->setSize(240)->setMargin(24));
 
         return base64_encode($result->getString());
     }
 
     public function index(Request $request)
     {
-        $qrAbsen = QrAbsen::paginate(10);
-        return view('pages.qr_absen.index', compact('qrAbsen'));
+        $filters = $request->validate(['month' => ['nullable', 'date_format:Y-m'], 'date' => ['nullable', 'date_format:Y-m-d']]);
+        $filters = ['month' => $filters['month'] ?? '', 'date' => $filters['date'] ?? ''];
+        $qrAbsen = QrAbsen::query()
+            ->when($filters['month'] !== '', function ($q) use ($filters) {
+                $start = CarbonImmutable::createFromFormat('!Y-m', $filters['month']);
+                $q->whereBetween('date', [$start->toDateString(), $start->endOfMonth()->toDateString()]);
+            })
+            ->when($filters['date'] !== '', fn ($q) => $q->where('date', $filters['date']))
+            ->orderByDesc('date')->orderByDesc('id')->paginate(10)->withQueryString();
+
+        return view('pages.qr_absen.index', compact('qrAbsen', 'filters'));
     }
 
     public function show($id)
     {
-        $qrAbsen = QrAbsen::find($id);
-        return view('pages.qr_absen.show', compact('qrAbsen'));
+        $qrAbsen = QrAbsen::findOrFail($id);
+
+        return view('pages.qr_absen.show', [
+            'qrAbsen' => $qrAbsen, 'company' => Company::findOrFail(auth()->user()->company_id), 'qrCodeCheckin' => $this->qrImage($qrAbsen->qr_checkin),
+            'qrCodeCheckout' => $this->qrImage($qrAbsen->qr_checkout),
+        ]);
     }
 
     public function create()
@@ -62,42 +65,46 @@ class QrAbsenController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'month' => 'required|date_format:Y-m',
-        ]);
+        $data = $request->validate(['month' => ['required', 'date_format:Y-m']]);
+        $month = CarbonImmutable::createFromFormat('!Y-m', $data['month']);
+        $changed = DB::transaction(function () use ($request, $month) {
+            Company::whereKey($request->user()->company_id)->lockForUpdate()->firstOrFail();
+            $changed = 0;
+            for ($day = 1; $day <= $month->daysInMonth; $day++) {
+                $date = $month->setDay($day)->toDateString();
+                $qr = QrAbsen::firstOrNew(['date' => $date]);
+                if ($qr->qr_checkin && $qr->qr_checkout) {
+                    continue;
+                }
+                if (! $qr->qr_checkin) {
+                    do {
+                        $qr->qr_checkin = $this->generateCode();
+                    } while ($qr->qr_checkin === $qr->qr_checkout);
+                }
+                if (! $qr->qr_checkout) {
+                    do {
+                        $qr->qr_checkout = $this->generateCode();
+                    } while ($qr->qr_checkout === $qr->qr_checkin);
+                }
+                $qr->save();
+                $changed++;
+            }
 
-        $month = Carbon::createFromFormat('Y-m', $request->month);
-        $daysInMonth = $month->daysInMonth;
+            return $changed;
+        });
 
-        for ($day = 1; $day <= $daysInMonth; $day++) {
-            $date = $month->copy()->setDay($day);
-
-            QrAbsen::create([
-                'date' => $date->format('Y-m-d'),
-                'qr_checkin' => $this->generateQRCodeCheckin(),
-                'qr_checkout' => $this->generateQRCodeCheckout(),
-            ]);
-        }
-
-        return redirect()->route('qr_absens.index')->with('success', 'QR codes generated successfully for ' . $month->format('F Y'));
+        return redirect()->route('qr_absens.index', ['month' => $data['month']])->with('success',
+            $changed.' hari QR ditambahkan atau dilengkapi. QR yang sudah lengkap tetap digunakan.');
     }
 
     public function downloadPDF($id)
     {
         $qrAbsen = QrAbsen::findOrFail($id);
+        abort_unless($qrAbsen->qr_checkin && $qrAbsen->qr_checkout, 422, 'Pasangan QR belum lengkap. Lengkapi melalui pembuatan QR bulanan.');
 
-        // Generate QR codes as base64 images
-        $qrCodeCheckin = $this->generateQrCode($qrAbsen->qr_checkin);
-        $qrCodeCheckout = $this->generateQrCode($qrAbsen->qr_checkout);
-
-        $data = [
-            'qrAbsen' => $qrAbsen,
-            'qrCodeCheckin' => $qrCodeCheckin,
-            'qrCodeCheckout' => $qrCodeCheckout,
-        ];
-
-        $pdf = Pdf::loadView('pages.pdf.qr_absen', $data);
-
-        return $pdf->download('qr_absen_' . $qrAbsen->date . '.pdf');
+        return Pdf::loadView('pages.pdf.qr_absen', [
+            'qrAbsen' => $qrAbsen, 'company' => Company::findOrFail(auth()->user()->company_id),
+            'qrCodeCheckin' => $this->qrImage($qrAbsen->qr_checkin), 'qrCodeCheckout' => $this->qrImage($qrAbsen->qr_checkout),
+        ])->setPaper('a4')->download('qr_absen_'.$qrAbsen->date.'.pdf');
     }
 }
