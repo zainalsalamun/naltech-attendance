@@ -5,116 +5,88 @@ namespace App\Http\Controllers;
 use App\Models\Reimbursement;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ReimbursementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
+        $filters = $request->validate([
+            'name' => ['nullable', 'string', 'max:100'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
+            'user_id' => ['nullable', 'integer', Rule::exists('users', 'id')->where('company_id', $request->user()->company_id)],
+            'status' => ['nullable', Rule::in(['all', 'pending', 'approved', 'rejected'])],
+        ]);
+        $filters = ['name' => trim($filters['name'] ?? ''), 'date' => $filters['date'] ?? '', 'status' => $filters['status'] ?? 'all', 'user_id' => $filters['user_id'] ?? ''];
         $reimbursements = Reimbursement::with('user')
-            ->when($request->user_id, function ($query) use ($request) {
-                $query->where('user_id', $request->user_id);
-            })
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-        return view('pages.reimbursements.index', compact('reimbursements'));
+            ->when($filters['name'] !== '', fn ($q) => $q->whereHas('user', fn ($u) => $u->where('name', 'like', '%'.$filters['name'].'%')))
+            ->when($filters['user_id'] !== '', fn ($q) => $q->where('user_id', $filters['user_id']))
+            ->when($filters['date'] !== '', fn ($q) => $q->where('date', $filters['date']))
+            ->when($filters['status'] !== 'all', fn ($q) => $q->where('status', $filters['status']))
+            ->orderByDesc('date')->orderByDesc('id')->paginate(10)->withQueryString();
+
+        return view('pages.reimbursements.index', compact('reimbursements', 'filters'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $users = User::orderBy('name')->get();
+
         return view('pages.reimbursements.create', compact('users'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    private function rules(Request $request): array
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'date' => 'required|date',
-            'description' => 'required|string',
-            'amount' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
-        $image = null;
-        if ($request->hasFile('image')) {
-            $image = $request->file('image')->store('assets/reimbursements', 'public');
-        }
-
-        Reimbursement::create([
-            'user_id' => $request->user_id,
-            'date' => $request->date,
-            'description' => $request->description,
-            'amount' => $request->amount,
-            // 'status' => 'pending', // Default is pending
-            'image' => $image,
-        ]);
-
-        return redirect()->route('reimbursements.index')->with('success', 'Reimbursement created successfully.');
+        return [
+            'user_id' => ['required', Rule::exists('users', 'id')->where('company_id', $request->user()->company_id)],
+            'date' => ['required', 'date_format:Y-m-d'],
+            'description' => ['required', 'string', 'max:10000'],
+            'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01', 'max:9999999999.99'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        ];
     }
 
-    /**
-     * Display the specified resource.
-     */
+    public function store(Request $request)
+    {
+        $data = $request->validate($this->rules($request));
+        $data['image'] = $request->hasFile('image') ? $request->file('image')->store('assets/reimbursements', 'public') : null;
+        $data['status'] = 'pending';
+        Reimbursement::create($data);
+
+        return redirect()->route('reimbursements.index')->with('success', 'Pengajuan reimbursement berhasil ditambahkan.');
+    }
+
     public function show(Reimbursement $reimbursement)
     {
+        $reimbursement->load('user');
+
         return view('pages.reimbursements.show', compact('reimbursement'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Reimbursement $reimbursement)
     {
+        $reimbursement->load('user');
         $users = User::orderBy('name')->get();
+
         return view('pages.reimbursements.edit', compact('reimbursement', 'users'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Reimbursement $reimbursement)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'date' => 'required|date',
-            'description' => 'required|string',
-            'amount' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'status' => 'required|in:pending,approved,rejected',
-        ]);
-
-        $image = $reimbursement->image;
+        $data = $request->validate($this->rules($request) + ['status' => ['required', Rule::in(['pending', 'approved', 'rejected'])]]);
+        unset($data['image']);
         if ($request->hasFile('image')) {
-            $image = $request->file('image')->store('assets/reimbursements', 'public');
+            $data['image'] = $request->file('image')->store('assets/reimbursements', 'public');
         }
+        $reimbursement->update($data);
 
-        $reimbursement->update([
-            'user_id' => $request->user_id,
-            'date' => $request->date,
-            'description' => $request->description,
-            'amount' => $request->amount,
-            'status' => $request->status,
-            'image' => $image,
-        ]);
-
-        return redirect()->route('reimbursements.index')->with('success', 'Reimbursement updated successfully.');
+        return redirect()->route('reimbursements.index')->with('success', 'Pengajuan reimbursement berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Reimbursement $reimbursement)
     {
         $reimbursement->delete();
-        return redirect()->route('reimbursements.index')->with('success', 'Reimbursement deleted successfully.');
+
+        return redirect()->route('reimbursements.index')->with('success', 'Pengajuan reimbursement berhasil dihapus.');
     }
 }
