@@ -26,6 +26,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Kamera digunakan untuk memindai QR absensi.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Lokasi digunakan saat aplikasi dibuka untuk memeriksa radius tempat absensi.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Pilih foto profil atau lampiran pengajuan dari galeri Anda.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

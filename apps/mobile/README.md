@@ -1,12 +1,12 @@
 # Naltech Attendance — Mobile
 
-Aplikasi Presensi cerdas berbasis Flutter yang menggunakan teknologi Face Detection (Pengenalan Wajah) dan validasi titik lokasi Radius (GPS) untuk mendata kehadiran karyawan secara *real-time* dan mencegah kecurangan.
+Aplikasi presensi Flutter dengan validasi lokasi dan layanan karyawan. Pendaftaran wajah memakai deteksi setelah mengambil foto dan peninjauan HR/admin; deteksi wajah tidak sama dengan verifikasi identitas atau liveness.
 
 ## ✨ Fitur Utama
 
-- **Face ID Attendance**: Mendata absen Datang dan Pulang menggunakan deteksi wajah di kamera secara mandiri (Selfie).
+- **Pendaftaran wajah**: Ambil foto dari Profil, periksa preview, ajukan dengan persetujuan penggunaan, lihat status dan cabut pendaftaran sendiri. Absensi Face tetap belum aktif sampai verifikasi/liveness server andal tersedia. [Status implementasi](../../docs/face-enrollment-implementation.md).
 - **Verifikasi Lokasi Geofencing**: Validasi ketat membandingkan koordinat perangkat *(device location)* dengan batas radius kantor yang disetel di server pusat. Memblokir absen bila terdeteksi lokasi palsu *(Mock Location)*.
-- **Smart Dashboard**: Panel interaktif *Premium UI* yang menampilkan Waktu Server *real-time* (Stream) dan Jadwal Shift Karyawan.
+- **Beranda**: Jam operasional perusahaan, status lokasi dan masuk/pulang dari API. Jam tampilan mengikuti perangkat; jam operasional bukan riwayat shift pribadi.
 - **Reimbursement System**: Formulir digital terintegrasi untuk mengajukan *reimbursement* / klaim biaya kepada perusahaan lengkap dengan foto bukti transaksi.
 - **Menu Cepat**: Pengajuan izin kerja/tidak masuk, catatan tugas, absen lembur langsung di layar utama dengan animasi halus.
 - **Update Profile**: Pengaturan khusus karyawan seperti foto profil, sinkronisasi *email* dan pelacakan riwayat versi aplikasi.
