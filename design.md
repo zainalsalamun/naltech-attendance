@@ -65,3 +65,10 @@ Periksa light/dark, desktop/layar sempit, teks panjang, data kosong, filter, dan
 ## Perluasan lingkup web — 19 Oktober 2026
 
 Sesuai instruksi pengguna, keselarasan Workspace mencakup seluruh halaman web, bukan hanya Home. Ikuti [timeline web menyeluruh](docs/web-ui-timeline.md): Kehadiran → Karyawan → Izin → Lembur → Reimbursement → Shift → Lokasi → QR → Verifikasi → Profil/Login → QA dan review web. Mobile menunggu review web menyeluruh. Checklist Dashboard tetap khusus Home/Ringkasan; statusnya tidak mewakili modul lain.
+
+
+## Revisi Beranda mobile yang disetujui — 20 Oktober 2026
+
+Pengguna menyetujui [konsep Beranda light/dark](docs/design/mobile-home-approved-concept.png) dan meminta penerapan. Konsep ini menggantikan tampilan Beranda M2 sebelumnya: wordmark kecil, sapaan/nama perusahaan, headline, kartu jadwal navy dengan garis geometris, lokasi ringkas, panel kehadiran dengan satu tombol utama, dua layanan sejajar serta navigasi bawah berikon dan indikator garis.
+
+Implementasi memakai data asli dan komponen Flutter, bukan gambar mockup sebagai layar. Tombol notifikasi pada konsep diganti kontrol tema yang sudah berfungsi; avatar membuka Profil. Informasi jadwal/zona waktu dan pemeriksaan lokasi tersedia lewat detail. Data contoh dalam konsep tidak menjadi fallback produksi. Tampilan menumpuk pada layar sempit/teks besar. Radius, status server, QR dan pembatasan Face dipertahankan. [Bukti implementasi](docs/screenshots/mobile-home-v2-light.png).

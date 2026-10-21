@@ -1,6 +1,6 @@
 # Naltech Attendance — Backend & Dashboard
 
-Sistem Manajemen Absensi Karyawan berbasis Laravel (Backend/Dashboard) dan Flutter (Mobile App). Sistem ini dirancang untuk memudahkan pencatatan kehadiran dengan validasi lokasi (Geofencing), pendeteksi wajah, dan perhitungan lembur otomatis.
+Sistem Manajemen Absensi Karyawan berbasis Laravel (Backend/Dashboard) dan Flutter (Mobile App), dengan validasi lokasi, pengelolaan karyawan dan lembur. Pendaftaran foto referensi wajah dengan persetujuan HR/admin tersedia pada kode baru; matching/anti-spoofing masih PoC dan absensi Face belum diaktifkan. [Status wajah dan penerapan migrasi](../../docs/face-enrollment-implementation.md).
 
 ## Fitur Utama
 
