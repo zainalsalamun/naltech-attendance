@@ -20,7 +20,12 @@ class DashboardController extends Controller
             'filter' => ['nullable', Rule::in(['all', 'late', 'absent'])],
             'q' => ['nullable', 'string', 'max:100'],
         ]);
-        $date = $validated['date'] ?? now()->toDateString();
+        $company = $request->user()->company()->firstOrFail();
+        $calendar = app(\App\Services\WorkCalendar::class);
+        $timezone = $calendar->timezone($company);
+        $today = now($timezone)->toDateString();
+        $date = $validated['date'] ?? $today;
+        $calendarDay = $calendar->day($company, $date);
         $filter = $validated['filter'] ?? 'all';
         $search = trim($validated['q'] ?? '');
         $viewer = $request->user();
@@ -28,8 +33,12 @@ class DashboardController extends Controller
         $company = Company::findOrFail($viewer->company_id);
 
         // One row per company member; only the selected date's attendance is joined.
-        // There is no workday calendar or historical shift snapshot in this schema.
+        // Calendar applies company-wide; effective shift snapshots are a later slice.
+        $approvalReady = \Illuminate\Support\Facades\Schema::hasColumn('permissions', 'status');
+        $approvedPredicate = $approvalReady ? "p.status = 'approved'" : 'p.is_approved = 1';
         $members = User::query()->where('users.company_id', $company->id)
+            ->when($date === $today && \Illuminate\Support\Facades\Schema::hasColumn('users', 'employment_status'),
+                fn ($q) => $q->where('users.employment_status', 'active')->whereNull('users.archived_at'))
             ->when(! $manager, fn ($q) => $q->where('users.id', $viewer->id))
             ->leftJoin('shifts as s', function ($join) use ($company) {
                 $join->on('s.id', '=', 'users.shift_id')->where('s.company_id', $company->id);
@@ -44,8 +53,9 @@ class DashboardController extends Controller
                 WHEN a.time_in IS NOT NULL AND (s.id IS NULL OR s.time_in IS NULL OR s.time_out IS NULL OR s.time_out <= s.time_in) THEN 'review'
                 WHEN a.time_in IS NOT NULL AND a.time_in > s.time_in THEN 'late'
                 WHEN a.time_in IS NOT NULL THEN 'ontime'
-                WHEN EXISTS (SELECT 1 FROM permissions p WHERE p.user_id = users.id AND p.date_permission = ? AND p.is_approved = 1) THEN 'leave'
-                ELSE 'absent' END as attendance_status", [$date]);
+                WHEN ? = 1 THEN 'off'
+                WHEN EXISTS (SELECT 1 FROM permissions p WHERE p.user_id = users.id AND p.date_permission = ? AND {$approvedPredicate}) THEN 'leave'
+                ELSE 'absent' END as attendance_status", [$calendarDay['working'] === false ? 1 : 0, $date]);
 
         $counts = DB::query()->fromSub((clone $members)->toBase(), 'members')
             ->selectRaw('attendance_status, COUNT(*) as total')->groupBy('attendance_status')
@@ -58,18 +68,18 @@ class DashboardController extends Controller
             'absent' => (int) ($counts['absent'] ?? 0),
             'leave' => (int) ($counts['leave'] ?? 0),
             'review' => (int) ($counts['review'] ?? 0),
+            'off' => (int) ($counts['off'] ?? 0),
         ];
         $rows = DB::query()->fromSub($members->toBase(), 'members')
             ->when($filter !== 'all', fn ($q) => $q->where('attendance_status', $filter))
             ->when($search !== '', fn ($q) => $q->where('name', 'like', '%'.$search.'%'))
             ->orderBy('name')->orderBy('id')->paginate(8)->withQueryString();
 
-        // Permission's boolean cannot distinguish rejected from awaiting review.
-        // Show it truthfully as "Belum disetujui", not a pending approval count.
-        $permissions = Permission::with('user:id,name')->where('is_approved', false)
-            ->when(! $manager, fn ($q) => $q->where('user_id', $viewer->id));
+        // Only canonical pending rows are actionable; legacy unknown rows need reconciliation.
+        $permissions = Permission::with('user:id,name')->when($approvalReady, fn ($q) => $q->where('status', 'pending'), fn ($q) => $q->where('is_approved', false))
+            ->visibleTo($viewer);
         $overtimes = Overtime::with('user:id,name')->where('status', 'pending')
-            ->when(! $manager, fn ($q) => $q->where('user_id', $viewer->id));
+            ->visibleTo($viewer);
         $permissionCount = (clone $permissions)->count();
         $overtimeCount = (clone $overtimes)->count();
 
@@ -79,8 +89,8 @@ class DashboardController extends Controller
             'selectedDate' => CarbonImmutable::parse($date)->locale('id'),
             'permissions' => $permissions->latest()->limit(3)->get(),
             'overtimes' => $overtimes->latest()->limit(3)->get(),
-            'permissionCount' => $permissionCount, 'overtimeCount' => $overtimeCount,
-            'generatedAt' => now(),
+            'approvalReady' => $approvalReady, 'permissionCount' => $permissionCount, 'overtimeCount' => $overtimeCount,
+            'generatedAt' => now($timezone), 'timezone' => $timezone, 'today' => $today, 'calendarDay' => $calendarDay,
         ]);
     }
 }
