@@ -36,16 +36,18 @@ class AttendanceController extends Controller
 
     public function exportCsv(Request $request)
     {
-        $attendances = $this->filteredAttendances($this->filters($request))->orderByDesc('date')->orderByDesc('id')->get();
+        $attendances = $this->filteredAttendances($this->filters($request))->orderByDesc('date')->orderByDesc('id');
+        $companyId = (int) $request->user()->company_id;
+        $attendances->whereHas('user', fn ($q) => $q->withoutGlobalScopes()->where('company_id', $companyId));
 
         $filename = 'attendances.csv';
 
         $callback = function () use ($attendances) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['ID', 'Name', 'Date', 'Time In', 'Time Out', 'LatLong In', 'LatLong Out']);
+            fputcsv($handle, ['ID', 'Name', 'Date', 'Time In', 'Time Out', 'LatLong In', 'LatLong Out'], ',', '"', '');
 
-            foreach ($attendances as $attendance) {
-                fputcsv($handle, [
+            foreach ($attendances->lazy(500) as $attendance) {
+                fputcsv($handle, array_map([\App\Support\CsvCell::class, 'text'], [
                     $attendance->id,
                     $attendance->user->name,
                     $attendance->date,
@@ -53,7 +55,7 @@ class AttendanceController extends Controller
                     $attendance->time_out,
                     $attendance->latlon_in,
                     $attendance->latlon_out,
-                ]);
+                ]), ',', '"', '');
             }
 
             fclose($handle);
