@@ -47,6 +47,6 @@
     document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeMenu(); document.querySelectorAll('details[open]').forEach(d => d.open = false); } });
     document.addEventListener('click', event => {
         if (!sidebar.contains(event.target) && !menu.contains(event.target)) closeMenu();
-        document.querySelectorAll('details[open]').forEach(d => { if (!d.contains(event.target)) d.open = false; });
+        document.querySelectorAll('details[open]:not([data-persistent-details])').forEach(d => { if (!d.contains(event.target)) d.open = false; });
     });
 })();
