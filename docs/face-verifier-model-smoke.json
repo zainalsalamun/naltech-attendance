@@ -1,0 +1,19 @@
+{
+  "scope": "local model smoke only; not identity accuracy or liveness validation",
+  "checks": {
+    "models_loaded": true,
+    "same_image_compared": true,
+    "brightness_variant_compared": true,
+    "same_image_not_attendance_eligible": true,
+    "liveness_not_claimed": true,
+    "blank_rejected": true,
+    "multiple_faces_rejected": true,
+    "malformed_base64_rejected": true
+  },
+  "passed": 8,
+  "limitations": [
+    "No different-person accuracy benchmark",
+    "No real camera or spoof presentation test",
+    "Liveness not implemented; attendance remains blocked"
+  ]
+}

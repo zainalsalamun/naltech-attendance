@@ -1,0 +1,68 @@
+{
+  "scope": "paired runtime inference audit, not liveness certification",
+  "engine": "anti-spoof-mn3-original-onnx",
+  "threshold": 0.8,
+  "synthetic_samples": 4,
+  "camera_samples": 4,
+  "camera_counts": {
+    "live": 1,
+    "print": 1,
+    "screen": 1,
+    "video": 1
+  },
+  "accepted_by_kind": {
+    "opencv": {
+      "live": 1,
+      "print": 1,
+      "screen": 1,
+      "video": 1
+    },
+    "onnxruntime": {
+      "live": 1,
+      "print": 1,
+      "screen": 1,
+      "video": 1
+    }
+  },
+  "maximum_probability_delta_between_runtimes": 1.0728836059570312e-06,
+  "tolerance": 0.0001,
+  "decisions_equal": true,
+  "parity_passed": true,
+  "runtime_versions": {
+    "opencv": "4.12.0",
+    "onnxruntime": "1.23.2",
+    "numpy": "2.2.6"
+  },
+  "model_provenance": {
+    "engine": "anti-spoof-mn3-original-onnx",
+    "omz_commit": "2c9b5c563ab3a202d085a42e2bbfc48f77961f4b",
+    "upstream_commit": "82a2c26bacff5462c6f9320c34ae0363ccbed497",
+    "model_url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/public/2022.1/anti-spoof-mn3/anti-spoof-mn3.onnx",
+    "sha384": "6de4534964b723397b3e8c995cadcf43bc007cc2f9930b95ae25f76adccece5d1d4d058d0b15117b9e4a9f758424f92a",
+    "files": {
+      "anti-spoof-mn3.onnx": {
+        "sha256": "c4c99af04603b62d7e44f6f4daeb33e0daeccc696008c0b1d62f6f5cebbb3262"
+      },
+      "model.yml": {
+        "sha256": "463e1ec4a3c287e09052d06557f4681b396bbcc9b7773f586fe60fdc50b28730"
+      },
+      "accuracy-check.yml": {
+        "sha256": "3ee0b4fbb11ef7deb319c20aa25b2c3362e0dc6a821b51927e066920f234ae33"
+      },
+      "upstream-LICENSE": {
+        "sha256": "36bbbe52e0602c3ce36f4ecfd6f8cd7d1ae334217e436ed4692a8de27e3de6a8"
+      }
+    }
+  },
+  "production_ready": false,
+  "attendance_eligible": false,
+  "limitations": [
+    "Both runtimes receive the same preprocessing; parity alone cannot validate camera labels/crop policy.",
+    "One person/device, no holdout; do not infer population accuracy."
+  ],
+  "cleanup": {
+    "phone_qa_samples_deleted": true,
+    "computer_private_samples_deleted": true,
+    "retained": "aggregate report only"
+  }
+}

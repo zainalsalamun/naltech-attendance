@@ -1,0 +1,22 @@
+{
+  "scope": "Real HTTP Laravel + local OpenCV, disposable fixtures/public image; no user biometric data",
+  "checks": [
+    "fixture API login",
+    "own enrollment status",
+    "public sample reference submitted",
+    "actual OpenCV matching through Laravel",
+    "matching does not claim liveness or authorization",
+    "raw biometric output not exposed",
+    "non-face rejected by real provider",
+    "same-image replay match cannot authorize Face attendance",
+    "real experimental NCNN diagnostic",
+    "experimental diagnostic cannot authorize attendance",
+    "liveness unsupported fails closed",
+    "reference withdrawn after smoke",
+    "withdrawn reference cannot be matched"
+  ],
+  "passed": 13,
+  "production_liveness_implemented": false,
+  "experimental_liveness_tested": true,
+  "attendance_face_enabled": false
+}
