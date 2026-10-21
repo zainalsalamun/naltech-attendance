@@ -1,0 +1,3 @@
+# Optional independent CPU runtime for auditing original ONNX inference only.
+# Install into the private PoC venv, never the global Python environment.
+onnxruntime==1.23.2

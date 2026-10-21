@@ -1,0 +1,4 @@
+-r requirements.txt
+ncnn==1.0.20260526
+# Install core first, then this file with --no-deps. NCNN's optional model-zoo
+# dependencies would otherwise pull a second conflicting GUI cv2 distribution.
