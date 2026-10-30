@@ -19,26 +19,17 @@ class ShiftController extends Controller
 
     public function create()
     {
-        return view('pages.shifts.create');
+        return view('pages.shifts.create', ['timezone' => $this->timezone()]);
+    }
+
+    private function timezone(): string
+    {
+        return app(\App\Services\WorkCalendar::class)->timezone(request()->user()->company()->firstOrFail());
     }
 
     private function validatedShift(Request $request): array
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'time_in' => ['required', 'date_format:H:i,H:i:s'],
-            'time_out' => ['required', 'date_format:H:i,H:i:s'],
-        ]);
-        foreach (['time_in', 'time_out'] as $field) {
-            if (strlen($data[$field]) === 5) {
-                $data[$field] .= ':00';
-            }
-        }
-        if ($data['time_in'] === $data['time_out']) {
-            throw \Illuminate\Validation\ValidationException::withMessages(['time_out' => 'Jam pulang harus berbeda dari jam masuk.']);
-        }
-
-        return $data;
+        return \App\Support\ShiftInput::validate($request);
     }
 
     public function store(Request $request)
@@ -52,12 +43,12 @@ class ShiftController extends Controller
     {
         $shift->loadCount('users');
 
-        return view('pages.shifts.show', compact('shift'));
+        return view('pages.shifts.show', array_merge(compact('shift'), ['timezone' => $this->timezone()]));
     }
 
     public function edit(Shift $shift)
     {
-        return view('pages.shifts.edit', compact('shift'));
+        return view('pages.shifts.edit', array_merge(compact('shift'), ['timezone' => $this->timezone()]));
     }
 
     public function update(Request $request, Shift $shift)
@@ -69,6 +60,9 @@ class ShiftController extends Controller
 
     public function destroy(Shift $shift)
     {
+        if (app(\App\Services\EffectiveShift::class)->ready()) {
+            abort_if(\Illuminate\Support\Facades\DB::table('employee_shift_assignments')->where('shift_id', $shift->id)->exists(), 409, 'Shift memiliki riwayat penempatan; pertahankan master atau buat shift baru.');
+        }
         $shift->delete();
 
         return redirect()->route('shifts.index')->with('success', 'Shift berhasil dihapus. Karyawan terkait kini tidak memiliki shift.');
