@@ -15,12 +15,21 @@ class OvertimeController extends Controller
             'name' => ['nullable', 'string', 'max:100'],
             'date' => ['nullable', 'date_format:Y-m-d'],
             'status' => ['nullable', Rule::in(['all', 'pending', 'approved', 'rejected', 'cancelled'])],
+            'action_context' => ['nullable', Rule::in(['all', 'actionable', 'waiting_others'])],
+            'context' => ['nullable', Rule::in(['all', 'actionable', 'waiting_others'])],
         ]);
-        $filters = ['name' => trim($filters['name'] ?? ''), 'date' => $filters['date'] ?? '', 'status' => $filters['status'] ?? 'all'];
-        $overtimes = Overtime::visibleTo(request()->user())->with('user')
+        $actionContext = $filters['action_context'] ?? $filters['context'] ?? 'all';
+        $filters = [
+            'name' => trim($filters['name'] ?? ''),
+            'date' => $filters['date'] ?? '',
+            'status' => $filters['status'] ?? 'all',
+            'action_context' => $actionContext,
+        ];
+        $overtimes = Overtime::visibleTo(request()->user())->with(['user.manager'])
             ->when($filters['name'] !== '', fn ($q) => $q->whereHas('user', fn ($u) => $u->where('name', 'like', '%'.$filters['name'].'%')))
             ->when($filters['date'] !== '', fn ($q) => $q->where('date', $filters['date']))
             ->when($filters['status'] !== 'all', fn ($q) => $q->where('status', $filters['status']))
+            ->withActionContext(request()->user(), $filters['action_context'])
             ->orderByDesc('date')->orderByDesc('id')->paginate(10)->withQueryString();
 
         return view('pages.overtime.index', compact('overtimes', 'filters'));
