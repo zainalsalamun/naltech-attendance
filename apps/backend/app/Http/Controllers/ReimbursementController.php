@@ -16,13 +16,23 @@ class ReimbursementController extends Controller
             'date' => ['nullable', 'date_format:Y-m-d'],
             'user_id' => ['nullable', 'integer', Rule::exists('users', 'id')->where('company_id', $request->user()->company_id)],
             'status' => ['nullable', Rule::in(['all', 'pending', 'approved', 'rejected', 'cancelled'])],
+            'action_context' => ['nullable', Rule::in(['all', 'actionable', 'waiting_others'])],
+            'context' => ['nullable', Rule::in(['all', 'actionable', 'waiting_others'])],
         ]);
-        $filters = ['name' => trim($filters['name'] ?? ''), 'date' => $filters['date'] ?? '', 'status' => $filters['status'] ?? 'all', 'user_id' => $filters['user_id'] ?? ''];
-        $reimbursements = Reimbursement::visibleTo(request()->user())->with('user')
+        $actionContext = $filters['action_context'] ?? $filters['context'] ?? 'all';
+        $filters = [
+            'name' => trim($filters['name'] ?? ''),
+            'date' => $filters['date'] ?? '',
+            'status' => $filters['status'] ?? 'all',
+            'user_id' => $filters['user_id'] ?? '',
+            'action_context' => $actionContext,
+        ];
+        $reimbursements = Reimbursement::visibleTo(request()->user())->with(['user.manager'])
             ->when($filters['name'] !== '', fn ($q) => $q->whereHas('user', fn ($u) => $u->where('name', 'like', '%'.$filters['name'].'%')))
             ->when($filters['user_id'] !== '', fn ($q) => $q->where('user_id', $filters['user_id']))
             ->when($filters['date'] !== '', fn ($q) => $q->where('date', $filters['date']))
             ->when($filters['status'] !== 'all', fn ($q) => $q->where('status', $filters['status']))
+            ->withActionContext(request()->user(), $filters['action_context'])
             ->orderByDesc('date')->orderByDesc('id')->paginate(10)->withQueryString();
 
         return view('pages.reimbursements.index', compact('reimbursements', 'filters'));
