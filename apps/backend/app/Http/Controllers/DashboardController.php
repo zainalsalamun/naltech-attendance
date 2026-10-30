@@ -33,9 +33,13 @@ class DashboardController extends Controller
         $company = Company::findOrFail($viewer->company_id);
 
         // One row per company member; only the selected date's attendance is joined.
-        // Calendar applies company-wide; effective shift snapshots are a later slice.
+        // Calendar applies company-wide; new attendance keeps its effective shift snapshot.
         $approvalReady = \Illuminate\Support\Facades\Schema::hasColumn('permissions', 'status');
-        $approvedPredicate = $approvalReady ? "p.status = 'approved'" : 'p.is_approved = 1';
+        $approvedPredicate = $approvalReady ? "p.status IN ('approved', 'cancellation_requested')" : 'p.is_approved = 1';
+        $isOff = $calendarDay['working'] === false ? 1 : 0;
+        $isFuture = $date > $today;
+        $defaultStatus = $isFuture ? 'upcoming' : 'absent';
+
         $members = User::query()->where('users.company_id', $company->id)
             ->when($date === $today && \Illuminate\Support\Facades\Schema::hasColumn('users', 'employment_status'),
                 fn ($q) => $q->where('users.employment_status', 'active')->whereNull('users.archived_at'))
@@ -54,8 +58,29 @@ class DashboardController extends Controller
                 WHEN a.time_in IS NOT NULL AND a.time_in > s.time_in THEN 'late'
                 WHEN a.time_in IS NOT NULL THEN 'ontime'
                 WHEN ? = 1 THEN 'off'
-                WHEN EXISTS (SELECT 1 FROM permissions p WHERE p.user_id = users.id AND p.date_permission = ? AND {$approvedPredicate}) THEN 'leave'
-                ELSE 'absent' END as attendance_status", [$calendarDay['working'] === false ? 1 : 0, $date]);
+                WHEN EXISTS (SELECT 1 FROM permissions p WHERE p.user_id = users.id AND ((p.start_date IS NOT NULL AND p.start_date <= ? AND p.end_date >= ?) OR (p.start_date IS NULL AND p.date_permission = ?)) AND {$approvedPredicate}) THEN 'leave'
+                ELSE ? END as attendance_status", [$isOff, $date, $date, $date, $defaultStatus]);
+
+        if (app(\App\Services\EffectiveShift::class)->ready()) {
+            $members->leftJoin('employee_shift_assignments as es', function ($join) use ($date, $company) {
+                $join->on('es.user_id', '=', 'users.id')->where('es.company_id', $company->id)->whereRaw('es.id = (SELECT ee.id FROM employee_shift_assignments ee WHERE ee.user_id = users.id AND ee.company_id = ? AND ee.effective_from <= ? ORDER BY ee.effective_from DESC, ee.id DESC LIMIT 1)', [$company->id, $date]);
+            });
+            $has = 'EXISTS (SELECT 1 FROM employee_shift_assignments eh WHERE eh.user_id=users.id AND eh.company_id=users.company_id)';
+            $name = "CASE WHEN a.checked_in_at IS NOT NULL THEN a.scheduled_name WHEN es.id IS NOT NULL THEN es.shift_name WHEN $has THEN NULL ELSE s.name END";
+            $in = "CASE WHEN a.checked_in_at IS NOT NULL THEN a.scheduled_in WHEN es.id IS NOT NULL THEN es.time_in WHEN $has THEN NULL ELSE s.time_in END";
+            $out = "CASE WHEN a.checked_in_at IS NOT NULL THEN a.scheduled_out WHEN es.id IS NOT NULL THEN es.time_out WHEN $has THEN NULL ELSE s.time_out END";
+            $members->setBindings([], 'select');
+            $members->select('users.id', 'users.name', 'users.department', 'a.time_in', 'a.time_out', 'a.latlon_in', 'a.latlon_out')->selectRaw("$name AS shift_name, $in AS shift_in, $out AS shift_out")
+                ->selectRaw("CASE WHEN a.checked_in_at IS NOT NULL AND a.scheduled_start_at IS NULL THEN 'review'
+                WHEN a.checked_in_at IS NOT NULL AND a.checked_in_at > a.scheduled_start_at THEN 'late'
+                WHEN a.checked_in_at IS NOT NULL THEN 'ontime'
+                WHEN a.time_in IS NOT NULL AND ($in IS NULL OR $out IS NULL OR $out <= $in) THEN 'review'
+                WHEN a.time_in IS NOT NULL AND a.time_in > $in THEN 'late'
+                WHEN a.time_in IS NOT NULL THEN 'ontime'
+                WHEN ? = 1 THEN 'off'
+                WHEN EXISTS (SELECT 1 FROM permissions p WHERE p.user_id=users.id AND ((p.start_date IS NOT NULL AND p.start_date <= ? AND p.end_date >= ?) OR (p.start_date IS NULL AND p.date_permission = ?)) AND {$approvedPredicate}) THEN 'leave'
+                ELSE ? END as attendance_status", [$isOff, $date, $date, $date, $defaultStatus]);
+        }
 
         $counts = DB::query()->fromSub((clone $members)->toBase(), 'members')
             ->selectRaw('attendance_status, COUNT(*) as total')->groupBy('attendance_status')
@@ -70,25 +95,40 @@ class DashboardController extends Controller
             'review' => (int) ($counts['review'] ?? 0),
             'off' => (int) ($counts['off'] ?? 0),
         ];
+        if ($isFuture) {
+            $summary['upcoming'] = (int) ($counts['upcoming'] ?? 0);
+        }
         $rows = DB::query()->fromSub($members->toBase(), 'members')
             ->when($filter !== 'all', fn ($q) => $q->where('attendance_status', $filter))
             ->when($search !== '', fn ($q) => $q->where('name', 'like', '%'.$search.'%'))
             ->orderBy('name')->orderBy('id')->paginate(8)->withQueryString();
 
         // Only canonical pending rows are actionable; legacy unknown rows need reconciliation.
-        $permissions = Permission::with('user:id,name')->when($approvalReady, fn ($q) => $q->where('status', 'pending'), fn ($q) => $q->where('is_approved', false))
+        $permissionsQuery = Permission::with('user:id,name')->when($approvalReady, fn ($q) => $q->where('status', 'pending'), fn ($q) => $q->where('is_approved', false))
             ->visibleTo($viewer);
-        $overtimes = Overtime::with('user:id,name')->where('status', 'pending')
+        $overtimesQuery = Overtime::with('user:id,name')->where('status', 'pending')
             ->visibleTo($viewer);
-        $permissionCount = (clone $permissions)->count();
-        $overtimeCount = (clone $overtimes)->count();
+
+        if ($manager) {
+            $actionablePermissions = (clone $permissionsQuery)->withActionContext($viewer, 'actionable');
+            $actionableOvertimes = (clone $overtimesQuery)->withActionContext($viewer, 'actionable');
+            $permissionCount = (clone $actionablePermissions)->count();
+            $overtimeCount = (clone $actionableOvertimes)->count();
+            $permissions = $actionablePermissions->latest()->limit(3)->get();
+            $overtimes = $actionableOvertimes->latest()->limit(3)->get();
+        } else {
+            $permissionCount = (clone $permissionsQuery)->count();
+            $overtimeCount = (clone $overtimesQuery)->count();
+            $permissions = $permissionsQuery->latest()->limit(3)->get();
+            $overtimes = $overtimesQuery->latest()->limit(3)->get();
+        }
 
         return view('pages.dashboard', [
             'company' => $company, 'manager' => $manager, 'summary' => $summary,
             'rows' => $rows, 'date' => $date, 'filter' => $filter, 'search' => $search,
             'selectedDate' => CarbonImmutable::parse($date)->locale('id'),
-            'permissions' => $permissions->latest()->limit(3)->get(),
-            'overtimes' => $overtimes->latest()->limit(3)->get(),
+            'permissions' => $permissions,
+            'overtimes' => $overtimes,
             'approvalReady' => $approvalReady, 'permissionCount' => $permissionCount, 'overtimeCount' => $overtimeCount,
             'generatedAt' => now($timezone), 'timezone' => $timezone, 'today' => $today, 'calendarDay' => $calendarDay,
         ]);
