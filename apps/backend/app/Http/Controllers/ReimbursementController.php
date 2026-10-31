@@ -40,7 +40,11 @@ class ReimbursementController extends Controller
 
     public function create()
     {
-        $users = User::when(request()->user()->role === 'supervisor', fn ($q) => $q->where(fn ($q) => $q->where('id', auth()->id())->orWhere('manager_id', auth()->id())))->orderBy('name')->get();
+        $users = User::when(request()->user()->role === 'supervisor', fn ($q) => $q->where(fn ($q) => $q->where('id', auth()->id())->orWhere('manager_id', auth()->id())))
+            ->orderBy('name')
+            ->get()
+            ->filter(fn ($user) => $user->isEmploymentActive())
+            ->values();
 
         return view('pages.reimbursements.create', compact('users'));
     }
@@ -48,7 +52,6 @@ class ReimbursementController extends Controller
     private function rules(Request $request): array
     {
         return [
-            'user_id' => ['required', Rule::exists('users', 'id')->where('company_id', $request->user()->company_id)],
             'date' => ['required', 'date_format:Y-m-d'],
             'description' => ['required', 'string', 'max:10000'],
             'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01', 'max:9999999999.99'],
@@ -58,7 +61,18 @@ class ReimbursementController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate($this->rules($request));
+        $data = $request->validate($this->rules($request) + [
+            'user_id' => [
+                'required',
+                Rule::exists('users', 'id')->where('company_id', $request->user()->company_id),
+                function ($attribute, $value, $fail) {
+                    $target = User::find($value);
+                    if (! $target || ! $target->isEmploymentActive()) {
+                        $fail('Pengajuan hanya dapat dibuat untuk karyawan aktif.');
+                    }
+                },
+            ],
+        ]);
         if ($request->user()->role === 'supervisor') {
             abort_unless(User::whereKey($data['user_id'])->where(fn ($q) => $q->where('id', $request->user()->id)->orWhere('manager_id', $request->user()->id))->exists(), 403);
         }
@@ -87,7 +101,11 @@ class ReimbursementController extends Controller
 
     public function update(Request $request, Reimbursement $reimbursement)
     {
-        $data = $request->validate($this->rules($request) + ['status' => ['sometimes', 'in:pending'], 'approval_version' => ['required', 'integer', 'min:0']]);
+        $data = $request->validate($this->rules($request) + [
+            'user_id' => ['required', Rule::exists('users', 'id')->where('company_id', $request->user()->company_id)],
+            'status' => ['sometimes', 'in:pending'],
+            'approval_version' => ['required', 'integer', 'min:0'],
+        ]);
         unset($data['image'], $data['status'], $data['approval_version']);
         abort_unless((int) $data['user_id'] === (int) $reimbursement->user_id, 422, 'Pemilik pengajuan tidak dapat diganti.');
         app(\App\Services\SubmissionApproval::class)->edit($request->user(), 'reimbursement', $reimbursement->id, (int) $request->input('approval_version'),
