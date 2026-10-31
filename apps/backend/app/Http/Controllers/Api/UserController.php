@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
 
 class UserController extends Controller
 {
@@ -13,47 +12,33 @@ class UserController extends Controller
     {
         abort_unless((int) $id === (int) $request->user()->id, 403);
         $user = $request->user();
+
         return response([
             'status' => 'Success',
             'message' => 'User found',
-            'data' => $user
+            'data' => $user,
         ], 200);
     }
 
     public function updateProfile(Request $request)
     {
-        try {
-            $request->validate([
-                'id' => 'required',
-                'name' => 'required',
-                'email' => 'required|email',
-                'phone' => 'required',
-                'image_url' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            ]);
-
-            abort_unless((int) $request->id === (int) $request->user()->id, 403);
-            $user = $request->user();
-            $user->name = $request->name;
-            $user->email = $request->email;
-            $user->phone = $request->phone;
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $image_name = time() . '.' . $image->getClientOriginalExtension();
-                $filePath = $image->storeAs('images/users', $image_name, 'public');
-                $user->image_url = $filePath;
-            }
-            $user->save();
-            return response([
-                'status' => 'Success',
-                'message' => 'Update user success',
-                'data' => $user,
-            ], 200);
-        } catch (\Illuminate\Validation\ValidationException|\Symfony\Component\HttpKernel\Exception\HttpException $e) {
-            throw $e;
-        } catch (\Throwable $th) {
-            return response([
-                'message' => $th->getMessage(),
-            ]);
+        abort_unless((int) $request->id === (int) $request->user()->id, 403);
+        $user = $request->user();
+        $data = $request->validate([
+            'id' => 'required|integer',
+            'name' => 'required|string|max:255',
+            'email' => ['required', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users', 'email')->ignore($user->id)],
+            'phone' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+        $user->fill(['name' => $data['name'], 'email' => $data['email'], 'phone' => $data['phone']]);
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('images/users', 'public');
+            abort_unless(is_string($path) && $path !== '', 503, 'Foto belum dapat disimpan. Coba lagi.');
+            $user->image_url = $path;
         }
+        $user->save();
+
+        return response(['status' => 'Success', 'message' => 'Update user success', 'data' => $user], 200);
     }
 }
