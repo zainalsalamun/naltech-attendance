@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Shift;
+use Illuminate\Http\Request;
 
 class ShiftController extends Controller
 {
@@ -14,9 +14,10 @@ class ShiftController extends Controller
     public function index()
     {
         $shifts = Shift::all();
+
         return response()->json([
             'status' => 'success',
-            'data' => $shifts
+            'data' => $shifts,
         ]);
     }
 
@@ -27,21 +28,11 @@ class ShiftController extends Controller
     {
         abort_unless(in_array($request->user()->role, ['admin', 'super admin', 'hrd', 'supervisor'], true), 403);
         //
-        $request->validate([
-            'name' => 'required',
-            'time_in' => 'required',
-            'time_out' => 'required',
-        ]);
-
-        $shift = Shift::create([
-            'name' => $request->name,
-            'time_in' => $request->time_in,
-            'time_out' => $request->time_out,
-        ]);
+        $shift = Shift::create(\App\Support\ShiftInput::validate($request));
 
         return response()->json([
             'status' => 'success',
-            'data' => $shift
+            'data' => $shift,
         ], 201);
     }
 
@@ -54,12 +45,12 @@ class ShiftController extends Controller
         if ($shift) {
             return response()->json([
                 'status' => 'success',
-                'data' => $shift
+                'data' => $shift,
             ]);
         } else {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Shift not found'
+                'message' => 'Shift not found',
             ], 404);
         }
     }
@@ -73,15 +64,16 @@ class ShiftController extends Controller
         //
         $shift = Shift::find($id);
         if ($shift) {
-            $shift->update($request->all());
+            $shift->update(\App\Support\ShiftInput::validate($request));
+
             return response()->json([
                 'status' => 'success',
-                'data' => $shift
+                'data' => $shift,
             ]);
         } else {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Shift not found'
+                'message' => 'Shift not found',
             ], 404);
         }
     }
