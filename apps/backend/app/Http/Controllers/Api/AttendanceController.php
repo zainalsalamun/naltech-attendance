@@ -31,17 +31,28 @@ class AttendanceController extends Controller
         ]);
 
         return DB::transaction(function () use ($request, $location, $data, $checkout) {
+            // Match configuration/lifecycle lock order: company, then employee.
+            \App\Models\Company::whereKey($request->user()->company_id)->lockForUpdate()->firstOrFail();
             // Lock an existing row, even when this user has no attendance yet.
             $user = User::whereKey($request->user()->id)->lockForUpdate()->firstOrFail();
+            abort_unless($user->isEmploymentActive(), 401, 'Akun nonaktif. Hubungi HR/admin.');
             $company = $user->company()->firstOrFail();
-            $now = now();
-            $attendance = Attendance::where('user_id', $user->id)
-                ->where('date', $now->toDateString())->lockForUpdate()->first();
+            $now = now(app(\App\Services\WorkCalendar::class)->timezone($company));
+            $effective = app(\App\Services\EffectiveShift::class);
+            $context = $effective->ready() ? $effective->context($user) : null;
+            $date = $context['date'] ?? $now->toDateString();
+            $attendance = Attendance::where('user_id', $user->id)->where('date', $date)->lockForUpdate()->first();
+            if ($context && ! $context['actionable']) {
+                abort(409, 'Sesi absensi melewati batas 24 jam. Minta HR mengoreksi sesi sebelum melanjutkan.');
+            }
+            if ($checkout && $attendance?->attendance_timezone) {
+                $now = now($attendance->attendance_timezone);
+            }
 
-            if ($checkout && !$attendance) {
+            if ($checkout && ! $attendance) {
                 return response(['message' => 'Silakan check-in terlebih dahulu.'], 400);
             }
-            if (!$checkout && $attendance) {
+            if (! $checkout && $attendance) {
                 return response(['message' => 'Anda sudah check-in hari ini.'], 409);
             }
             if ($checkout && $attendance->time_out !== null) {
@@ -59,7 +70,7 @@ class AttendanceController extends Controller
                 $column = $checkout ? 'qr_checkout' : 'qr_checkin';
                 $valid = QrAbsen::where('date', $now->toDateString())
                     ->where($column, $request->string('qr_code')->toString())->exists();
-                if (!$valid) {
+                if (! $valid) {
                     throw ValidationException::withMessages(['qr_code' => 'QR absensi tidak valid untuk hari ini. Silakan scan ulang.']);
                 }
             } elseif ($mode !== 'none') {
@@ -68,12 +79,15 @@ class AttendanceController extends Controller
 
             $coordinates = $data['latitude'].','.$data['longitude'];
             if ($checkout) {
-                $attendance->update(['time_out' => $now->toTimeString(), 'latlon_out' => $coordinates]);
+                $attendance->forceFill(['time_out' => $now->toTimeString(), 'latlon_out' => $coordinates] + ($effective->ready() ? ['checked_out_at' => \Carbon\CarbonImmutable::now('UTC')->format('Y-m-d H:i:s')] : []))->save();
             } else {
                 $attendance = Attendance::create([
-                    'user_id' => $user->id, 'date' => $now->toDateString(),
+                    'user_id' => $user->id, 'date' => $date,
                     'time_in' => $now->toTimeString(), 'latlon_in' => $coordinates,
                 ]);
+                if ($effective->ready()) {
+                    $attendance->forceFill($effective->snapshot($user, $date))->save();
+                }
             }
 
             return response(['message' => $checkout ? 'Checkout success' : 'Checkin success', 'attendance' => $attendance], 200);
@@ -82,10 +96,15 @@ class AttendanceController extends Controller
 
     public function isCheckedin(Request $request)
     {
-        $attendance = Attendance::where('user_id', $request->user()->id)
-            ->where('date', now()->toDateString())->first();
+        $effective = app(\App\Services\EffectiveShift::class);
+        if ($effective->ready()) {
+            $context = $effective->context($request->user());
 
-        return response(['checkedin' => $attendance !== null, 'checkedout' => $attendance?->time_out !== null], 200);
+            return response(['checkedin' => $context['attendance'] !== null, 'checkedout' => $context['attendance']?->time_out !== null, 'qr_date' => now(app(\App\Services\WorkCalendar::class)->timezone($request->user()->company()->firstOrFail()))->toDateString(), 'attendance_date' => $context['date'], 'attendance' => $context['attendance'], 'schedule' => $context['schedule'], 'actionable' => $context['actionable']]);
+        }
+        $attendance = Attendance::where('user_id', $request->user()->id)->where('date', now(app(\App\Services\WorkCalendar::class)->timezone($request->user()->company()->firstOrFail()))->toDateString())->first();
+
+        return response(['checkedin' => $attendance !== null, 'checkedout' => $attendance?->time_out !== null]);
     }
 
     public function index(Request $request)
