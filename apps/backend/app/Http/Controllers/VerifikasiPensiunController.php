@@ -30,23 +30,18 @@ class VerifikasiPensiunController extends Controller
         return view('pages.verifikasi.index', compact('attendances', 'filters'));
     }
 
-    private function csvText(?string $value): string
-    {
-        $value = $value ?? '';
-
-        return preg_match('/^(\s*[=+\-@]|[\t\r])/u', $value) ? "'".$value : $value;
-    }
-
     public function exportCsv(Request $request)
     {
         $records = $this->records($this->filters($request));
+        $companyId = (int) $request->user()->company_id;
+        $records->whereHas('user', fn ($q) => $q->withoutGlobalScopes()->where('company_id', $companyId));
 
         return response()->streamDownload(function () use ($records) {
             $handle = fopen('php://output', 'w');
             fputcsv($handle, ['ID', 'Nama', 'Tanggal', 'Jam masuk', 'Jam pulang', 'Koordinat masuk', 'Koordinat pulang'], ',', '"', '');
             foreach ($records->lazy(500) as $record) {
-                fputcsv($handle, [$record->id, $this->csvText($record->user->name), $record->date, $record->time_in, $record->time_out,
-                    $this->csvText($record->latlon_in), $this->csvText($record->latlon_out)], ',', '"', '');
+                fputcsv($handle, array_map([\App\Support\CsvCell::class, 'text'], [$record->id, $record->user->name, $record->date, $record->time_in, $record->time_out,
+                    $record->latlon_in, $record->latlon_out]), ',', '"', '');
             }
             fclose($handle);
         }, 'verifikasi_pensiun.csv', ['Content-Type' => 'text/csv; charset=UTF-8', 'Cache-Control' => 'no-store']);
