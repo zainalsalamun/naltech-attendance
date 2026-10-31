@@ -14,24 +14,29 @@ class AuthController extends Controller
     {
         $loginData = $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $loginData['email'])->first();
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($loginData) {
+            $user = User::withoutGlobalScopes()->where('email', $loginData['email'])->lockForUpdate()->first();
 
-        //check user exist
-        if (!$user) {
-            return response(['message' => 'Invalid credentials'], 401);
-        }
+            //check user exist
+            if (! $user) {
+                return response(['message' => 'Invalid credentials'], 401);
+            }
 
-        //check password
-        if (!Hash::check($loginData['password'], $user->password)) {
-            return response(['message' => 'Invalid credentials'], 401);
-        }
+            //check password
+            if (! Hash::check($loginData['password'], $user->password)) {
+                return response(['message' => 'Invalid credentials'], 401);
+            }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+            if (! $user->isEmploymentActive()) {
+                return response(['message' => 'Akun nonaktif. Hubungi HR/admin.'], 401);
+            }
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response(['user' => $user, 'token' => $token], 200);
+            return response(['user' => $user, 'token' => $token], 200);
+        });
     }
 
     //logout
@@ -45,25 +50,7 @@ class AuthController extends Controller
     //update image profile & face_embedding
     public function updateProfile(Request $request)
     {
-        $request->validate([
-            // 'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'face_embedding' => 'required',
-        ]);
-
-        $user = $request->user();
-        // $image = $request->file('image');
-        $face_embedding = $request->face_embedding;
-
-        // //save image
-        // $image->storeAs('public/images', $image->hashName());
-        // $user->image_url = $image->hashName();
-        $user->face_embedding = $face_embedding;
-        $user->save();
-
-        return response([
-            'message' => 'Profile updated',
-            'user' => $user,
-        ], 200);
+        abort(410, 'Pendaftaran embedding dari perangkat tidak lagi didukung. Gunakan pendaftaran wajah dengan persetujuan HR/admin.');
     }
 
     //update fcm token
