@@ -37,7 +37,11 @@ class OvertimeController extends Controller
 
     public function create()
     {
-        $users = User::when(request()->user()->role === 'supervisor', fn ($q) => $q->where(fn ($q) => $q->where('id', auth()->id())->orWhere('manager_id', auth()->id())))->orderBy('name')->get();
+        $users = User::when(request()->user()->role === 'supervisor', fn ($q) => $q->where(fn ($q) => $q->where('id', auth()->id())->orWhere('manager_id', auth()->id())))
+            ->orderBy('name')
+            ->get()
+            ->filter(fn ($user) => $user->isEmploymentActive())
+            ->values();
 
         return view('pages.overtime.create', compact('users'));
     }
@@ -46,7 +50,8 @@ class OvertimeController extends Controller
     {
         return [
             'date' => ['required', 'date_format:Y-m-d'],
-            'duration' => ['required', 'integer', 'min:1', 'max:2147483647'],
+            // Batas teknis yang diusulkan: maksimal 1.440 menit (24 jam) per pengajuan tanggal kerja.
+            'duration' => ['required', 'integer', 'min:1', 'max:1440'],
             'description' => ['nullable', 'string', 'max:10000'],
         ];
     }
@@ -54,7 +59,16 @@ class OvertimeController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate($this->rules() + [
-            'user_id' => ['required', Rule::exists('users', 'id')->where('company_id', $request->user()->company_id)],
+            'user_id' => [
+                'required',
+                Rule::exists('users', 'id')->where('company_id', $request->user()->company_id),
+                function ($attribute, $value, $fail) {
+                    $target = User::find($value);
+                    if (! $target || ! $target->isEmploymentActive()) {
+                        $fail('Pengajuan hanya dapat dibuat untuk karyawan aktif.');
+                    }
+                },
+            ],
         ]);
         if ($request->user()->role === 'supervisor') {
             abort_unless(User::whereKey($data['user_id'])->where(fn ($q) => $q->where('id', $request->user()->id)->orWhere('manager_id', $request->user()->id))->exists(), 403);
