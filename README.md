@@ -97,6 +97,8 @@ Path pada dokumentasi lama di dalam aplikasi mungkin masih memakai nama folder s
 - [Unit organisasi dan hubungan atasan H1](docs/hris-h1-organization.md)
 
 - [H2 tahap 1 — zona waktu dan kalender kerja](docs/hris-h2-calendar.md)
+- [H2 tahap 2 — jadwal efektif dan checkout lintas malam](docs/hris-h2-effective-shifts.md)
+- [QA shift malam Android emulator](docs/hris-h2-mobile-emulator.md)
 
 - [H3 tahap 1 — approval izin, lembur dan reimbursement](docs/hris-h3-approval.md)
 
@@ -107,5 +109,13 @@ Path pada dokumentasi lama di dalam aplikasi mungkin masih memakai nama folder s
 - [H3 alur persetujuan bertingkat: konfigurasi Dashboard dan tahap/riwayat mobile](docs/hris-h3-workflows.md).
 
 - [H4 jenis dan kebijakan cuti: Dashboard, snapshot pengajuan dan approval H3](docs/hris-h4-leave-types.md).
-
 - [H4 mobile: pemilih jenis cuti, persyaratan lampiran dan kebijakan historis](docs/hris-h4-mobile-leave.md).
+- [H4 uji cuti Android: form, bukti sintetis, approval bertingkat dan snapshot](docs/hris-h4-mobile-device.md).
+- [H4 cuti rentang tanggal, kalender kerja, dan buku besar saldo](docs/hris-h4-leave-balances-and-date-range.md).
+- [Restrukturisasi navigasi sidebar Workspace](docs/sidebar-navigation-restructuring.md).
+- [H5 jejak audit koreksi absensi & rekap periode kehadiran](docs/hris-h5-attendance-corrections-and-recap.md).
+- [H6 pengemasan komersial source code & panduan penerimaan pembeli](docs/hris-h6-commercial-packaging-and-guide.md).
+
+### Pembaruan setup dan verifikasi HRIS — 21 Oktober 2026
+
+Admin awal wajib memakai `SETUP_ADMIN_PASSWORD` unik minimal 12 karakter sebelum seeding; tidak ada password admin produksi bawaan. Akun demo hanya untuk lingkungan demo. [Perbaikan rekap dan hasil pengujian MySQL](docs/hris-review-fixes-and-mysql-testing.md) serta [panduan menjalankan MySQL QA](tools/mysql-qa/README.md) menjelaskan cakupan dan batas kesiapan produk.
