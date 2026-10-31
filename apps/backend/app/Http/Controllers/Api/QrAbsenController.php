@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\QrAbsen;
+use Illuminate\Http\Request;
 
 class QrAbsenController extends Controller
 {
@@ -13,12 +13,12 @@ class QrAbsenController extends Controller
 
         $request->validate([
             'qr_code' => 'required',
-            'date' => 'required|date_format:Y-m-d|in:'.now()->toDateString(),
+            'date' => 'required|date_format:Y-m-d|in:'.now(app(\App\Services\WorkCalendar::class)->timezone($request->user()->company()->firstOrFail()))->toDateString(),
             'type_qr' => 'required|in:qr_checkin,qr_checkout',
         ]);
 
         $QrAbsen = QrAbsen::where('date', $request->date)->first();
-        if (!$QrAbsen) {
+        if (! $QrAbsen) {
             return response()->json([
                 'success' => false,
                 'status_code' => 404,
