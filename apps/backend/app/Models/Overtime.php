@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Overtime extends Model
 {
-    use HasFactory;
     use \App\Models\Concerns\BelongsToCompanyUser;
+    use \App\Models\Concerns\HasSubmissionApproval;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
