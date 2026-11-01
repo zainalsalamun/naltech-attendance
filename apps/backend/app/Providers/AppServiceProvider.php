@@ -20,10 +20,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\View::composer('layouts.workspace', function ($view) {
-            $user = auth()->user();
-            $view->with('company', $user->company()->firstOrFail());
-            $view->with('manager', in_array($user->role, ['admin', 'super admin', 'hrd', 'supervisor'], true));
+        \Illuminate\Support\Facades\View::composer(['layouts.workspace', 'pages.*'], function ($view) {
+            if ($user = auth()->user()) {
+                $view->with('company', $user->company()->firstOrFail());
+                $view->with('manager', in_array($user->role, ['admin', 'super admin', 'hrd', 'supervisor'], true));
+            }
         });
         Paginator::useBootstrapFour();
     }
