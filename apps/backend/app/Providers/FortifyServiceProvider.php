@@ -28,6 +28,17 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = \App\Models\User::withoutGlobalScopes()->where(Fortify::username(), $request->input(Fortify::username()))->first();
+
+            return $user && $user->isEmploymentActive()
+                && \Illuminate\Support\Facades\Hash::check((string) $request->input('password'), $user->password) ? $user : null;
+        });
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Auth\Events\Login::class, function ($event) {
+            if ($event->guard === 'web' && request()->hasSession()) {
+                request()->session()->put('employee_auth_epoch.'.$event->user->id, (int) $event->user->auth_epoch);
+            }
+        });
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
