@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(append: [\App\Http\Middleware\EnsureActiveEmployee::class]);
+        $middleware->api(append: [\App\Http\Middleware\EnsureActiveEmployee::class]);
         $middleware->priority([
             \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
             \Illuminate\Cookie\Middleware\EncryptCookies::class,
@@ -22,8 +24,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Routing\Middleware\ThrottleRequests::class,
             \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class,
             \Illuminate\Contracts\Session\Middleware\AuthenticatesSessions::class,
+            \App\Http\Middleware\EnsureActiveEmployee::class,
             \App\Http\Middleware\EnsureCompany::class,
             \App\Http\Middleware\EnsureAttendanceManager::class,
+            \App\Http\Middleware\EnsureFaceEnrollmentReady::class,
+            \App\Http\Middleware\EnsureEmployeeLifecycleReady::class,
+            \App\Http\Middleware\EnsureWorkCalendarReady::class,
+            \App\Http\Middleware\EnsureSubmissionApprovalReady::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \Illuminate\Auth\Middleware\Authorize::class,
         ]);
