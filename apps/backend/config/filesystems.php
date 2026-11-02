@@ -30,6 +30,20 @@ return [
 
     'disks' => [
 
+        'submission_private' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/submission-attachments'),
+            'visibility' => 'private',
+            'throw' => false,
+        ],
+
+        'face_private' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/face-enrollments'),
+            'visibility' => 'private',
+            'throw' => false,
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
