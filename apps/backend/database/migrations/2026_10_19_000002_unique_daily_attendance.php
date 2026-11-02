@@ -21,6 +21,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        // MySQL can reuse this composite index for the user_id foreign key.
+        if (Schema::getConnection()->getDriverName() === 'mysql' && ! Schema::hasIndex('attendances', 'attendances_user_rollback_index')) {
+            Schema::table('attendances', fn (Blueprint $table) => $table->index('user_id', 'attendances_user_rollback_index'));
+        }
         Schema::table('attendances', fn (Blueprint $table) => $table->dropUnique('attendances_user_date_unique'));
     }
 };
