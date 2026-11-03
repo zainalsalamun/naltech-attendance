@@ -1,63 +1,7 @@
 @extends('layouts.auth')
-
-@section('title', 'Login')
-
-@push('style')
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="{{ asset('library/bootstrap-social/bootstrap-social.css') }}">
-@endpush
-
+@section('title','Masuk')
 @section('main')
-    <div class="card card-primary">
-        <div class="card-header">
-            <h4>Login</h4>
-        </div>
-
-        <div class="card-body">
-            <form method="POST" action="{{ route('login') }}" class="needs-validation" novalidate="">
-                @csrf
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                        value="{{ old('email') }}" name="email" tabindex="1">
-                    @error('email')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                </div>
-
-                <div class="form-group">
-                    <div class="d-block">
-                        <label for="password" class="control-label">Password</label>
-
-                    </div>
-                    <input id="password" type="password" class="form-control" name="password" tabindex="2">
-                    <div class="invalid-feedback">
-                        please fill in your password
-                    </div>
-                </div>
-
-
-
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
-                        Login
-                    </button>
-                </div>
-            </form>
-
-
-        </div>
-    </div>
-    <div class="text-muted mt-5 text-center">
-        Don't have an account? <a href="auth-register.html">Create One</a>
-    </div>
+<section class="panel auth-panel"><p class="breadcrumb">WORKSPACE PERUSAHAAN</p><h1>Selamat datang kembali</h1><p class="muted">Masuk untuk mengakses kehadiran dan akun perusahaan Anda.</p>
+@if($errors->any())<div class="notice error" id="login-error" role="alert">Belum dapat masuk. Periksa email dan kata sandi, atau tunggu sebentar sebelum mencoba lagi.</div>@endif
+<form method="post" action="{{ route('login') }}" class="auth-form">@csrf<div class="field"><label for="email">Email</label><input id="email" type="email" name="email" required autocomplete="username" maxlength="255" value="{{ old('email') }}" @if($errors->any()) aria-invalid="true" aria-describedby="login-error" @endif></div><div class="field"><label for="password">Kata sandi</label><input id="password" name="password" type="password" required autocomplete="current-password" @if($errors->any()) aria-invalid="true" aria-describedby="login-error" @endif></div><button type="submit" class="primary">Masuk</button></form><p class="muted auth-help">Belum memiliki akun atau perlu bantuan masuk? Hubungi pengelola perusahaan Anda.</p></section>
 @endsection
-
-@push('scripts')
-    <!-- JS Libraies -->
-
-    <!-- Page Specific JS File -->
-@endpush
