@@ -1,164 +1,32 @@
-@extends('layouts.app')
+@extends('layouts.workspace')
 
-@section('title', 'General Dashboard')
-
-@push('style')
-    <!-- CSS Libraries -->
-    <link rel="stylesheet"
-        href="{{ asset('library/jqvmap/dist/jqvmap.min.css') }}">
-    <link rel="stylesheet"
-        href="{{ asset('library/summernote/dist/summernote-bs4.min.css') }}">
-@endpush
-
-@section('main')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Dashboard</h1>
-            </div>
-            <div class="row">
-                @if(in_array(auth()->user()->role, ['admin', 'super admin', 'hrd', 'supervisor']))
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-primary">
-                            <i class="far fa-user"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>Total Users</h4>
-                            </div>
-                            <div class="card-body">
-                                {{ $users_count }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-danger">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>Total Shifts</h4>
-                            </div>
-                            <div class="card-body">
-                                {{ $shifts_count }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-warning">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>Present Today</h4>
-                            </div>
-                            <div class="card-body">
-                                {{ $present_today }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1">
-                        <div class="card-icon bg-success">
-                            <i class="fas fa-user-clock"></i>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card-header">
-                                <h4>Late Today</h4>
-                            </div>
-                            <div class="card-body">
-                                {{ $late_today }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-8 col-md-12 col-12 col-sm-12">
-                    <div class="card">
-                        <div class="card-header">
-                            @if(in_array(auth()->user()->role, ['admin', 'super admin', 'hrd', 'supervisor']))
-                                <h4>Latest Attendances</h4>
-                            @else
-                                <h4>My Latest Attendances</h4>
-                            @endif
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table-striped mb-0 table">
-                                    <thead>
-                                        <tr>
-                                            <th>User</th>
-                                            <th>Time In</th>
-                                            <th>Time Out</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($latest_attendances as $attendance)
-                                        <tr>
-                                            <td>{{ $attendance->user->name }}</td>
-                                            <td>{{ $attendance->time_in }}</td>
-                                            <td>{{ $attendance->time_out }}</td>
-                                            <td>{{ $attendance->date }}</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-12 col-12 col-sm-12">
-                    <div class="card">
-                        <div class="card-header">
-                            @if(in_array(auth()->user()->role, ['admin', 'super admin', 'hrd', 'supervisor']))
-                                <h4>Latest Permissions</h4>
-                            @else
-                                <h4>My Latest Permissions</h4>
-                            @endif
-                        </div>
-                        <div class="card-body">
-                             <ul class="list-unstyled list-unstyled-border">
-                                @foreach($latest_permissions as $permission)
-                                <li class="media">
-                                    <img class="rounded-circle mr-3"
-                                        width="50"
-                                        src="{{ asset('img/avatar/avatar-1.png') }}"
-                                        alt="avatar">
-                                    <div class="media-body">
-                                        <div class="text-primary float-right">{{ $permission->created_at->diffForHumans() }}</div>
-                                        <div class="media-title">{{ $permission->user->name }}</div>
-                                        <span class="text-small text-muted">{{ $permission->reason }}</span>
-                                    </div>
-                                </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-    </div>
+@section('content')
+<div class="page-heading"><div><p class="breadcrumb">Workspace / Ringkasan</p><h1>{{ $date === $today ? 'Ringkasan hari ini' : 'Ringkasan kehadiran' }}</h1><p class="muted">{{ $manager ? 'Kehadiran tim dan pengajuan yang perlu ditinjau.' : 'Catatan kehadiran dan pengajuan Anda.' }}</p></div><form method="get" action="{{ route('home') }}" class="date-form"><label for="date">Tanggal rekap</label><div><input id="date" type="date" name="date" value="{{ $date }}" required><button class="secondary" type="submit">Tampilkan</button></div></form></div>
+@if($errors->any())<div class="notice error" role="alert">{{ $errors->first() }}</div>@endif
+<section class="daily panel" aria-label="Ringkasan kehadiran"><div class="metrics">
+    @foreach([['Hadir', 'present', 'ion-ios-people-outline', 'Karyawan tercatat masuk'], ['Tepat waktu', 'ontime', 'ion-ios-checkmark-outline', 'Sesuai jadwal tersimpan'], ['Terlambat', 'late', 'ion-ios-clock-outline', 'Melewati jam masuk shift'], [$date > $today ? 'Terjadwal' : ($date === $today ? 'Belum check-in' : 'Alpa'), $date > $today ? 'upcoming' : 'absent', 'ion-ios-minus-outline', $date > $today ? 'Tanggal kerja mendatang' : 'Tidak termasuk izin disetujui']] as [$label, $key, $icon, $context])
+    <div class="metric"><div class="metric-heading"><span>{{ $label }}</span><i class="{{ $icon }} metric-icon {{ $key === 'late' ? 'amber' : '' }}" aria-hidden="true"></i></div><div class="metric-value">{{ $summary[$key] }}@if($key === 'present')<small>/ {{ $summary['total'] }}</small>@endif</div><p class="{{ $key === 'late' ? 'amber' : 'muted' }}">{{ $context }}</p></div>
+    @endforeach
+</div><div class="daily-footer"><span><span class="status-dot"></span>{{ $selectedDate->translatedFormat('d F Y') }} · {{ $summary['total'] }} anggota terdaftar</span><span>Hari libur {{ $summary['off'] }} · Izin disetujui {{ $summary['leave'] }} · Status waktu perlu ditinjau {{ $summary['review'] }}</span></div></section>
+<p class="calculation-note">Kalender: {{ $calendarDay['label'] }}. {{ $calendarDay['working'] === null ? 'Hari kerja belum diketahui; belum check-in tidak berarti alpa.' : 'Anggota tanpa absensi pada hari libur tidak dihitung sebagai belum check-in.' }} Catatan baru memakai salinan jadwal dan waktu UTC tanpa toleransi. Catatan lama memakai penempatan yang tersedia; shift malam lama dan jadwal kosong perlu ditinjau. Zona waktu: {{ $timezone }}.</p>
+<div class="dashboard-grid"><section class="panel attendance-panel" aria-labelledby="attendance-title"><div class="panel-heading"><div><h2 id="attendance-title"><i class="ion-ios-calendar-outline" aria-hidden="true"></i>{{ $manager ? 'Kehadiran karyawan' : 'Kehadiran saya' }}</h2><p class="muted">{{ $selectedDate->translatedFormat('l, d F Y') }}</p></div>@if($manager)<a class="text-link" href="{{ route('attendances.index') }}">Semua catatan <i class="ion-ios-arrow-thin-right" aria-hidden="true"></i></a>@endif</div>
+<form method="get" action="{{ route('home') }}" class="table-toolbar"><input type="hidden" name="date" value="{{ $date }}"><input type="hidden" name="filter" value="{{ $filter }}"><div class="filters" aria-label="Filter kehadiran">@foreach(['all'=>'Semua', 'late'=>'Terlambat', 'absent'=>'Belum masuk'] as $value=>$label)<a href="{{ route('home', ['date'=>$date, 'q'=>$search, 'filter'=>$value]) }}" @class(['selected'=>$filter===$value]) @if($filter===$value) aria-current="true" @endif>{{ $label }}</a>@endforeach</div><div class="search-control"><label class="sr-only" for="employee-search">Cari karyawan</label><input id="employee-search" name="q" type="search" maxlength="100" placeholder="Cari karyawan…" value="{{ $search }}"><button class="icon-button" aria-label="Cari" type="submit"><i class="ion-ios-search" aria-hidden="true"></i></button></div></form>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Kehadiran pada {{ $date }} — tabel dapat digeser horizontal"><table><caption class="sr-only">Kehadiran pada {{ $date }}</caption><thead><tr><th scope="col">Karyawan</th><th scope="col">Masuk</th><th scope="col">Pulang</th><th scope="col">Status</th><th scope="col">Detail</th></tr></thead><tbody>
+@forelse($rows as $row)
+@php($status = [
+    'off'=>['Hari libur','ion-ios-calendar-outline'],
+    'ontime'=>['Tepat waktu','ion-ios-checkmark-outline'],
+    'late'=>['Terlambat','ion-ios-clock-outline'],
+    'leave'=>['Izin disetujui','ion-ios-paper-outline'],
+    'absent'=>[$date === $today ? 'Belum masuk' : 'Alpa','ion-ios-minus-outline'],
+    'upcoming'=>['Terjadwal','ion-ios-calendar-outline'],
+    'review'=>['Perlu tinjau','ion-ios-information-outline'],
+][$row->attendance_status] ?? ['Belum masuk','ion-ios-minus-outline'])
+<tr><td><div class="person"><span class="initials" aria-hidden="true">{{ mb_strtoupper(mb_substr($row->name,0,2)) }}</span><div><strong>{{ $row->name }}</strong><small>{{ $row->department ?: 'Departemen belum diatur' }} · {{ $row->shift_name ?: 'Tanpa shift' }}</small></div></div></td><td class="time">{{ $row->time_in ? substr($row->time_in,0,5) : '—' }}</td><td class="time">{{ $row->time_out ? substr($row->time_out,0,5) : '—' }}</td><td><span class="badge status-{{ $row->attendance_status }}"><i class="{{ $status[1] }}" aria-hidden="true"></i>{{ $status[0] }}</span></td><td><button type="button" class="icon-button detail-toggle" data-attendance-dialog="attendance-{{ $row->id }}" aria-haspopup="dialog" aria-label="Detail {{ $row->name }}"><i class="ion-ios-information-outline" aria-hidden="true"></i></button><dialog class="attendance-dialog" id="attendance-{{ $row->id }}" aria-labelledby="attendance-title-{{ $row->id }}"><div class="dialog-heading"><h2 id="attendance-title-{{ $row->id }}">{{ $row->name }}</h2><form method="dialog"><button type="submit" class="secondary">Tutup</button></form></div><div class="dialog-content"><p>Shift: {{ $row->shift_in ? substr($row->shift_in,0,5) : '—' }}–{{ $row->shift_out ? substr($row->shift_out,0,5) : '—' }}</p><p>Lokasi masuk: {{ $row->latlon_in ?: 'Belum tercatat' }}</p><p>Lokasi pulang: {{ $row->latlon_out ?: 'Belum tercatat' }}</p><p>Zona waktu {{ $timezone }}</p></div></dialog></td></tr>
+@empty<tr><td colspan="5" class="empty-state"><i class="ion-ios-search" aria-hidden="true"></i><strong>Tidak ada hasil</strong><p>{{ $search || $filter !== 'all' ? 'Coba kata pencarian atau filter lainnya.' : 'Belum ada anggota yang dapat ditampilkan.' }}</p></td></tr>@endforelse
+</tbody></table></div><div class="table-footer"><span>{{ $rows->total() ? $rows->firstItem().'–'.$rows->lastItem() : 0 }} dari {{ $rows->total() }} karyawan</span><nav class="pagination" aria-label="Halaman kehadiran">@if($rows->onFirstPage())<span aria-disabled="true">Sebelumnya</span>@else<a href="{{ $rows->previousPageUrl() }}">Sebelumnya</a>@endif<span>{{ $rows->currentPage() }} / {{ $rows->lastPage() }}</span>@if($rows->hasMorePages())<a href="{{ $rows->nextPageUrl() }}">Berikutnya</a>@else<span aria-disabled="true">Berikutnya</span>@endif</nav></div></section>
+<aside class="dashboard-rail"><section class="panel"><div class="panel-heading"><h2><i class="ion-ios-paper-outline" aria-hidden="true"></i>{{ $manager ? 'Tinjau pengajuan' : 'Pengajuan saya' }}</h2></div><div class="requests"><p class="request-label">{{ $manager ? 'Lembur perlu tindakan' : 'Lembur menunggu' }} <span>{{ $overtimeCount }}</span></p>@forelse($overtimes as $overtime)<article class="request"><strong>{{ $overtime->user->name }}</strong><p>{{ \Carbon\Carbon::parse($overtime->date)->locale('id')->translatedFormat('d M Y') }} · {{ $overtime->duration }} menit</p>@if($manager)<a class="review" href="{{ route('overtimes.edit', $overtime) }}">Tinjau <i class="ion-ios-arrow-thin-right" aria-hidden="true"></i></a>@else<span class="muted">Menunggu</span>@endif</article>@empty<p class="muted request-empty">{{ $manager ? 'Tidak ada lembur yang memerlukan tindakan Anda.' : 'Tidak ada lembur menunggu.' }}</p>@endforelse
+<p class="request-label">{{ $manager ? 'Izin perlu tindakan' : ($approvalReady ? 'Izin menunggu' : 'Izin belum disetujui') }} <span>{{ $permissionCount }}</span></p>@forelse($permissions as $permission)<article class="request"><strong>{{ $permission->user->name }}</strong><p>{{ \Carbon\Carbon::parse($permission->date_permission)->locale('id')->translatedFormat('d M Y') }}</p><p>{{ \Illuminate\Support\Str::limit($permission->reason, 90) }}</p>@if($manager)<a class="review" href="{{ route('permissions.show', $permission) }}">Tinjau <i class="ion-ios-arrow-thin-right" aria-hidden="true"></i></a>@endif</article>@empty<p class="muted request-empty">{{ $manager ? 'Tidak ada izin yang memerlukan tindakan Anda.' : 'Tidak ada izin menunggu.' }}</p>@endforelse<p class="small-note">{{ $manager ? 'Daftar pengajuan di atas hanya menampilkan pengajuan yang saat ini memerlukan tindakan Anda.' : ($approvalReady ? 'Daftar pengajuan menunggu mengikuti akses tim Anda.' : 'Data izin lama belum membedakan menunggu dan ditolak.') }} Daftar ini tidak mengikuti tanggal rekap.</p></div></section>
+<section class="panel office"><i class="ion-ios-location-outline office-icon" aria-hidden="true"></i><h2>Lokasi perusahaan</h2><strong>{{ $company->name }}</strong><p class="muted">{{ $company->address ?: 'Alamat belum diatur' }}</p><dl><div><dt>Radius absensi</dt><dd>{{ is_numeric($company->radius_km) && $company->radius_km > 0 ? number_format($company->radius_km * 1000, 0, ',', '.').' meter' : 'Belum valid' }}</dd></div><div><dt>Metode</dt><dd>{{ ['qr'=>'QR + lokasi','none'=>'Manual + lokasi','face'=>'Wajah (belum tersedia)'][strtolower($company->attendance_type ?? '')] ?? 'Belum diatur' }}</dd></div></dl>@if($manager)<a class="text-link" href="{{ route('companies.show',$company) }}">Detail perusahaan <i class="ion-ios-arrow-thin-right" aria-hidden="true"></i></a>@endif</section></aside></div>
+<footer class="workspace-footer"><span>Naltech Attendance</span><span>Rekap dimuat {{ $generatedAt->format('H:i:s') }} · <a href="{{ request()->fullUrl() }}">Muat ulang</a></span></footer>
 @endsection
-
-@push('scripts')
-    <!-- JS Libraies -->
-    <script src="{{ asset('library/simpleweather/jquery.simpleWeather.min.js') }}"></script>
-    <script src="{{ asset('library/chart.js/dist/Chart.min.js') }}"></script>
-    <script src="{{ asset('library/jqvmap/dist/jquery.vmap.min.js') }}"></script>
-    <script src="{{ asset('library/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
-    <script src="{{ asset('library/summernote/dist/summernote-bs4.min.js') }}"></script>
-    <script src="{{ asset('library/chocolat/dist/js/jquery.chocolat.min.js') }}"></script>
-
-    <!-- Page Specific JS File -->
-    <script src="{{ asset('js/page/index-0.js') }}"></script>
-@endpush
