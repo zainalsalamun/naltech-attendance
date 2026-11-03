@@ -1,128 +1,153 @@
-@extends('layouts.app')
-
-@section('title', 'Overtime Requests')
-
-@push('style')
-    <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
-@endpush
-
-@section('main')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Overtime Requests</h1>
-                <div class="section-header-button">
-                    <a href="{{ route('overtimes.create') }}" class="btn btn-primary">Add New Request</a>
-                </div>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="{{ route('overtimes.index') }}">Overtime</a></div>
-                    <div class="breadcrumb-item">All Requests</div>
-                </div>
-            </div>
-
-            <div class="section-body">
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>History & Status Lembur</h4>
-                                <div class="card-header-form">
-                                    <form method="GET" action="{{ route('overtimes.index') }}">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Search employee..." name="name" value="{{ request('name') }}">
-                                            <div class="input-group-btn">
-                                                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="table-responsive">
-                                    <table class="table-striped table">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-center">#</th>
-                                                <th>Employee Name</th>
-                                                <th>Date</th>
-                                                <th>Duration</th>
-                                                <th>Status</th>
-                                                <th>Description</th>
-                                                <th class="text-center">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($overtimes as $index => $overtime)
-                                                <tr>
-                                                    <td class="text-center">{{ $overtimes->firstItem() + $index }}</td>
-                                                    <td class="font-weight-600">{{ $overtime->user->name }}</td>
-                                                    <td>{{ \Carbon\Carbon::parse($overtime->date)->format('d M Y') }}</td>
-                                                    <td>
-                                                        <div class="badge badge-info">
-                                                            <i class="fas fa-clock mr-1"></i> {{ $overtime->duration }} Min
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        @if($overtime->status == 'pending')
-                                                            <div class="badge badge-primary">Pending</div>
-                                                        @elseif($overtime->status == 'approved')
-                                                            <div class="badge badge-success">Approved</div>
-                                                        @else
-                                                            <div class="badge badge-danger">Rejected</div>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <small class="text-muted">{{ Str::limit($overtime->description, 30) ?: '-' }}</small>
-                                                    </td>
-                                                    <td class="text-center">
-                                                        <div class="d-flex justify-content-center">
-                                                            <a href="{{ route('overtimes.edit', $overtime->id) }}"
-                                                                class="btn btn-sm btn-info btn-icon mr-2"
-                                                                data-toggle="tooltip" title="Edit/Review">
-                                                                <i class="fas fa-edit"></i>
-                                                            </a>
-                                                            <form action="{{ route('overtimes.destroy', $overtime->id) }}"
-                                                                method="POST" class="d-inline">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button class="btn btn-sm btn-danger btn-icon confirm-delete"
-                                                                    data-toggle="tooltip" title="Delete">
-                                                                    <i class="fas fa-trash"></i>
-                                                                </button>
-                                                            </form>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="7" class="text-center p-4">
-                                                        <img src="{{ asset('img/drawkit/drawkit-nature-man-colour.svg') }}" alt="" width="150" class="mb-3">
-                                                        <p class="text-muted">No overtime requests found.</p>
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="card-footer text-right">
-                                    {{ $overtimes->withQueryString()->links() }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+@extends('layouts.workspace')
+@section('title', 'Lembur')
+@section('content')
+<div class="page-heading">
+    <div>
+        <p class="breadcrumb"><a href="{{ route('home') }}">Workspace</a> / Lembur</p>
+        <h1>Pengajuan lembur</h1>
+        <p class="muted">Kelola durasi pekerjaan tambahan dan persetujuan karyawan.</p>
     </div>
+    <a class="primary" href="{{ route('overtimes.create') }}"><i class="ion-ios-plus-empty" aria-hidden="true"></i> Tambah lembur</a>
+</div>
+
+@include('components.workspace-feedback')
+
+<section class="panel">
+    <div class="panel-heading">
+        <div>
+            <h2>Daftar pengajuan lembur</h2>
+            <p class="muted">{{ $overtimes->total() }} pengajuan sesuai kriteria pencarian</p>
+        </div>
+    </div>
+
+    <form class="record-filters" method="get" action="{{ route('overtimes.index') }}">
+        <div class="field">
+            <label for="name">Nama karyawan</label>
+            <input id="name" name="name" type="search" value="{{ $filters['name'] }}" maxlength="100" placeholder="Cari nama karyawan">
+        </div>
+        <div class="field">
+            <label for="date">Tanggal lembur</label>
+            <input id="date" name="date" type="date" value="{{ $filters['date'] }}">
+        </div>
+        <div class="field">
+            <label for="action_context">Konteks tindakan</label>
+            <select id="action_context" name="action_context">
+                <option value="all" @selected(($filters['action_context'] ?? 'all') === 'all')>Semua yang dapat saya lihat</option>
+                <option value="actionable" @selected(($filters['action_context'] ?? '') === 'actionable')>Perlu tindakan saya</option>
+                <option value="waiting_others" @selected(($filters['action_context'] ?? '') === 'waiting_others')>Menunggu peninjau lain</option>
+            </select>
+        </div>
+        <div class="field">
+            <label for="status">Status lembur</label>
+            <select id="status" name="status">
+                @foreach(['all' => 'Semua status', 'pending' => 'Menunggu persetujuan', 'approved' => 'Disetujui', 'rejected' => 'Ditolak', 'cancelled' => 'Dibatalkan'] as $value => $label)
+                    <option value="{{ $value }}" @selected($filters['status'] === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <button class="primary" type="submit">Terapkan</button>
+        <a class="secondary" href="{{ route('overtimes.index') }}">Reset</a>
+    </form>
+
+    <div class="table-scroll" tabindex="0" role="region" aria-label="Pengajuan lembur perusahaan — tabel dapat digeser horizontal">
+        <table>
+            <caption class="sr-only">Pengajuan lembur perusahaan</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Karyawan</th>
+                    <th scope="col">Tanggal</th>
+                    <th scope="col">Durasi</th>
+                    <th scope="col">Status & Tahap</th>
+                    <th scope="col">Catatan</th>
+                    <th scope="col">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($overtimes as $overtime)
+                    @php
+                        $viewer = auth()->user();
+                        $approvalService = app(\App\Services\SubmissionApproval::class);
+                        $canDecide = $approvalService->canDecide($viewer, $overtime);
+                        $activeReviewer = !empty($overtime->approval_steps)
+                            ? app(\App\Services\ApprovalWorkflow::class)->reviewer($overtime)
+                            : null;
+                        $statusBadgeClass = match($overtime->status) {
+                            'approved' => 'status-ontime',
+                            'pending' => 'amber',
+                            'rejected', 'cancelled' => 'error',
+                            default => 'muted',
+                        };
+                    @endphp
+                    <tr>
+                        <td>
+                            <div class="person">
+                                <span class="initials" aria-hidden="true">{{ mb_strtoupper(mb_substr($overtime->user->name, 0, 2)) }}</span>
+                                <div>
+                                    <strong>{{ $overtime->user->name }}</strong>
+                                    <small>{{ $overtime->user->department ?: 'Departemen belum diatur' }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="time">{{ $overtime->date }}</td>
+                        <td class="time"><strong>{{ $overtime->duration }} menit</strong></td>
+                        <td>
+                            <div>
+                                <span class="badge {{ $statusBadgeClass }}">
+                                    {{ ['pending' => 'Menunggu persetujuan', 'approved' => 'Disetujui', 'rejected' => 'Ditolak', 'cancelled' => 'Dibatalkan'][$overtime->status] ?? 'Perlu ditinjau' }}
+                                </span>
+                            </div>
+                            @if($overtime->status === 'pending')
+                                @if($overtime->approval_progress)
+                                    <small class="muted" style="display:block;margin-top:3px">
+                                        Tahap {{ $overtime->approval_progress['current'] }} dari {{ $overtime->approval_progress['total'] }}: {{ $overtime->approval_progress['label'] }}
+                                    </small>
+                                @endif
+                                @if($activeReviewer)
+                                    <small class="muted" style="display:block;margin-top:2px">
+                                        Peninjau: <strong>{{ $activeReviewer->name }}</strong>
+                                    </small>
+                                @elseif(!empty($overtime->approval_steps))
+                                    <small class="error" style="display:block;margin-top:2px">
+                                        Peninjau belum tersedia
+                                    </small>
+                                @endif
+                            @endif
+                        </td>
+                        <td class="permission-reason">
+                            {{ \Illuminate\Support\Str::limit($overtime->description, 80) ?: 'Tanpa catatan' }}
+                        </td>
+                        <td>
+                            <div class="record-actions">
+                                @if($canDecide)
+                                    <a class="primary" href="{{ route('overtimes.show', $overtime) }}" aria-label="Tinjau pengajuan lembur {{ $overtime->user->name }}">Tinjau pengajuan</a>
+                                @else
+                                    <a class="secondary" href="{{ route('overtimes.show', $overtime) }}" aria-label="Detail lembur {{ $overtime->user->name }}">Detail</a>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <strong>Tidak ada pengajuan lembur</strong>
+                            <p>
+                                @if(($filters['action_context'] ?? 'all') !== 'all' || ($filters['status'] ?? 'all') !== 'all' || !empty($filters['name']) || !empty($filters['date']))
+                                    Tidak ada pengajuan lembur yang sesuai dengan kombinasi filter saat ini.
+                                @else
+                                    Belum ada data pengajuan lembur.
+                                @endif
+                            </p>
+                            @if(($filters['action_context'] ?? 'all') !== 'all' || ($filters['status'] ?? 'all') !== 'all' || !empty($filters['name']) || !empty($filters['date']))
+                                <div style="margin-top:10px">
+                                    <a class="secondary" href="{{ route('overtimes.index') }}">Reset semua filter</a>
+                                </div>
+                            @endif
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    @include('components.workspace-pagination', ['paginator' => $overtimes, 'unit' => 'pengajuan'])
+</section>
 @endsection
-
-@push('scripts')
-    <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            $('[data-toggle="tooltip"]').tooltip();
-        });
-    </script>
-@endpush
-

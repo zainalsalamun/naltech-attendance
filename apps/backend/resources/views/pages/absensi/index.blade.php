@@ -1,151 +1,19 @@
-@extends('layouts.app')
-
-@section('title', 'Attendances')
-
-@push('style')
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
-@endpush
-
-@section('main')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Attendances</h1>
-                {{-- <div class="section-header-button">
-                    <a href="{{ route('attendances.create') }}" class="btn btn-primary">Add New</a>
-                </div> --}}
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="#">Attendances</a></div>
-                    <div class="breadcrumb-item">All Attendances</div>
-                </div>
-            </div>
-            <div class="section-body">
-                <div class="row">
-                    {{-- <div class="col-12">
-                        @include('layouts.alert')
-                    </div> --}}
-                </div>
-                <h2 class="section-title">Attendances</h2>
-                <p class="section-lead">
-                    You can manage all Attendances, such as editing, deleting and more.
-                </p>
-
-
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4>All Posts</h4>
-                            </div>
-                            <div class="card-body">
-
-                                <div class="float-right">
-                                    <form method="GET" action="{{ route('attendances.index') }}">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" placeholder="Search by name" name="name">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <div class="clearfix mb-3"></div>
-
-                                <div class="table-responsive">
-                                    <table class="table-striped table">
-                                        <tr>
-
-                                            <th>Name</th>
-                                            <th>Date</th>
-                                            <th>Time In</th>
-                                            <th>Time Out</th>
-                                            <th>Latlong In</th>
-                                            <th>Latlong Out</th>
-                                            <th>Shift</th>
-                                            <th>Action</th>
-                                        </tr>
-                                        @foreach ($attendances as $attendance)
-                                            <tr>
-
-                                                <td>{{ $attendance->user->name }}
-                                                </td>
-                                                <td>
-                                                    {{ $attendance->date }}
-                                                </td>
-                                                <td>
-                                                    {{ $attendance->time_in }}
-                                                </td>
-                                                <td>
-                                                    {{ $attendance->time_out }}
-                                                </td>
-                                                <td>
-                                                    {{ $attendance->latlon_in }}
-                                                </td>
-                                                <td>
-                                                    {{ $attendance->latlon_out }}
-                                                </td>
-                                                <td>
-                                                    @if ($attendance->user->shift)
-                                                        {{ $attendance->user->shift->name }} ({{ $attendance->user->shift->time_in }} - {{ $attendance->user->shift->time_out }})
-                                                        <br>
-                                                        @if ($attendance->time_in > $attendance->user->shift->time_in)
-                                                            <span class="badge badge-danger">Late</span>
-                                                        @else
-                                                            <span class="badge badge-success">On Time</span>
-                                                        @endif
-                                                    @else
-                                                        No Shift
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex justify-content-center">
-                                                        <a href='{{ route('attendances.edit', $attendance->id) }}'
-                                                            class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i>
-                                                            Edit
-                                                        </a>
-
-                                                        <form action="{{ route('attendances.destroy', $attendance->id) }}"
-                                                            method="POST" class="ml-2">
-                                                            <input type="hidden" name="_method" value="DELETE" />
-                                                            <input type="hidden" name="_token"
-                                                                value="{{ csrf_token() }}" />
-                                                            <button class="btn btn-sm btn-danger btn-icon confirm-delete">
-                                                                <i class="fas fa-times"></i> Delete
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-
-
-                                    </table>
-                                </div>
-                                <div class="float-left">
-                                    <div class="card-header-action">
-                                        <a href="{{ route('attendances.export-csv', request()->query()) }}" class="btn btn-success">Download</a>
-                                    </div>
-                                </div>
-                                <div class="float-right">
-                                    {{ $attendances->withQueryString()->links() }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+@extends('layouts.workspace')
+@section('title', 'Kehadiran')
+@section('content')
+<div class="page-heading"><div><p class="breadcrumb"><a href="{{ route('home') }}">Workspace</a> / Kehadiran</p><h1>Catatan kehadiran</h1><p class="muted">Telusuri jam masuk dan pulang karyawan perusahaan Anda.</p></div><div style="display:flex;gap:8px"><a class="secondary" href="{{ route('attendance-recap.index') }}"><i class="ion-ios-pie-outline" aria-hidden="true"></i> Rekap Periode</a><a class="secondary" href="{{ route('attendances.export-csv', $filters) }}"><i class="ion-ios-download-outline" aria-hidden="true"></i> Ekspor CSV</a></div></div>
+@include('components.workspace-feedback')
+<section class="panel"><div class="panel-heading"><div><h2>Riwayat absensi</h2><p class="muted">{{ $attendances->total() }} catatan sesuai filter · Zona waktu {{ config('app.timezone') }}</p></div></div>
+<form method="get" action="{{ route('attendances.index') }}" class="record-filters"><div class="field"><label for="name">Nama karyawan</label><input id="name" type="search" name="name" value="{{ $filters['name'] }}" maxlength="100" placeholder="Cari nama karyawan"></div><div class="field"><label for="date">Tanggal</label><input id="date" type="date" name="date" value="{{ $filters['date'] }}"></div><button type="submit" class="primary">Terapkan</button><a class="secondary" href="{{ route('attendances.index') }}">Reset filter</a></form>
+<p class="record-note muted">Catatan baru memakai salinan jadwal saat check-in; data lama tanpa salinan tetap perlu peninjauan. Tanggal adalah tanggal kerja saat masuk.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Catatan kehadiran karyawan — tabel dapat digeser horizontal"><table><caption class="sr-only">Catatan kehadiran karyawan</caption><thead><tr>@foreach(['Karyawan','Tanggal','Masuk','Pulang','Status','Aksi'] as $heading)<th scope="col">{{ $heading }}</th>@endforeach</tr></thead><tbody>
+@forelse($attendances as $attendance)
+@php
+    $shift = $attendance->user->shift;
+    $status = $attendance->timing_label;
+@endphp
+<tr><td><div class="person"><span class="initials" aria-hidden="true">{{ mb_strtoupper(mb_substr($attendance->user->name,0,2)) }}</span><div><strong>{{ $attendance->user->name }}</strong><small>{{ $attendance->schedule_label }}</small></div></div></td><td class="time">{{ $attendance->date }}</td><td class="time">{{ $attendance->time_in ? substr($attendance->time_in,0,5) : '—' }}</td><td class="time">{{ $attendance->time_out ? substr($attendance->time_out,0,5) : '—' }} @if($attendance->checked_out_at)<small>{{ \Carbon\CarbonImmutable::parse($attendance->checked_out_at,'UTC')->setTimezone($attendance->attendance_timezone)->format('Y-m-d') }}</small>@endif</td><td><span @class(['badge','status-late'=>$status==='Terlambat','status-ontime'=>$status==='Tepat waktu'])>{{ $status }}</span></td><td><div class="record-actions"><a class="secondary" href="{{ route('attendances.edit',$attendance) }}" aria-label="Edit kehadiran {{ $attendance->user->name }} tanggal {{ $attendance->date }}">Edit</a><button class="danger" type="button" data-attendance-dialog="delete-{{ $attendance->id }}" aria-haspopup="dialog" aria-label="Hapus kehadiran {{ $attendance->user->name }} tanggal {{ $attendance->date }}">Hapus</button></div>
+<dialog class="attendance-dialog" id="delete-{{ $attendance->id }}" aria-labelledby="delete-title-{{ $attendance->id }}"><h2 id="delete-title-{{ $attendance->id }}">Hapus catatan kehadiran?</h2><div class="dialog-content"><p>{{ $attendance->user->name }} · {{ $attendance->date }}</p><p>Catatan yang dihapus tidak dapat dipulihkan dari aplikasi.</p></div><div class="dialog-actions"><form method="dialog"><button class="secondary" autofocus>Batal</button></form><form method="post" action="{{ route('attendances.destroy',$attendance) }}">@csrf @method('DELETE')<button class="danger" type="submit">Hapus catatan</button></form></div></dialog></td></tr>
+@empty<tr><td colspan="6" class="empty-state"><strong>Tidak ada catatan kehadiran</strong><p>Coba nama atau tanggal lain, atau reset filter.</p></td></tr>@endforelse
+</tbody></table></div>@include('components.workspace-pagination',['paginator'=>$attendances])</section>
 @endsection
-
-@push('scripts')
-    <!-- JS Libraies -->
-    <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
-
-    <!-- Page Specific JS File -->
-    <script src="{{ asset('js/page/features-posts.js') }}"></script>
-@endpush
