@@ -1,65 +1,7 @@
-@extends('layouts.app')
-
-@section('title', 'Profile')
-
-@push('style')
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="{{ asset('library/summernote/dist/summernote-bs4.css') }}">
-    <link rel="stylesheet" href="{{ asset('library/bootstrap-social/assets/css/bootstrap.css') }}">
-@endpush
-@php
-    use Carbon\Carbon;
-@endphp
-@section('main')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>QR</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-                    <div class="breadcrumb-item">QR</div>
-                </div>
-            </div>
-            <div class="section-body">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4>QR Absen untuk tanggal
-                                    {{ Carbon::parse($qrAbsen->date)->locale('id')->isoFormat('DD MMMM YYYY') }}</h4>
-                                <a href="{{ route('qr_absens.download', $qrAbsen->id) }}" class="btn btn-primary">
-                                    <i class="fas fa-download"></i> Download PDF
-                                </a>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h5>QR Check-in</h5>
-                                        <div class="qr-code-container text-center mb-3">
-                                            {!! QrCode::size(200)->generate($qrAbsen->qr_checkin) !!}
-                                        </div>
-                                        <p class="text-center"><strong>Kode:</strong> {{ $qrAbsen->qr_checkin }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h5>QR Check-out</h5>
-                                        <div class="qr-code-container text-center mb-3">
-                                            {!! QrCode::size(200)->generate($qrAbsen->qr_checkout) !!}
-                                        </div>
-                                        <p class="text-center"><strong>Kode:</strong> {{ $qrAbsen->qr_checkout }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
+@extends('layouts.workspace')
+@section('title','Detail QR absensi')
+@section('content')
+<div class="page-heading"><div><p class="breadcrumb"><a href="{{ route('home') }}">Workspace</a> / <a href="{{ route('qr_absens.index') }}">QR absensi</a> / Detail</p><h1>QR absensi {{ $qrAbsen->date }}</h1><p class="muted">{{ $company->name }} · {{ config('app.timezone') }}</p></div>@if($qrCodeCheckin && $qrCodeCheckout)<a class="primary" href="{{ route('qr_absens.download',$qrAbsen) }}">Unduh PDF</a>@endif</div>
+@if(!$qrCodeCheckin || !$qrCodeCheckout)<div class="notice amber" role="status">Pasangan QR belum lengkap. <a href="{{ route('qr_absens.create') }}">Lengkapi QR bulanan</a> untuk tanggal ini.</div>@endif
+<div class="company-grid">@foreach([['Masuk',$qrCodeCheckin],['Pulang',$qrCodeCheckout]] as [$label,$qrImage])<section class="panel"><div class="panel-heading"><h2>QR {{ $label }}</h2></div><div class="record-form qr-preview">@if($qrImage)<img width="288" height="288" src="data:image/png;base64,{{ $qrImage }}" alt="QR {{ strtolower($label) }} tanggal {{ $qrAbsen->date }}">@else<p class="muted">QR belum tersedia.</p>@endif</div></section>@endforeach</div><p class="calculation-note">Gunakan QR sesuai tanggal dan aksi masuk/pulang. Absensi tetap mengikuti metode perusahaan, pemeriksaan lokasi dan validasi server.</p><a class="secondary" href="{{ route('qr_absens.index') }}">Kembali</a>
 @endsection
-
-@push('scripts')
-    <!-- JS Libraries -->
-    <script src="{{ asset('library/summernote/dist/summernote-bs4.js') }}"></script>
-
-    <!-- Page Specific JS File -->
-@endpush
