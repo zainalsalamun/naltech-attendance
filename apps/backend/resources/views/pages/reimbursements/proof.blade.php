@@ -1,0 +1,1 @@
+<div class="permission-copy"><h2>Bukti pengeluaran</h2>@if($reimbursement->image)<a href="{{ route('submission-attachments.show', ['kind' => 'reimbursement', 'id' => $reimbursement->id]) }}" target="_blank" rel="noopener">Buka bukti pengeluaran <span class="sr-only">di tab baru</span></a>@else<p class="muted">Tidak ada bukti pengeluaran.</p>@endif</div>
