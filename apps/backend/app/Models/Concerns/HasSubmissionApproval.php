@@ -36,7 +36,13 @@ trait HasSubmissionApproval
 
     public function getDecisionTimeAttribute(): ?string
     {
-        return $this->reviewed_at ? CarbonImmutable::parse($this->reviewed_at, config('app.timezone'))->toIso8601String() : null;
+        if (! $this->reviewed_at) {
+            return null;
+        }
+        $company = $this->relationLoaded('user') ? $this->user?->company : ($this->user_id ? \App\Models\User::find($this->user_id)?->company : null);
+        $tz = $company ? app(\App\Services\WorkCalendar::class)->timezone($company) : config('app.timezone');
+
+        return CarbonImmutable::parse($this->reviewed_at, config('app.timezone'))->setTimezone($tz)->toIso8601String();
     }
 
     public function getActiveApproverAttribute(): ?User
