@@ -51,13 +51,20 @@ class SubmissionApproval
             $row->setAttribute('cannot_decide_reason', $this->whyCannotDecide($viewer, $row));
         }
         $row->unsetRelation('activeApprover');
-        $row->setAttribute('approval_history', $events->map(function ($event) {
+
+        $company = $row->relationLoaded('user') ? $row->user?->company : ($row->user_id ? \App\Models\User::find($row->user_id)?->company : null);
+        $company = $company ?? $viewer?->company;
+        $tz = $company ? app(\App\Services\WorkCalendar::class)->timezone($company) : config('app.timezone');
+
+        $row->setAttribute('timezone', $tz);
+        $row->setAttribute('company_timezone', $tz);
+        $row->setAttribute('approval_history', $events->map(function ($event) use ($tz) {
             $classified = $event->classified ?? self::classifyEvent($event);
             $snapshot = json_decode($event->snapshot, true);
 
             return [
                 'actor' => $event->actor_name,
-                'time' => \Carbon\CarbonImmutable::parse($event->created_at, config('app.timezone'))->toIso8601String(),
+                'time' => \Carbon\CarbonImmutable::parse($event->created_at, config('app.timezone'))->setTimezone($tz)->toIso8601String(),
                 'reason' => $event->reason,
                 'stage' => ! empty($snapshot['before']['approval_steps']) ? (int) ($snapshot['before']['approval_step'] ?? 0) + 1 : null,
                 'action' => $classified['action'],
