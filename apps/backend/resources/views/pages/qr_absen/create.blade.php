@@ -1,50 +1,6 @@
-@extends('layouts.app')
-
-@section('title', 'Advanced Forms')
-
-@push('style')
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="{{ asset('library/bootstrap-daterangepicker/daterangepicker.css') }}">
-    <link rel="stylesheet" href="{{ asset('library/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('library/select2/dist/css/select2.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
-    <link rel="stylesheet" href="{{ asset('library/bootstrap-timepicker/css/bootstrap-timepicker.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('library/bootstrap-tagsinput/dist/bootstrap-tagsinput.css') }}">
-@endpush
-
-@section('main')
-    <div class="main-content">
-        <section class="section">
-            <div class="section-header">
-                <h1>Create QR Forms</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="#">Forms</a></div>
-                    <div class="breadcrumb-item">QR</div>
-                </div>
-            </div>
-
-            <div class="section-body">
-                <div class="card">
-                    <form action="{{ route('qr_absens.store') }}" method="POST">
-                        @csrf
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="month">Pilih Bulan:</label>
-                                <input type="month" id="month" name="month" class="form-control" required>
-                            </div>
-                        </div>
-                        <div class="card-footer text-right">
-                            <a href="{{ route('qr_absens.index') }}" class="btn btn-secondary">Cancel</a>
-                            <button class="btn btn-primary ml-2">Generate</button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </section>
-    </div>
+@extends('layouts.workspace')
+@section('title','Buat QR bulanan')
+@section('content')
+<div class="page-heading"><div><p class="breadcrumb"><a href="{{ route('home') }}">Workspace</a> / <a href="{{ route('qr_absens.index') }}">QR absensi</a> / Buat</p><h1>Buat QR bulanan</h1><p class="muted">Sediakan QR masuk dan pulang untuk setiap tanggal dalam bulan.</p></div></div>@include('components.workspace-feedback')
+<section class="panel record-form-panel"><div class="panel-heading"><h2>Periode QR</h2></div><form class="record-form" method="post" action="{{ route('qr_absens.store') }}">@csrf<div class="field"><label for="month">Bulan (wajib)</label><input id="month" name="month" type="month" required value="{{ old('month',now()->format('Y-m')) }}" @error('month') aria-invalid="true" aria-describedby="month-error" @enderror>@error('month')<span class="error" id="month-error">{{ $message }}</span>@enderror</div><p class="muted">QR yang sudah lengkap tetap digunakan. Pembuatan ulang hanya menambah tanggal yang belum tersedia atau melengkapi pasangan QR. Setiap kode hanya berlaku untuk tanggal dan aksi terkait; radius lokasi tetap diperiksa.</p><div class="dialog-actions"><a class="secondary" href="{{ route('qr_absens.index') }}">Batal</a><button class="primary" type="submit">Buat QR bulanan</button></div></form></section>
 @endsection
-
-@push('scripts')
-@endpush
