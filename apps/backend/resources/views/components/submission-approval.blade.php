@@ -20,6 +20,9 @@
         default => ucfirst($kind),
     };
 
+    $company = $submission->relationLoaded('user') ? $submission->user?->company : ($submission->user_id ? \App\Models\User::find($submission->user_id)?->company : null);
+    $companyTz = $company ? app(\App\Services\WorkCalendar::class)->timezone($company) : config('app.timezone');
+
     $previews = [
         'cancellation' => [
             'approved' => $approvalService->impactPreview($kind, $submission, 'approved'),
@@ -86,8 +89,11 @@
         @endif
 
         @if($submission->reviewed_at)
+            @php
+                $formattedReviewedAt = \Carbon\CarbonImmutable::parse($submission->reviewed_at, config('app.timezone'))->setTimezone($companyTz)->format('Y-m-d H:i:s');
+            @endphp
             <p class="muted" style="margin-bottom:14px">
-                Keputusan terakhir: {{ $submission->reviewed_at }} ({{ config('app.timezone') }}) · Catatan: {{ $submission->decision_reason ?: 'Tanpa catatan' }}
+                Keputusan terakhir: {{ $formattedReviewedAt }} ({{ $companyTz }}) · Catatan: {{ $submission->decision_reason ?: 'Tanpa catatan' }}
             </p>
         @endif
 
@@ -244,7 +250,10 @@
                         $description = $classified['description'] ?? null;
                     @endphp
                     <tr>
-                        <td class="time">{{ $event->created_at }}</td>
+                        @php
+                            $eventTime = \Carbon\CarbonImmutable::parse($event->created_at, config('app.timezone'))->setTimezone($companyTz)->format('Y-m-d H:i:s');
+                        @endphp
+                        <td class="time">{{ $eventTime }} ({{ $companyTz }})</td>
                         <td><strong>{{ $event->actor_name ?: 'Sistem' }}</strong></td>
                         <td>
                             <div>
