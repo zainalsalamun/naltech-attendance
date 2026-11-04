@@ -1,0 +1,6 @@
+@extends('layouts.workspace')
+@section('title','Detail reimbursement')
+@section('content')
+<div class="page-heading"><div><p class="breadcrumb"><a href="{{ route('home') }}">Workspace</a> / <a href="{{ route('reimbursements.index') }}">Reimbursement</a> / Detail</p><h1>Detail reimbursement</h1></div></div><section class="panel record-form-panel"><div class="panel-heading"><h2>Informasi pengajuan</h2></div><div class="record-form"><dl class="form-grid permission-details">@foreach(['Karyawan'=>$reimbursement->user->name,'Tanggal'=>$reimbursement->date,'Nominal'=>'Rp '.number_format($reimbursement->amount,2,',','.'),'Status'=>['pending'=>'Menunggu','approved'=>'Disetujui','rejected'=>'Ditolak','cancelled'=>'Dibatalkan'][$reimbursement->status] ?? 'Perlu tinjau'] as $label=>$value)<div><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>@endforeach</dl><div class="permission-copy"><h2>Keterangan pengeluaran</h2><p>{{ $reimbursement->description ?: 'Tanpa catatan.' }}</p></div>@include('pages.reimbursements.proof')<div class="dialog-actions"><a class="secondary" href="{{ route('reimbursements.index') }}">Kembali</a><a class="primary" href="{{ route('reimbursements.edit',$reimbursement) }}">Kelola persetujuan</a></div></div></section>
+@include('components.submission-approval',['submission'=>$reimbursement,'kind'=>'reimbursement'])
+@endsection
