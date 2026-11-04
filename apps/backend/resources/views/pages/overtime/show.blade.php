@@ -1,0 +1,6 @@
+@extends('layouts.workspace')
+@section('title','Detail lembur')
+@section('content')
+<div class="page-heading"><div><p class="breadcrumb"><a href="{{ route('home') }}">Workspace</a> / <a href="{{ route('overtimes.index') }}">Lembur</a> / Detail</p><h1>Detail lembur</h1></div></div><section class="panel record-form-panel"><div class="panel-heading"><h2>Informasi pengajuan</h2></div><div class="record-form"><dl class="form-grid permission-details">@foreach(['Karyawan'=>$overtime->user->name,'Tanggal'=>$overtime->date,'Durasi'=>$overtime->duration.' menit','Status'=>['pending'=>'Menunggu','approved'=>'Disetujui','rejected'=>'Ditolak','cancelled'=>'Dibatalkan'][$overtime->status] ?? 'Perlu tinjau'] as $label=>$value)<div><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>@endforeach</dl><div class="permission-copy"><h2>Catatan pekerjaan</h2><p>{{ $overtime->description ?: 'Tanpa catatan.' }}</p></div><div class="dialog-actions"><a class="secondary" href="{{ route('overtimes.index') }}">Kembali</a><a class="primary" href="{{ route('overtimes.edit',$overtime) }}">Kelola persetujuan</a></div></div></section>
+@include('components.submission-approval',['submission'=>$overtime,'kind'=>'overtime'])
+@endsection
