@@ -148,7 +148,7 @@
         </div>
 
         <p class="muted" style="margin:4px 0 0;font-size:12px">
-            Perubahan ini akan dicatat ke audit log secara atomik. Pastikan seluruh detail telah sesuai sebelum konfirmasi.
+            Perubahan dan alasan koreksi akan disimpan dalam riwayat. Pastikan seluruh detail telah sesuai sebelum konfirmasi.
         </p>
     </div>
     <div class="dialog-actions" style="margin-top:18px;display:flex;justify-content:flex-end;gap:8px">
