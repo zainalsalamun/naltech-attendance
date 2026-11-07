@@ -21,7 +21,7 @@
 <div class="record-actions"><a class="secondary" href="{{ route('users.edit',$employee) }}" aria-label="Edit {{ $employee->name }}">Edit</a>
 @if(!$employee->archived_at && $employee->id!==auth()->id())<button class="danger" type="button" data-attendance-dialog="archive-user-{{ $employee->id }}" aria-haspopup="dialog" aria-label="Arsipkan {{ $employee->name }}">Arsipkan</button>@endif</div>
 @if(!$employee->archived_at && $employee->id!==auth()->id())
-<dialog class="attendance-dialog archive-dialog" id="archive-user-{{ $employee->id }}" aria-labelledby="archive-title-{{ $employee->id }}" @if(old('archive_user_id') == $employee->id && session('conflict')) open @endif style="max-width:520px;width:92%;padding:20px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);box-shadow:var(--shadow-lg);">
+<dialog class="attendance-dialog archive-dialog" id="archive-user-{{ $employee->id }}" aria-labelledby="archive-title-{{ $employee->id }}" @if(old('archive_user_id') == $employee->id && session('conflict')) data-auto-open="true" @endif style="max-width:520px;width:92%;padding:20px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--ink);box-shadow:var(--shadow-lg);">
 <h2 id="archive-title-{{ $employee->id }}" style="margin:0 0 12px;font-size:18px;">Arsipkan karyawan?</h2>
 <div class="dialog-content" style="font-size:13px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px">
 <p style="margin:0"><strong>{{ $employee->name }}</strong> ({{ $employee->employee_number ?: 'Nomor belum diatur' }})</p>
@@ -114,6 +114,20 @@ Status awal: <strong>{{ $employee->employment_status === 'active' ? 'Aktif' : 'N
             }
         });
     });
+
+    // Buka kembali modal arsip pasca-konflik dengan showModal() agar backdrop & penguncian fokus aktif
+    var autoOpenDialog = document.querySelector('.archive-dialog[data-auto-open="true"]');
+    if (autoOpenDialog) {
+        if (typeof autoOpenDialog.showModal === 'function') {
+            autoOpenDialog.showModal();
+        } else {
+            autoOpenDialog.setAttribute('open', '');
+        }
+        var reasonField = autoOpenDialog.querySelector('textarea[name="lifecycle_reason"]');
+        if (reasonField) {
+            reasonField.focus();
+        }
+    }
 })();
 </script>
 @endsection
