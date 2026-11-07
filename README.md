@@ -115,6 +115,18 @@ Path pada dokumentasi lama di dalam aplikasi mungkin masih memakai nama folder s
 - [Restrukturisasi navigasi sidebar Workspace](docs/sidebar-navigation-restructuring.md).
 - [H5 jejak audit koreksi absensi & rekap periode kehadiran](docs/hris-h5-attendance-corrections-and-recap.md).
 - [H6 pengemasan komersial source code & panduan penerimaan pembeli](docs/hris-h6-commercial-packaging-and-guide.md).
+- [Panduan operasional HR, karyawan, troubleshooting & arsitektur kode](docs/operations/README.md).
+
+### Panduan Operasional Sistem
+
+Panduan penggunaan sistem berbahasa Indonesia dan materi teknis arsitektur tersedia pada direktori [`docs/operations/`](docs/operations/README.md):
+- [Indeks Navigasi & Pemilihan Panduan](docs/operations/README.md)
+- [Panduan Pengelola HR & Administrator](docs/operations/hr-admin-guide.md) (Dashboard Web)
+- [Panduan Pengguna Karyawan](docs/operations/employee-mobile-guide.md) (Aplikasi Mobile Flutter)
+- [Matriks Troubleshooting & Diagnosa Masalah](docs/operations/troubleshooting.md)
+- [Batasan Fungsional & Keterbatasan Fitur](docs/operations/feature-boundaries.md)
+- [Peta Pembelajaran Kode Sumber](docs/operations/source-code-learning-map.md)
+- [Laporan Audit & Penerimaan Panduan](docs/hris-operational-guides-report.md)
 
 ### Pembaruan setup dan verifikasi HRIS — 21 Oktober 2026
 
