@@ -11,9 +11,13 @@ Route::get('/user', function (Request $request) {
 Route::post('/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
 
 //logout
-Route::post('/logout', [App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+Route::post('/logout', [App\Http\Controllers\Api\AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 //company
+Route::get('/submission-attachments/{kind}/{id}', [App\Http\Controllers\SubmissionAttachmentController::class, 'show'])
+    ->where('kind', 'permission|reimbursement')->whereNumber('id')
+    ->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+
 Route::get('/company', [App\Http\Controllers\Api\CompanyController::class, 'show'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
 
 //checkin
@@ -29,10 +33,17 @@ Route::get('/is-checkin', [App\Http\Controllers\Api\AttendanceController::class,
 Route::post('/update-profile', [App\Http\Controllers\Api\AuthController::class, 'updateProfile'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
 
 //create permission
-Route::apiResource('/api-permissions', App\Http\Controllers\Api\PermissionController::class)->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+Route::apiResource('/api-permissions', App\Http\Controllers\Api\PermissionController::class)->only(['index', 'show', 'store'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class, \App\Http\Middleware\EnsureSubmissionApprovalReady::class]);
 
 //notes
-Route::apiResource('/api-notes', App\Http\Controllers\Api\NoteController::class)->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+Route::middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class, \App\Http\Middleware\EnsureFaceEnrollmentReady::class])->group(function () {
+    Route::get('/face-enrollments', [App\Http\Controllers\Api\FaceEnrollmentController::class, 'index']);
+    Route::post('/face-matching-preview', [App\Http\Controllers\Api\FaceEnrollmentController::class, 'preview'])->middleware('throttle:5,1');
+    Route::post('/face-enrollments', [App\Http\Controllers\Api\FaceEnrollmentController::class, 'store'])->middleware('throttle:5,1');
+    Route::delete('/face-enrollments/{enrollment}', [App\Http\Controllers\Api\FaceEnrollmentController::class, 'destroy'])->middleware('throttle:10,1');
+});
+
+Route::apiResource('/api-notes', App\Http\Controllers\Api\NoteController::class)->only(['index', 'store'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
 
 //update fcm token
 Route::post('/update-fcm-token', [App\Http\Controllers\Api\AuthController::class, 'updateFcmToken'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
@@ -48,10 +59,17 @@ Route::post('/api-user/edit', [App\Http\Controllers\Api\UserController::class, '
 Route::post('/check-qr', [App\Http\Controllers\Api\QrAbsenController::class, 'checkQR'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
 
 //reimbursements
-Route::apiResource('/api-reimbursements', App\Http\Controllers\Api\ReimbursementController::class)->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+Route::apiResource('/api-reimbursements', App\Http\Controllers\Api\ReimbursementController::class)->only(['index', 'show', 'store'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class, \App\Http\Middleware\EnsureSubmissionApprovalReady::class]);
 
 //shifts
-Route::apiResource('/api-shifts', App\Http\Controllers\Api\ShiftController::class)->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+Route::apiResource('/api-shifts', App\Http\Controllers\Api\ShiftController::class)->only(['index', 'show', 'store', 'update'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
 
 //overtimes
-Route::apiResource('/api-overtimes', App\Http\Controllers\Api\OvertimeController::class)->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+Route::apiResource('/api-overtimes', App\Http\Controllers\Api\OvertimeController::class)->only(['index', 'show', 'store'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class, \App\Http\Middleware\EnsureSubmissionApprovalReady::class]);
+
+Route::post('/submission-cancellations/{kind}/{id}', [App\Http\Controllers\SubmissionApprovalController::class, 'cancel'])->where('kind', 'permission|overtime|reimbursement')->whereNumber('id')->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class, \App\Http\Middleware\EnsureSubmissionApprovalReady::class]);
+
+Route::get('/leave-types', [App\Http\Controllers\Api\LeaveTypeController::class, 'index'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class, \App\Http\Middleware\EnsureLeavePolicyReady::class]);
+Route::get('/leave-balances', [App\Http\Controllers\Api\LeaveBalanceController::class, 'index'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+Route::post('/leave-calculate', [App\Http\Controllers\Api\LeaveBalanceController::class, 'calculate'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
+Route::get('/leave-ledgers', [App\Http\Controllers\Api\LeaveBalanceController::class, 'ledger'])->middleware(['auth:sanctum', \App\Http\Middleware\EnsureCompany::class]);
