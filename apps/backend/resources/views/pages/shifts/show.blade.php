@@ -1,0 +1,5 @@
+@extends('layouts.workspace')
+@section('title','Detail shift')
+@section('content')
+<div class="page-heading"><div><p class="breadcrumb"><a href="{{ route('home') }}">Workspace</a> / <a href="{{ route('shifts.index') }}">Shift</a> / Detail</p><h1>Detail shift</h1></div></div><section class="panel record-form-panel"><div class="panel-heading"><h2>{{ $shift->name }}</h2></div><div class="record-form"><dl class="form-grid permission-details">@foreach(['Jam masuk'=>$shift->time_in,'Jam pulang'=>$shift->time_out,'Karyawan terhubung'=>$shift->users_count,'Zona waktu perusahaan'=>$timezone] as $label=>$value)<div><dt>{{ $label }}</dt><dd>{{ $value }}</dd></div>@endforeach</dl>@if($shift->time_out <= $shift->time_in)<p class="muted">Jam pulang berada pada hari berikutnya. Absensi baru memakai tanggal kerja dan salinan jadwal; catatan lama tanpa salinan tetap perlu ditinjau.</p>@endif<div class="dialog-actions"><a class="secondary" href="{{ route('shifts.index') }}">Kembali</a><a class="primary" href="{{ route('shifts.edit',$shift) }}">Edit shift</a></div></div></section>
+@endsection
