@@ -24,13 +24,14 @@ class AttendanceIntegrityTest extends TestCase
         $app['config']->set('database.connections.sqlite.database', ':memory:');
         $app['config']->set('app.timezone', 'Asia/Jakarta');
         $app['config']->set('app.key', 'base64:'.base64_encode(str_repeat('t', 32)));
+
         return $app;
     }
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->travelTo(now()->setDate(2026, 10, 19)->setTime(8, 0));
+        $this->travelTo(\Carbon\Carbon::parse('2026-10-19 08:00:00', 'Asia/Jakarta'));
     }
 
     private function company(array $attributes = []): Company
@@ -47,6 +48,7 @@ class AttendanceIntegrityTest extends TestCase
         $user = User::factory()->create(['role' => $role]);
         $user->company_id = $company?->id;
         $user->save();
+
         return $user;
     }
 
@@ -233,7 +235,7 @@ class AttendanceIntegrityTest extends TestCase
         $admin = $this->employee($own, 'admin');
         $this->actingAs($admin)->post('/users', [
             'name' => 'New staff', 'email' => 'new@example.test', 'password' => 'password123',
-            'company_id' => $other->id, 'role' => 'staff',
+            'company_id' => $other->id, 'role' => 'staff', 'employee_number' => 'EMP-NEW',
         ])->assertRedirect();
         $this->assertDatabaseHas('users', ['email' => 'new@example.test', 'company_id' => $own->id]);
     }
@@ -243,6 +245,8 @@ class AttendanceIntegrityTest extends TestCase
         $company = $this->company();
         $staff = $this->employee(null);
         $migration = require database_path('migrations/2026_10_19_000001_add_company_membership.php');
+        (require database_path('migrations/2026_10_21_000002_add_employee_organization.php'))->down();
+        (require database_path('migrations/2026_10_21_000001_add_employee_lifecycle.php'))->down();
         $migration->down();
         $migration->up();
         $this->assertSame($company->id, (int) $staff->fresh()->company_id);
@@ -254,6 +258,8 @@ class AttendanceIntegrityTest extends TestCase
         $this->company();
         $staff = $this->employee(null);
         $migration = require database_path('migrations/2026_10_19_000001_add_company_membership.php');
+        (require database_path('migrations/2026_10_21_000002_add_employee_organization.php'))->down();
+        (require database_path('migrations/2026_10_21_000001_add_employee_lifecycle.php'))->down();
         $migration->down();
         $migration->up();
         $this->assertNull($staff->fresh()->company_id);
