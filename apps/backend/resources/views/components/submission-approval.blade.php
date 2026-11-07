@@ -20,6 +20,11 @@
         default => ucfirst($kind),
     };
 
+    $usesLeaveBalance = ($kind === 'permission') && (
+        ($submission->leave_policy_snapshot['deducts_balance'] ?? false) ||
+        ($submission->leaveType?->deducts_balance ?? false)
+    );
+
     $company = $submission->relationLoaded('user') ? $submission->user?->company : ($submission->user_id ? \App\Models\User::find($submission->user_id)?->company : null);
     $companyTz = $company ? app(\App\Services\WorkCalendar::class)->timezone($company) : config('app.timezone');
 
@@ -151,7 +156,11 @@
                 </div>
                 <p class="muted" style="margin-top:6px">
                     {{ $isFinalStep ? 'Persetujuan final akan menyelesaikan seluruh alur pengajuan.' : 'Persetujuan akan meneruskan pengajuan ke tahap peninjau berikutnya.' }}
-                    Penolakan akan mengakhiri pengajuan dan mengembalikan saldo cadangan jika ada.
+                    @if($usesLeaveBalance)
+                        Penolakan akan mengakhiri pengajuan dan mengembalikan saldo cadangan jika ada.
+                    @else
+                        Penolakan akan mengakhiri pengajuan.
+                    @endif
                 </p>
                 <div class="dialog-actions" style="margin-top:12px">
                     <button class="primary" type="button" id="btn-review-decision">Tinjau keputusan</button>
