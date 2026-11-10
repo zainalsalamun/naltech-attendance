@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'core/session/session_events.dart';
+import 'presentation/auth/pages/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -23,9 +26,10 @@ import 'package:flutter_absensi_app/presentation/profile/bloc/update_user/update
 import 'package:flutter_absensi_app/data/datasources/reimbursement_remote_datasource.dart';
 import 'package:flutter_absensi_app/presentation/home/bloc/add_reimbursement/add_reimbursement_bloc.dart';
 import 'package:flutter_absensi_app/presentation/home/bloc/get_reimbursements/get_reimbursements_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'core/theme/workspace_theme.dart';
+import 'core/theme/theme_controller.dart';
 
-import 'core/core.dart';
 import 'data/datasources/user_remote_datasource.dart';
 import 'presentation/auth/bloc/login/login_bloc.dart';
 import 'presentation/auth/pages/splash_page.dart';
@@ -38,101 +42,130 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  } catch (e) {
-    debugPrint('Firebase initialization failed: $e');
+    FirebaseMessangingRemoteDatasource().initialize().catchError((_) {
+      debugPrint('Notifikasi belum dapat diinisialisasi.');
+    });
+  } catch (_) {
+    // The app must still open when optional notifications cannot initialize.
+    debugPrint('Layanan notifikasi belum tersedia.');
   }
-  FirebaseMessangingRemoteDatasource().initialize().catchError((e) {
-    debugPrint('Firebase messaging initialization failed: $e');
-  });
-  runApp(const MyApp());
+  final themeController =
+      ThemeController(await SharedPreferences.getInstance());
+  runApp(MyApp(themeController: themeController));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({super.key, required this.themeController});
 
-  // This widget is the root of your application.
+  final ThemeController themeController;
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _navigator = GlobalKey<NavigatorState>();
+  StreamSubscription<void>? _subscription;
+  bool _redirecting = false;
+  ThemeController get themeController => widget.themeController;
+  @override
+  void initState() {
+    super.initState();
+    _subscription = SessionEvents.expired.listen((_) {
+      if (!mounted || _redirecting) return;
+      _redirecting = true;
+      _navigator.currentState
+          ?.pushAndRemoveUntil(
+              MaterialPageRoute<void>(
+                  builder: (_) => const LoginPage(
+                      initialMessage:
+                          'Sesi Anda berakhir. Silakan masuk kembali.')),
+              (_) => false)
+          .whenComplete(() => _redirecting = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => LoginBloc(AuthRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) => LogoutBloc(AuthRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) =>
-              UpdateUserRegisterFaceBloc(AuthRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) => GetCompanyBloc(AttendanceRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) => IsCheckedinBloc(AttendanceRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) =>
-              CheckinAttendanceBloc(AttendanceRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) =>
-              CheckoutAttendanceBloc(AttendanceRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) => AddPermissionBloc(PermissonRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) =>
-              GetAttendanceByDateBloc(AttendanceRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) => CheckQrBloc(QrAbsenRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) => GetQrcodeCheckinBloc(),
-        ),
-        BlocProvider(
-          create: (context) => GetQrcodeCheckoutBloc(),
-        ),
-        BlocProvider(
-          create: (context) => GetUserBloc(UserRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) => UpdateUserBloc(UserRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) =>
-              AddReimbursementBloc(ReimbursementRemoteDatasource()),
-        ),
-        BlocProvider(
-          create: (context) =>
-              GetReimbursementsBloc(ReimbursementRemoteDatasource()),
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Naltech Attendance',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
-          dividerTheme:
-              DividerThemeData(color: AppColors.light.withValues(alpha: 0.5)),
-          dialogTheme: const DialogThemeData(elevation: 0),
-          textTheme: GoogleFonts.kumbhSansTextTheme(
-            Theme.of(context).textTheme,
-          ),
-          appBarTheme: AppBarTheme(
-            centerTitle: true,
-            backgroundColor: AppColors.white,
-            elevation: 0,
-            titleTextStyle: GoogleFonts.kumbhSans(
-              color: AppColors.black,
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
+    return ThemeScope(
+      controller: themeController,
+      child: ListenableBuilder(
+        listenable: themeController,
+        builder: (context, child) => MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (context) => LoginBloc(AuthRemoteDatasource()),
             ),
+            BlocProvider(
+              create: (context) => LogoutBloc(AuthRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  UpdateUserRegisterFaceBloc(AuthRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) => GetCompanyBloc(AttendanceRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  IsCheckedinBloc(AttendanceRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  CheckinAttendanceBloc(AttendanceRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  CheckoutAttendanceBloc(AttendanceRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  AddPermissionBloc(PermissonRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  GetAttendanceByDateBloc(AttendanceRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) => CheckQrBloc(QrAbsenRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) => GetQrcodeCheckinBloc(),
+            ),
+            BlocProvider(
+              create: (context) => GetQrcodeCheckoutBloc(),
+            ),
+            BlocProvider(
+              create: (context) => GetUserBloc(UserRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) => UpdateUserBloc(UserRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  AddReimbursementBloc(ReimbursementRemoteDatasource()),
+            ),
+            BlocProvider(
+              create: (context) =>
+                  GetReimbursementsBloc(ReimbursementRemoteDatasource()),
+            ),
+          ],
+          child: MaterialApp(
+            navigatorKey: _navigator,
+            debugShowCheckedModeBanner: false,
+            title: 'Naltech Attendance',
+            theme: WorkspaceTheme.light,
+            darkTheme: WorkspaceTheme.dark,
+            themeMode: themeController.mode,
+            home: const SplashPage(),
           ),
         ),
-        home: const SplashPage(),
       ),
     );
   }
