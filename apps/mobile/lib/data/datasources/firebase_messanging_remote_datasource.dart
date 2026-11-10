@@ -35,7 +35,7 @@ class FirebaseMessangingRemoteDatasource {
     final fcmToken = await _firebaseMessaging.getToken();
 
     if (fcmToken != null && await AuthLocalDatasource().getAuthData() != null) {
-      AuthRemoteDatasource().updateFcmToken(fcmToken);
+      await AuthRemoteDatasource().updateFcmToken(fcmToken);
     }
 
     FirebaseMessaging.instance.getInitialMessage();
