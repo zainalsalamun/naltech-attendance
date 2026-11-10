@@ -1,3 +1,5 @@
+import '../../core/session/authenticated_client.dart';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dartz/dartz.dart';
@@ -9,12 +11,19 @@ import 'package:flutter_absensi_app/data/models/response/checkinout_response_mod
 import 'package:flutter_absensi_app/data/models/response/company_response_model.dart';
 import 'package:http/http.dart' as http;
 import 'attendance_qr_proof.dart';
+import '../models/response/attendance_context.dart';
 
 class AttendanceRemoteDatasource {
+  AttendanceRemoteDatasource(
+      {http.Client? client, AuthLocalDatasource? authLocal})
+      : _client = client,
+        _authLocal = authLocal ?? AuthLocalDatasource();
+  final http.Client? _client;
+  final AuthLocalDatasource _authLocal;
   Future<Either<String, CompanyResponseModel>> getCompanyProfile() async {
-    final authData = await AuthLocalDatasource().getAuthData();
+    final authData = await _authLocal.getAuthData();
     final url = Uri.parse('${Variables.baseUrl}/api/company');
-    final response = await http.get(
+    final response = await SessionHttp.client.get(
       url,
       headers: {
         'Accept': 'application/json',
@@ -31,92 +40,114 @@ class AttendanceRemoteDatasource {
   }
 
   Future<Either<String, (bool, bool)>> isCheckedin() async {
-    final authData = await AuthLocalDatasource().getAuthData();
-    final url = Uri.parse('${Variables.baseUrl}/api/is-checkin');
-    final response = await http.get(
-      url,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authData?.token}',
-      },
-    );
+    final result = await attendanceState();
+    return result.map((state) => (state.checkedIn, state.checkedOut));
+  }
 
-    if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      return Right((
-        responseData['checkedin'] as bool,
-        responseData['checkedout'] as bool
-      ));
-    } else {
-      return const Left('Failed to get checkedin status');
+  Future<Either<String, AttendanceContext>> attendanceState() async {
+    try {
+      final auth = await _authLocal.getAuthData();
+      if (auth?.token?.isNotEmpty != true || auth?.user?.id == null) {
+        return const Left('Sesi tidak tersedia.');
+      }
+      final request =
+          http.Request('GET', Uri.parse('${Variables.baseUrl}/api/is-checkin'))
+            ..followRedirects = false
+            ..headers.addAll({
+              'Accept': 'application/json',
+              'Authorization': 'Bearer ${auth!.token}'
+            });
+      final response = await http.Response.fromStream(
+              await (_client ?? SessionHttp.client)
+                  .send(request)
+                  .timeout(const Duration(seconds: 20)))
+          .timeout(const Duration(seconds: 20));
+      if (response.statusCode != 200 ||
+          (await _authLocal.getAuthData())?.token != auth.token) {
+        return const Left('Status absensi belum dapat dimuat.');
+      }
+      return Right(
+          AttendanceContext.parse(jsonDecode(response.body), auth.user!.id!));
+    } catch (_) {
+      return const Left('Status absensi belum dapat dimuat.');
     }
   }
 
   Future<Either<String, CheckInOutResponseModel>> checkin(
-      CheckInOutRequestModel data) async {
-    final authData = await AuthLocalDatasource().getAuthData();
-    final url = Uri.parse('${Variables.baseUrl}/api/checkin');
-    final response = await http.post(
-      url,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authData?.token}',
-      },
-      body: jsonEncode({
-        ...data.toMap(),
-        'qr_code': AttendanceQrProof.codeFor(authData?.token, 'qr_checkin'),
-      }),
-    );
-
-    if (response.statusCode == 200) {
-      return Right(CheckInOutResponseModel.fromJson(response.body));
-    } else {
-      try {
-        final error = jsonDecode(response.body);
-        return Left(error['message'] ?? 'Failed to checkin');
-      } catch (e) {
-        return Left('Failed to checkin: ${response.statusCode}');
-      }
-    }
-  }
-
+          CheckInOutRequestModel data) =>
+      _record(data, false);
   Future<Either<String, CheckInOutResponseModel>> checkout(
-      CheckInOutRequestModel data) async {
-    final authData = await AuthLocalDatasource().getAuthData();
-    final url = Uri.parse('${Variables.baseUrl}/api/checkout');
-    final response = await http.post(
-      url,
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${authData?.token}',
-      },
-      body: jsonEncode({
-        ...data.toMap(),
-        'qr_code': AttendanceQrProof.codeFor(authData?.token, 'qr_checkout'),
-      }),
-    );
+          CheckInOutRequestModel data) =>
+      _record(data, true);
 
-    if (response.statusCode == 200) {
-      return Right(CheckInOutResponseModel.fromJson(response.body));
-    } else {
-      try {
-        final error = jsonDecode(response.body);
-        return Left(error['message'] ?? 'Failed to checkout');
-      } catch (e) {
-        return Left('Failed to checkout: ${response.statusCode}');
+  Future<Either<String, CheckInOutResponseModel>> _record(
+      CheckInOutRequestModel data, bool checkout) async {
+    try {
+      final auth = await _authLocal.getAuthData();
+      if (auth?.token == null || auth!.token!.isEmpty) {
+        return const Left('Sesi berakhir. Silakan masuk kembali.');
       }
+      final action = checkout ? 'checkout' : 'checkin';
+      final response = await (_client?.post ?? SessionHttp.client.post)(
+        Uri.parse('${Variables.baseUrl}/api/$action'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${auth.token}'
+        },
+        body: jsonEncode({
+          ...data.toMap(),
+          'qr_code': AttendanceQrProof.codeFor(auth.token, 'qr_$action')
+        }),
+      ).timeout(const Duration(seconds: 20));
+      if (response.statusCode == 401) {
+        return const Left('Sesi berakhir. Silakan masuk kembali.');
+      }
+      if (response.statusCode == 403) {
+        return const Left(
+            'Akses absensi ditolak. Periksa akun dan perusahaan Anda.');
+      }
+      if (response.statusCode == 200) {
+        final result = CheckInOutResponseModel.fromJson(response.body);
+        final recordedTime =
+            checkout ? result.attendance?.timeOut : result.attendance?.timeIn;
+        if (result.attendance?.userId != auth.user?.id ||
+            result.attendance?.id == null ||
+            result.attendance?.date == null ||
+            recordedTime == null ||
+            recordedTime.isEmpty) {
+          return const Left(
+              'Hasil absensi belum lengkap. Kembali ke Beranda dan muat ulang sebelum mencoba lagi.');
+        }
+        AttendanceQrProof.clear();
+        return Right(result);
+      }
+      if (response.statusCode == 422 || response.statusCode == 409) {
+        final decoded = jsonDecode(response.body);
+        final message = decoded is Map ? decoded['message'] : null;
+        return Left(message is String &&
+                message.isNotEmpty &&
+                message.length <= 1000
+            ? message
+            : 'Absensi ditolak. Periksa lokasi, QR, dan status kehadiran Anda.');
+      }
+      return const Left(
+          'Belum dapat memastikan hasil absensi. Kembali ke Beranda dan muat ulang sebelum mencoba lagi.');
+    } on TimeoutException {
+      return const Left(
+          'Koneksi terlalu lama. Hasil absensi belum dapat dipastikan. Kembali ke Beranda dan muat ulang sebelum mencoba lagi.');
+    } catch (_) {
+      return const Left(
+          'Koneksi atau respons absensi bermasalah. Kembali ke Beranda dan muat ulang sebelum mencoba lagi.');
     }
   }
 
   Future<Either<String, AttendanceResponseModel>> getAttendance(
       String date) async {
-    final authData = await AuthLocalDatasource().getAuthData();
+    final authData = await _authLocal.getAuthData();
     final url =
         Uri.parse('${Variables.baseUrl}/api/api-attendances?date=$date');
-    final response = await http.get(
+    final response = await SessionHttp.client.get(
       url,
       headers: {
         'Accept': 'application/json',
