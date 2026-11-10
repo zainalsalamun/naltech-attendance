@@ -1,6 +1,8 @@
 /// Ephemeral scan evidence, bound to the current login and attendance action.
 /// The server independently validates this QR; no client boolean is trusted.
 class AttendanceQrProof {
+  static int _revision = 0;
+  static int get revision => _revision;
   static String? _token;
   static String? _code;
   static String? _action;
@@ -14,7 +16,9 @@ class AttendanceQrProof {
   }
 
   static String? codeFor(String? token, String action) {
-    if (token == null || token != _token || action != _action ||
+    if (token == null ||
+        token != _token ||
+        action != _action ||
         _scannedAt == null ||
         DateTime.now().difference(_scannedAt!) > const Duration(minutes: 5)) {
       return null;
@@ -23,6 +27,7 @@ class AttendanceQrProof {
   }
 
   static void clear() {
+    _revision++;
     _token = null;
     _code = null;
     _action = null;
