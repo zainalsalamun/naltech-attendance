@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:flutter_absensi_app/data/datasources/auth_remote_datasource.dart';
@@ -13,12 +13,17 @@ class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
     this._authRemoteDatasource,
   ) : super(const _Initial()) {
     on<_Logout>((event, emit) async {
+      if (state is _Loading) return;
       emit(const _Loading());
-      final result = await _authRemoteDatasource.logout();
-      result.fold(
-        (l) => emit(_Error(l)),
-        (r) => emit(const _Success()),
-      );
+      try {
+        final result = await _authRemoteDatasource.logout();
+        result.fold(
+          (l) => emit(_Error(l)),
+          (r) => emit(const _Success()),
+        );
+      } catch (_) {
+        emit(const _Error('Keluar akun belum dapat dikonfirmasi. Coba lagi.'));
+      }
     });
   }
 }

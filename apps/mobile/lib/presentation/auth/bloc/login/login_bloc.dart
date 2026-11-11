@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:flutter_absensi_app/data/datasources/auth_remote_datasource.dart';
@@ -14,13 +14,19 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     this._authRemoteDatasource,
   ) : super(const _Initial()) {
     on<_Login>((event, emit) async {
+      if (state is _Loading) return;
       emit(const _Loading());
-      final result = await _authRemoteDatasource.login(event.email, event.password);
-      result.fold(
-        (l) => emit(_Error(l)),
-        (r) => emit(_Success(r)),
-      );
-     
+      try {
+        final result =
+            await _authRemoteDatasource.login(event.email, event.password);
+        result.fold(
+          (l) => emit(_Error(l)),
+          (r) => emit(_Success(r)),
+        );
+      } catch (_) {
+        emit(const _Error(
+            'Tidak dapat terhubung. Periksa koneksi dan coba lagi.'));
+      }
     });
   }
 }
