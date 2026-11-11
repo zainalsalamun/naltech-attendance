@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../../data/datasources/reimbursement_remote_datasource.dart';
@@ -16,13 +16,18 @@ class GetReimbursementsBloc
   ) : super(const _Initial()) {
     on<_GetReimbursements>(
       (event, emit) async {
+        if (state is _Loading) return;
         emit(const _Loading());
-
-        final result = await datasource.getReimbursements();
-        result.fold(
-          (l) => emit(_Error(l)),
-          (r) => emit(_Success(r.data ?? [])),
-        );
+        try {
+          final result = await datasource.getReimbursements();
+          result.fold(
+            (l) => emit(_Error(l)),
+            (r) => emit(_Success(r.data ?? [])),
+          );
+        } catch (_) {
+          emit(const _Error(
+              'Pengajuan belum dapat diproses. Muat ulang daftar lalu coba lagi.'));
+        }
       },
     );
   }
