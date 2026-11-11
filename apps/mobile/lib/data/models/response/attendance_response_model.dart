@@ -18,7 +18,7 @@ class AttendanceResponseModel {
       AttendanceResponseModel(
         message: json["message"],
         data: json["data"] == null
-            ? []
+            ? null
             : List<Attendance>.from(
                 json["data"]!.map((x) => Attendance.fromMap(x))),
       );
