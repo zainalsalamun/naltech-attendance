@@ -508,8 +508,9 @@ class _AttendanceCheckoutPageState extends State<AttendanceCheckoutPage> {
                                 );
                               },
                               loaded: (responseModel) {
-                                context.pushReplacement(
-                                    const AttendanceSuccessPage(
+                                context.pushReplacement(AttendanceSuccessPage(
+                                  response: responseModel,
+                                  isCheckin: false,
                                   status: 'Berhasil Checkout',
                                 ));
                               },

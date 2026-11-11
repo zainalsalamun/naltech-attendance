@@ -508,8 +508,9 @@ class _AttendanceCheckinPageState extends State<AttendanceCheckinPage> {
                                 );
                               },
                               loaded: (responseModel) {
-                                context.pushReplacement(
-                                    const AttendanceSuccessPage(
+                                context.pushReplacement(AttendanceSuccessPage(
+                                  response: responseModel,
+                                  isCheckin: true,
                                   status: 'Berhasil Checkin',
                                 ));
                               },

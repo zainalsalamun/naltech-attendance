@@ -1,58 +1,62 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:flutter_absensi_app/presentation/home/bloc/is_checkedin/is_checkedin_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../core/core.dart';
+import '../../../data/models/response/checkinout_response_model.dart';
 
 class AttendanceSuccessPage extends StatelessWidget {
+  const AttendanceSuccessPage(
+      {super.key, required this.status, this.isCheckin = true, this.response});
   final String status;
-  const AttendanceSuccessPage({
-    super.key,
-    required this.status,
-  });
-
+  final bool isCheckin;
+  final CheckInOutResponseModel? response;
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final record = response?.attendance;
+    final time = isCheckin ? record?.timeIn : record?.timeOut;
+    final date = record?.date;
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Assets.images.success.image(),
-            const Text(
-              'Asiap !',
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SpaceHeight(8.0),
-            Center(
-              child: Text(
-                'Anda telah melakukan Absensi $status Pukul ${DateTime.now().toFormattedTime()}. Selamat bekerja ',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15.0,
-                  color: AppColors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SpaceHeight(80.0),
-            Button.filled(
+        appBar: AppBar(title: const Text('Hasil absensi')),
+        body: SafeArea(
+            child: ListView(padding: const EdgeInsets.all(24), children: [
+          const SizedBox(height: 32),
+          Icon(Icons.task_alt, size: 64, color: theme.colorScheme.primary),
+          const SizedBox(height: 24),
+          Text('Kehadiran tercatat',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 12),
+          Text(status,
+              textAlign: TextAlign.center, style: theme.textTheme.titleMedium),
+          const SizedBox(height: 28),
+          Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  border: Border.all(color: theme.colorScheme.outline),
+                  borderRadius: BorderRadius.circular(16)),
+              child: Column(children: [
+                Text(isCheckin ? 'Jam masuk' : 'Jam pulang',
+                    style:
+                        TextStyle(color: theme.colorScheme.onSurfaceVariant)),
+                const SizedBox(height: 10),
+                Text(time ?? 'Belum tersedia',
+                    style: theme.textTheme.headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 8),
+                Text(date == null
+                    ? 'Tanggal belum tersedia'
+                    : '${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year}'),
+              ])),
+          const SizedBox(height: 20),
+          const Text(
+              'Tanggal dan jam mengikuti catatan absensi yang diterima. Muat ulang Beranda bila data belum berubah.',
+              textAlign: TextAlign.center),
+          const SizedBox(height: 28),
+          FilledButton(
               onPressed: () {
-                context
-                    .read<IsCheckedinBloc>()
-                    .add(const IsCheckedinEvent.isCheckedIn());
-                context.popToRoot();
+                Navigator.of(context).popUntil((route) => route.isFirst);
               },
-              label: 'Oke, dimengerti',
-            ),
-          ],
-        ),
-      ),
-    );
+              child: const Text('Kembali ke Beranda')),
+        ])));
   }
 }
