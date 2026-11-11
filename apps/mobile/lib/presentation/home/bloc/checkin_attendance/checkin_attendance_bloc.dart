@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_absensi_app/data/models/request/checkinout_request_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -16,16 +16,24 @@ class CheckinAttendanceBloc
     this.datasource,
   ) : super(const _Initial()) {
     on<_Checkin>((event, emit) async {
+      if (state is _Loading) {
+        return;
+      }
       emit(const _Loading());
-      final requestModel = CheckInOutRequestModel(
-        latitude: event.latitute,
-        longitude: event.longitude,
-      );
-      final result = await datasource.checkin(requestModel);
-      result.fold(
-        (l) => emit(_Error(l)),
-        (r) => emit(_Loaded(r)),
-      );
+      try {
+        final requestModel = CheckInOutRequestModel(
+          latitude: event.latitute,
+          longitude: event.longitude,
+        );
+        final result = await datasource.checkin(requestModel);
+        result.fold(
+          (l) => emit(_Error(l)),
+          (r) => emit(_Loaded(r)),
+        );
+      } catch (_) {
+        emit(const _Error(
+            'Hasil absensi belum dapat dipastikan. Kembali ke Beranda dan muat ulang.'));
+      }
     });
   }
 }
