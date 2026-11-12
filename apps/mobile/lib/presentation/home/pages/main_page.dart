@@ -1,104 +1,108 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_absensi_app/presentation/home/pages/history_page.dart';
-import 'package:flutter_absensi_app/presentation/home/pages/home_page.dart';
-import 'package:flutter_absensi_app/presentation/profile/pages/profile_page.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/get_attendance_by_date/get_attendance_by_date_bloc.dart';
-
-import '../../../core/core.dart';
+import 'home_page.dart';
+import 'history_page.dart';
+import '../../profile/pages/profile_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
-
+  const MainPage({super.key, this.pages});
+  final List<Widget>? pages;
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  final _widgets = [
-    // const HomePage(),
-    const HomePage(),
-    const HistoryPage(),
+  final Set<int> _visited = {0};
+  late final List<Widget> _pages =
+      widget.pages ?? const [HomePage(), HistoryPage(), ProfilePage()];
 
-    const ProfilePage(),
-  ];
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _widgets,
-      ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.only(bottom: 10.0),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0)),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.black.withOpacity(0.06),
-              blurRadius: 16.0,
-              blurStyle: BlurStyle.outer,
-              offset: const Offset(0, -8),
-              spreadRadius: 0,
-            ),
-          ],
-        ),
-        child: Theme(
-          data: ThemeData(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
+  Widget build(BuildContext context) => PopScope(
+        canPop: _selectedIndex == 0,
+        onPopInvokedWithResult: (didPop, result) {
+          if (!didPop && _selectedIndex != 0) {
+            setState(() => _selectedIndex = 0);
+          }
+        },
+        child: Scaffold(
+          body: IndexedStack(
+              index: _selectedIndex,
+              children: List.generate(
+                  3,
+                  (index) => _visited.contains(index)
+                      ? (index == 0 && widget.pages == null
+                          ? HomePage(
+                              active: _selectedIndex == 0,
+                              onProfile: () => setState(() {
+                                    _visited.add(2);
+                                    _selectedIndex = 2;
+                                  }))
+                          : _pages[index])
+                      : const SizedBox.shrink())),
+          bottomNavigationBar: DecoratedBox(
+            decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                border: Border(
+                    top: BorderSide(
+                        color: Theme.of(context).colorScheme.outline))),
+            child: SafeArea(
+                top: false,
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(3, (index) {
+                      const labels = ['Beranda', 'Riwayat', 'Profil'];
+                      const icons = [
+                        Icons.home_outlined,
+                        Icons.history_outlined,
+                        Icons.person_outline
+                      ];
+                      final selected = _selectedIndex == index;
+                      final color = selected
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant;
+                      return Expanded(
+                          child: Semantics(
+                              selected: selected,
+                              button: true,
+                              child: InkWell(
+                                  onTap: () => setState(() {
+                                        _visited.add(index);
+                                        _selectedIndex = index;
+                                      }),
+                                  child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          8, 10, 8, 8),
+                                      child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                                selected && index == 0
+                                                    ? Icons.home
+                                                    : icons[index],
+                                                color: color,
+                                                size: 25),
+                                            const SizedBox(height: 4),
+                                            Text(labels[index],
+                                                style: TextStyle(
+                                                    color: color,
+                                                    fontSize: 12,
+                                                    fontWeight: selected
+                                                        ? FontWeight.w700
+                                                        : FontWeight.w400)),
+                                            const SizedBox(height: 7),
+                                            Container(
+                                                height: 3,
+                                                width: 24,
+                                                decoration: BoxDecoration(
+                                                    color: selected
+                                                        ? color
+                                                        : Colors.transparent,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            2))),
+                                          ])))));
+                    }))),
           ),
-          child: BottomNavigationBar(
-            useLegacyColorScheme: false,
-            currentIndex: _selectedIndex,
-            onTap: (value) {
-              setState(() => _selectedIndex = value);
-              if (value == 1) {
-                final currentDate =
-                    DateFormat('yyyy-MM-dd').format(DateTime.now());
-                context.read<GetAttendanceByDateBloc>().add(
-                      GetAttendanceByDateEvent.getAttendanceByDate(currentDate),
-                    );
-              }
-            },
-            type: BottomNavigationBarType.fixed,
-            selectedLabelStyle: const TextStyle(color: AppColors.primary),
-            selectedIconTheme: const IconThemeData(color: AppColors.primary),
-            elevation: 0,
-            items: [
-              BottomNavigationBarItem(
-                icon: Assets.icons.nav.home.svg(
-                  colorFilter: ColorFilter.mode(
-                    _selectedIndex == 0 ? AppColors.primary : AppColors.grey,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Assets.icons.nav.history.svg(
-                  colorFilter: ColorFilter.mode(
-                    _selectedIndex == 1 ? AppColors.primary : AppColors.grey,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                label: 'History',
-              ),
-              BottomNavigationBarItem(
-                icon: Assets.icons.nav.profile.svg(
-                  colorFilter: ColorFilter.mode(
-                    _selectedIndex == 2 ? AppColors.primary : AppColors.grey,
-                    BlendMode.srcIn,
-                  ),
-                ),
-                label: 'Profile',
-              ),
-            ],
-          ),
         ),
-      ),
-    );
-  }
+      );
 }
