@@ -1,269 +1,237 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_absensi_app/presentation/home/pages/main_page.dart';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-
-import 'package:flutter_absensi_app/core/core.dart';
-
-import '../../bloc/check_qr/check_qr_bloc.dart';
-import '../../bloc/get_qrcode_checkin/get_qrcode_checkin_bloc.dart';
-import '../../bloc/get_qrcode_checkout/get_qrcode_checkout_bloc.dart';
+import '../../../../data/datasources/attendance_qr_proof.dart';
+import '../../../../data/models/response/qr_absen_remote_datasource.dart';
+import '../../bloc/qr_scan/qr_scan_cubit.dart';
 import 'attendance_result_page.dart';
 
 class ScannerPage extends StatefulWidget {
+  const ScannerPage({super.key, required this.isCheckin, this.serverDate});
   final bool isCheckin;
-  const ScannerPage({
-    super.key,
-    required this.isCheckin,
-  });
-
+  final String? serverDate;
   @override
   State<ScannerPage> createState() => _ScannerPageState();
 }
 
 class _ScannerPageState extends State<ScannerPage> with WidgetsBindingObserver {
-  MobileScannerController cameraController = MobileScannerController(
-    autoStart: true,
-    torchEnabled: false,
-  );
-
-  Barcode? _barcode;
-  bool isScan = false;
-  StreamSubscription<Object?>? _subscription;
-
-  Widget _buildBarcode(Barcode? value) {
-    if (value == null) {
-      return const Text(
-        'Scan something!',
-        overflow: TextOverflow.fade,
-        style: TextStyle(color: Colors.white),
-      );
-    }
-
-    return Text(
-      value.displayValue ?? 'No display value.',
-      overflow: TextOverflow.fade,
-      style: const TextStyle(color: Colors.white),
-    );
-  }
-
-  void _handleBarcode(BarcodeCapture barcodes) {
-    if (mounted) {
-      // setState(() {
-      _barcode = barcodes.barcodes.firstOrNull;
-
-      if (_barcode != null && !isScan) {
-        context.read<GetQrcodeCheckinBloc>().add(
-            GetQrcodeCheckinEvent.getQrcodeCheckin(
-                _barcode!.displayValue ?? '', widget.isCheckin));
-
-        // log("BarCode Value: ${_barcode?.displayValue}");
-        //back
-        setState(() {
-          isScan = true;
-        });
-        // context.pushReplacement(MainPage());
-      }
-      // });
-    }
-  }
-
+  final _camera = MobileScannerController(
+      autoStart: false, formats: const [BarcodeFormat.qrCode]);
+  late final _scan =
+      QrScanCubit(QrAbsenRemoteDatasource(), serverDate: widget.serverDate);
+  bool _delivered = false;
+  String? _cameraError;
+  bool _starting = false;
+  bool _active = true;
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addObserver(this);
+    AttendanceQrProof.clear();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _start();
+      }
+    });
+  }
 
-    cameraController.start();
-    _subscription = cameraController.barcodes.listen(_handleBarcode);
+  Future<void> _start() async {
+    if (_camera.value.isRunning ||
+        _starting ||
+        !_active ||
+        _delivered ||
+        _scan.state.busy ||
+        _scan.state.error != null) {
+      return;
+    }
+    _starting = true;
+    try {
+      await _camera.start();
+      if (!mounted || !_active) {
+        await _stop();
+        return;
+      }
+      if (mounted) setState(() => _cameraError = null);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _cameraError =
+            'Kamera belum tersedia. Periksa izin kamera dan coba lagi.');
+      }
+    } finally {
+      _starting = false;
+    }
+  }
+
+  Future<void> _stop() async {
+    try {
+      await _camera.stop();
+    } catch (_) {/* Camera may already be stopped by the platform. */}
   }
 
   @override
-  Future<void> dispose() async {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _active = state == AppLifecycleState.resumed;
+    if (_active) {
+      _start();
+    } else {
+      _stop();
+    }
+  }
+
+  Future<void> _detect(BarcodeCapture capture) async {
+    if (!_active ||
+        _delivered ||
+        _scan.state.busy ||
+        _scan.state.error != null) {
+      return;
+    }
+    final code = capture.barcodes.firstOrNull?.rawValue;
+    if (code == null) {
+      return;
+    }
+    final pending = _scan.scan(code, widget.isCheckin);
+    await _stop();
+    final valid = await pending;
+    if (!mounted || !valid || _delivered) {
+      return;
+    }
+    _delivered = true;
+    Navigator.of(context).pushReplacement(MaterialPageRoute<void>(
+        builder: (_) => AttendanceResultPage(
+            isCheckin: widget.isCheckin, isMatch: true, attendanceType: 'QR')));
+  }
+
+  @override
+  void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(_subscription?.cancel());
-    _subscription = null;
+    if (!_delivered) {
+      AttendanceQrProof.clear();
+    }
+    _scan.close();
+    unawaited(_camera.dispose());
     super.dispose();
-    await cameraController.dispose();
   }
-
-  // @override
-  // void didChangeAppLifecycleState(AppLifecycleState state) {
-  //   if (!cameraController.value.isInitialized) {
-  //     return;
-  //   }
-
-  //   switch (state) {
-  //     case AppLifecycleState.detached:
-  //     case AppLifecycleState.hidden:
-  //     case AppLifecycleState.paused:
-  //       return;
-  //     case AppLifecycleState.resumed:
-  //       _subscription = cameraController.barcodes.listen(_handleBarcode);
-
-  //       unawaited(cameraController.start());
-  //     case AppLifecycleState.inactive:
-  //       unawaited(_subscription?.cancel());
-  //       _subscription = null;
-  //       unawaited(cameraController.stop());
-  //   }
-  // }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            cameraController.dispose();
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text('Scanning'),
-        actions: [
-          IconButton(
-            color: Colors.white,
-            icon: ValueListenableBuilder(
-              valueListenable: cameraController,
-              builder: (context, state, child) {
-                switch (state.torchState) {
-                  case TorchState.auto:
-                    return IconButton(
-                      color: Colors.white,
-                      iconSize: 32.0,
-                      icon: const Icon(Icons.flash_auto),
-                      onPressed: () async {
-                        await cameraController.toggleTorch();
-                      },
-                    );
-                  case TorchState.off:
-                    return const Icon(Icons.flash_off, color: Colors.grey);
-                  case TorchState.on:
-                    return const Icon(Icons.flash_on, color: Colors.yellow);
-                  case TorchState.unavailable:
-                    return const Icon(
-                      Icons.no_flash,
-                      color: Colors.grey,
-                    );
-                }
-              },
-            ),
-            iconSize: 32.0,
-            onPressed: () => cameraController.toggleTorch(),
-          ),
-          IconButton(
-            color: Colors.white,
-            icon: ValueListenableBuilder(
-              valueListenable: cameraController,
-              builder: (context, state, child) {
-                if (!state.isInitialized || !state.isRunning) {
-                  return const SizedBox.shrink();
-                }
-
-                final int? availableCameras = state.availableCameras;
-
-                if (availableCameras != null && availableCameras < 2) {
-                  return const SizedBox.shrink();
-                }
-
-                final Widget icon;
-
-                switch (state.cameraDirection) {
-                  case CameraFacing.front:
-                    icon = const Icon(Icons.camera_front);
-                  case CameraFacing.back:
-                    icon = const Icon(Icons.camera_rear);
-                  case CameraFacing.external:
-                    icon = const Icon(Icons.camera_rear);
-                  case CameraFacing.unknown:
-                    icon = const Icon(Icons.camera);
-                }
-
-                return IconButton(
-                  iconSize: 32.0,
-                  icon: icon,
-                  onPressed: () async {
-                    await cameraController.switchCamera();
-                  },
-                );
-              },
-            ),
-            iconSize: 32.0,
-            onPressed: () => cameraController.switchCamera(),
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          MobileScanner(
-            controller: cameraController,
-          ),
-          MultiBlocListener(
-            listeners: [
-              BlocListener<GetQrcodeCheckinBloc, GetQrcodeCheckinState>(
-                listener: (context, state) {
-                  state.maybeWhen(
-                    orElse: () {},
-                    success: (data, isCheckin) {
-                      final now = DateTime.now();
-                      String formattedDate =
-                          DateFormat('yyyy-MM-dd').format(now);
-                      context.read<CheckQrBloc>().add(CheckQrEvent.checkQr(
-                          data,
-                          formattedDate,
-                          isCheckin ? 'qr_checkin' : 'qr_checkout'));
-                    },
-                  );
-                },
-              ),
-              BlocListener<CheckQrBloc, CheckQrState>(
-                listener: (context, state) {
-                  state.maybeWhen(
-                    orElse: () {},
-                    error: (error) {
-                      setState(() {
-                        isScan = false;
-                      });
-                      context.pushReplacement(AttendanceResultPage(
-                        isMatch: false,
-                        isCheckin: widget.isCheckin,
-                        attendanceType: 'QR',
-                      ));
-                      context
-                          .read<GetQrcodeCheckinBloc>()
-                          .add(const GetQrcodeCheckinEvent.started());
-                      context
-                          .read<CheckQrBloc>()
-                          .add(const CheckQrEvent.started());
-                    },
-                    success: (isValid) {
-                      context.pushReplacement(AttendanceResultPage(
-                        isMatch: true,
-                        isCheckin: widget.isCheckin,
-                        attendanceType: 'QR',
-                      ));
-                    },
-                  );
-                },
-              ),
-            ],
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                padding: const EdgeInsets.all(16.0),
-                color: Colors.black.withOpacity(0.5),
-                child: _buildBarcode(_barcode),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+            title:
+                Text(widget.isCheckin ? 'QR absen masuk' : 'QR absen pulang'),
+            actions: [
+              ValueListenableBuilder(
+                  valueListenable: _camera,
+                  builder: (context, value, _) => IconButton(
+                      tooltip: 'Lampu kamera',
+                      onPressed: value.isRunning
+                          ? () async {
+                              try {
+                                await _camera.toggleTorch();
+                              } catch (_) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Lampu kamera tidak tersedia.')));
+                                }
+                              }
+                            }
+                          : null,
+                      icon: const Icon(Icons.flashlight_on_outlined))),
+            ]),
+        body: SafeArea(
+            child: BlocBuilder<QrScanCubit, QrScanState>(
+                bloc: _scan,
+                builder: (context, state) =>
+                    ListView(padding: const EdgeInsets.all(20), children: [
+                      Text('Pindai QR di kantor',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 10),
+                      const Text(
+                          'Arahkan kamera ke QR sesuai jenis absensi. Pastikan kode terlihat jelas dan Anda berada di area kantor.'),
+                      const SizedBox(height: 20),
+                      ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: AspectRatio(
+                              aspectRatio: 1,
+                              child: Stack(fit: StackFit.expand, children: [
+                                MobileScanner(
+                                    controller: _camera,
+                                    onDetect: _detect,
+                                    errorBuilder: (context, error) => ColoredBox(
+                                        color: const Color(0xFF192A48),
+                                        child: Center(
+                                            child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(24),
+                                                child: Text(
+                                                    error.errorCode ==
+                                                            MobileScannerErrorCode
+                                                                .permissionDenied
+                                                        ? 'Izin kamera ditolak. Buka pengaturan aplikasi untuk mengizinkan kamera.'
+                                                        : 'Kamera belum tersedia pada perangkat ini.',
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                        color:
+                                                            Colors.white)))))),
+                                IgnorePointer(
+                                    child: Center(
+                                        child: FractionallySizedBox(
+                                            widthFactor: .7,
+                                            heightFactor: .7,
+                                            child: DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: Colors.white,
+                                                        width: 2),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            16)))))),
+                                if (state.busy)
+                                  const ColoredBox(
+                                      color: Color(0xAA192A48),
+                                      child: Center(
+                                          child: CircularProgressIndicator(
+                                              semanticsLabel: 'Memeriksa QR'))),
+                              ]))),
+                      const SizedBox(height: 20),
+                      Semantics(
+                          liveRegion: true,
+                          child: Text(
+                              state.busy
+                                  ? 'Memeriksa QR…'
+                                  : state.error ??
+                                      _cameraError ??
+                                      'Setelah QR sesuai, lanjutkan konfirmasi lokasi untuk mencatat absensi.',
+                              style: TextStyle(
+                                  color: state.error == null
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant
+                                      : Theme.of(context).colorScheme.error))),
+                      const SizedBox(height: 16),
+                      if (state.error != null || _cameraError != null)
+                        FilledButton(
+                            onPressed: state.busy
+                                ? null
+                                : () {
+                                    _scan.retry();
+                                    _start();
+                                  },
+                            child: const Text('Coba pindai lagi')),
+                      OutlinedButton(
+                          onPressed:
+                              state.busy ? null : Geolocator.openAppSettings,
+                          child: const Text('Pengaturan izin kamera')),
+                      TextButton(
+                          onPressed: state.busy
+                              ? null
+                              : () => Navigator.of(context).pop(),
+                          child: const Text('Batal')),
+                    ]))),
+      );
 }
