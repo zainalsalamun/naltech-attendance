@@ -1,83 +1,90 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
-import '../../../core/assets/assets.dart';
-import '../../../core/components/components.dart';
-import '../../../core/constants/colors.dart';
+import '../models/history_presentation.dart';
+import 'history_location.dart';
 
 class HistoryAttendance extends StatelessWidget {
-  final String time;
-  final String date;
-  final String statusAbsen;
+  const HistoryAttendance(
+      {super.key,
+      required this.time,
+      required this.date,
+      required this.statusAbsen,
+      this.isAttendanceIn = true,
+      this.overtimeMinutes,
+      this.overtimePay,
+      this.coordinates});
+  final String time, date, statusAbsen;
   final bool isAttendanceIn;
   final int? overtimeMinutes;
   final dynamic overtimePay;
-
-  const HistoryAttendance({
-    super.key,
-    required this.time,
-    required this.date,
-    required this.statusAbsen,
-    this.isAttendanceIn = true,
-    this.overtimeMinutes,
-    this.overtimePay,
-  });
-
+  final String? coordinates;
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = isAttendanceIn
+        ? (theme.brightness == Brightness.dark
+            ? const Color(0xFF9ED2B9)
+            : const Color(0xFF34725B))
+        : theme.colorScheme.primary;
+    final recorded = historyValidTime(time);
+    final invalid = time.isNotEmpty && !recorded;
     return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: isAttendanceIn ? AppColors.primary : AppColors.red,
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            border: Border.all(color: theme.colorScheme.outline),
+            borderRadius: BorderRadius.circular(16)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: color.withValues(alpha: .10),
+                    borderRadius: BorderRadius.circular(12)),
+                child: Icon(isAttendanceIn ? Icons.login : Icons.logout,
+                    color: color, size: 24)),
+            const SizedBox(width: 12),
+            Expanded(
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Text(statusAbsen,
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 3),
+                  Text(
+                      invalid
+                          ? 'Jam perlu ditinjau'
+                          : recorded
+                              ? 'Kehadiran tercatat'
+                              : 'Belum tercatat',
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: theme.colorScheme.onSurfaceVariant))
+                ]))
+          ]),
+          const SizedBox(height: 18),
+          Text(recorded ? time : '--:--',
+              style: theme.textTheme.headlineMedium
+                  ?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 14),
+          HistoryLocation(
+              coordinates: coordinates,
+              isAttendance: isAttendanceIn,
+              recorded: recorded),
+          if (overtimeMinutes != null) ...[
+            const Divider(height: 28),
+            Wrap(spacing: 12, runSpacing: 8, children: [
+              const Text('Lembur tercatat'),
               Text(
-                'Absensi $statusAbsen',
-                style: const TextStyle(
-                  fontSize: 16.0,
-                  color: AppColors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(time, style: const TextStyle(color: AppColors.white)),
-            ],
-          ),
-          const SpaceHeight(4.0),
-          Row(
-            children: [
-              Assets.icons.location.svg(),
-              const SpaceWidth(8.0),
-              const Text('Kantor', style: TextStyle(color: AppColors.white)),
-              const Spacer(),
-              Text(
-                date.substring(0, 10),
-                style: const TextStyle(color: AppColors.white),
-              ),
-            ],
-          ),
-          if (overtimeMinutes != null && overtimeMinutes! > 0) ...[
-            const SpaceHeight(8.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Lembur', style: TextStyle(color: AppColors.white)),
-                Text(
-                  '$overtimeMinutes Menit (Rp ${overtimePay ?? 0})',
-                  style: const TextStyle(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+                  overtimeMinutes! >= 0
+                      ? '$overtimeMinutes menit'
+                      : 'Perlu tinjau',
+                  style: const TextStyle(fontWeight: FontWeight.w600))
+            ]),
+            const SizedBox(height: 6),
+            Text('Nominal lembur: ${historyPay(overtimePay)}',
+                style: TextStyle(color: theme.colorScheme.onSurfaceVariant))
           ],
-        ],
-      ),
-    );
+        ]));
   }
 }
