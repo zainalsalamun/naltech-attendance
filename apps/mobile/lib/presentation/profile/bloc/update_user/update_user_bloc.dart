@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:flutter_absensi_app/data/datasources/user_remote_datasource.dart';
@@ -17,13 +17,18 @@ class UpdateUserBloc extends Bloc<UpdateUserEvent, UpdateUserState> {
   ) : super(const _Initial()) {
     on<_UpdateUser>(
       (event, emit) async {
+        if (state is _Loading) return;
         emit(const _Loading());
-
-        final result = await datasource.updateProfile(event.model, event.id);
-        result.fold(
-          (l) => emit(_Error(l)),
-          (r) => emit(_Success(r)),
-        );
+        try {
+          final result = await datasource.updateProfile(event.model, event.id);
+          result.fold(
+            (l) => emit(_Error(l)),
+            (r) => emit(_Success(r)),
+          );
+        } catch (_) {
+          emit(const _Error(
+              'Profil belum dapat diproses. Periksa koneksi dan coba lagi.'));
+        }
       },
     );
   }
