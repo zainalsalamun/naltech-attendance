@@ -1,112 +1,81 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/core.dart';
+import '../models/history_presentation.dart';
 import '../pages/location_page.dart';
 
 class HistoryLocation extends StatelessWidget {
-  final double latitude;
-  final double longitude;
-  final bool isAttendance;
-  const HistoryLocation({
-    super.key,
-    required this.latitude,
-    required this.longitude,
-    this.isAttendance = true,
-  });
-
+  const HistoryLocation(
+      {super.key,
+      this.coordinates,
+      this.latitude,
+      this.longitude,
+      this.isAttendance = true,
+      this.recorded = true});
+  final String? coordinates;
+  final double? latitude, longitude;
+  final bool isAttendance, recorded;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: isAttendance ? AppColors.primary : AppColors.red,
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Assets.icons.location.svg(),
-              const SpaceWidth(8.0),
-              const Text(
-                'Kantor',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: AppColors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-          const SpaceHeight(4.0),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Status',
-                style: TextStyle(
-                  color: AppColors.white,
-                ),
-              ),
-              Text(
-                'Sesuai spot Absensi',
-                style: TextStyle(
-                  color: AppColors.white,
-                ),
-              ),
-            ],
-          ),
-          const SpaceHeight(4.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Longitude',
-                style: TextStyle(
-                  color: AppColors.white,
-                ),
-              ),
-              Text(
-                longitude.toString(),
-                style: const TextStyle(
-                  color: AppColors.white,
-                ),
-              ),
-            ],
-          ),
-          const SpaceHeight(4.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                'Latitude',
-                style: TextStyle(
-                  color: AppColors.white,
-                ),
-              ),
-              Text(
-                latitude.toString(),
-                style: const TextStyle(
-                  color: AppColors.white,
-                ),
-              ),
-            ],
-          ),
-          const SpaceHeight(12.0),
-          Button.filled(
-            color: AppColors.white.withOpacity(0.5),
-            onPressed: () {
-              context.push(LocationPage(
-                latitude: latitude,
-                longitude: longitude,
-              ));
-            },
-            label: 'Lihat di Peta',
-            fontSize: 14.0,
-            height: 40.0,
-          ),
-        ],
-      ),
-    );
+    final pageContext = context;
+    final point = HistoryCoordinates.parse(coordinates ??
+        (latitude != null && longitude != null
+            ? '$latitude,$longitude'
+            : null));
+    final colors = Theme.of(context).colorScheme;
+    if (!recorded || point == null) {
+      return Text(recorded ? 'Lokasi belum tersedia' : 'Lokasi belum tercatat',
+          style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12));
+    }
+    return Material(
+        color: Colors.transparent,
+        child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => showModalBottomSheet<void>(
+                context: context,
+                showDragHandle: true,
+                isScrollControlled: true,
+                builder: (context) => SafeArea(
+                    child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                  isAttendance
+                                      ? 'Lokasi masuk'
+                                      : 'Lokasi pulang',
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
+                              const SizedBox(height: 12),
+                              const Text(
+                                  'Koordinat yang tersimpan pada catatan kehadiran.'),
+                              const SizedBox(height: 16),
+                              Text('Lintang: ${point.latitude}'),
+                              Text('Bujur: ${point.longitude}'),
+                              const SizedBox(height: 20),
+                              FilledButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.of(pageContext).push(
+                                        MaterialPageRoute<void>(
+                                            builder: (_) => LocationPage(
+                                                latitude: point.latitude,
+                                                longitude: point.longitude)));
+                                  },
+                                  child: const Text('Lihat di peta')),
+                            ])))),
+            child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(children: [
+                  Icon(Icons.location_on_outlined,
+                      size: 19, color: colors.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                      child: Text('Lokasi tercatat',
+                          style:
+                              TextStyle(color: colors.primary, fontSize: 13))),
+                  Icon(Icons.chevron_right,
+                      size: 18, color: colors.onSurfaceVariant)
+                ]))));
   }
 }
