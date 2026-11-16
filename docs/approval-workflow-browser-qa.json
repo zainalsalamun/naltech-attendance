@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-21",
+  "scope": "Disposable SQLite, real Chrome web forms, synthetic accounts, no main database changes",
+  "checks": [
+    "workflow saved through web form",
+    "configuration remains open after theme light",
+    "configuration light desktop no page overflow",
+    "configuration light narrow no page overflow",
+    "configuration remains open after theme dark",
+    "configuration dark desktop no page overflow",
+    "configuration dark narrow no page overflow",
+    "native-compatible API creates workflow snapshot",
+    "API exposes two stages",
+    "HR cannot skip manager stage",
+    "first approval advances active stage",
+    "manager cannot approve HR stage",
+    "waiting-hr light desktop no page overflow",
+    "waiting-hr light narrow no page overflow",
+    "waiting-hr dark desktop no page overflow",
+    "waiting-hr dark narrow no page overflow",
+    "final stage locks decision form",
+    "manager history retained",
+    "HR history retained",
+    "API final approval only after both stages",
+    "final light desktop no page overflow",
+    "final light narrow no page overflow",
+    "final dark desktop no page overflow",
+    "final dark narrow no page overflow",
+    "supervisor sees configuration read only"
+  ],
+  "passed": 25,
+  "screenshots": "docs/screenshots/approval-workflows"
+}

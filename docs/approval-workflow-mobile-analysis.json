@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-21",
+  "completed": true,
+  "project_errors": 0,
+  "target_diagnostics": {
+    "submission_list_page.dart": [],
+    "submission_record.dart": [],
+    "submission_remote_datasource.dart": [],
+    "submission_cubit.dart": [],
+    "submission_form_page.dart": []
+  }
+}

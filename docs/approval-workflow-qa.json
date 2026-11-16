@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-21",
+  "scope": "Isolated SQLite and storage; synthetic fixtures; main database not migrated",
+  "backend": {
+    "passed": 111,
+    "assertions": 1438
+  },
+  "flutter": {
+    "passed": 69,
+    "narrow_viewport": "320x640",
+    "text_scale": 1.8
+  },
+  "chrome": {
+    "passed": 25,
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "widths": [
+      1440,
+      390
+    ]
+  },
+  "widget_visual": {
+    "passed": 1,
+    "screenshots": 2,
+    "native_device_capture": false
+  },
+  "blade": {
+    "compiled": true,
+    "compiled_php_syntax_checked": true,
+    "isolated_cache_cleared": true
+  },
+  "main_database_changed": false,
+  "native_multistage_retest": false,
+  "qa_server_stopped": true,
+  "report": "hris-h3-workflows.md"
+}
