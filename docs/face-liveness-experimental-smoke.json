@@ -1,0 +1,13 @@
+{
+  "scope": "Experimental NCNN MiniFASNet inference on a public digital sample, not a camera presentation test",
+  "models_loaded": true,
+  "diagnostic_completed": true,
+  "attendance_eligible": false,
+  "production_liveness_available": false,
+  "limitations": [
+    "No live-camera positive control",
+    "No physical print/screen/video replay dataset",
+    "No calibrated threshold or false-accept benchmark",
+    "Experimental output never authorizes attendance"
+  ]
+}
