@@ -1,0 +1,16 @@
+{
+  "scope": "Disposable SQLite/storage, synthetic employees; no main database changes",
+  "checks": [
+    "create mobile no page overflow",
+    "create and uppercase number",
+    "light list mobile no page overflow",
+    "dark list mobile no page overflow",
+    "archive cancel",
+    "archived absent from active filter",
+    "archive filter and number search",
+    "actor reason history renders",
+    "reactivation returns employee to active list"
+  ],
+  "passed": 9,
+  "screenshots": "docs/screenshots/employee-lifecycle"
+}

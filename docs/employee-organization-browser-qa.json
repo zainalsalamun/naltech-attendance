@@ -1,0 +1,27 @@
+{
+  "scope": "Disposable SQLite/storage and synthetic employees; no main database changes",
+  "checks": [
+    "empty units state",
+    "unit-form light desktop no page overflow",
+    "unit-form light mobile no page overflow",
+    "unit-form dark desktop no page overflow",
+    "unit-form dark mobile no page overflow",
+    "unit created uppercase",
+    "unit-list light desktop no page overflow",
+    "unit-list light mobile no page overflow",
+    "unit-list dark desktop no page overflow",
+    "unit-list dark mobile no page overflow",
+    "employee-mapping light desktop no page overflow",
+    "employee-mapping light mobile no page overflow",
+    "employee-mapping dark desktop no page overflow",
+    "employee-mapping dark mobile no page overflow",
+    "legacy department retained alongside unit",
+    "inactive hidden from active filter",
+    "inactive filter works",
+    "existing inactive unit retained",
+    "legacy retained after inactive unit",
+    "inactive unit unavailable to new employees"
+  ],
+  "passed": 20,
+  "screenshots": "docs/screenshots/employee-organization"
+}
