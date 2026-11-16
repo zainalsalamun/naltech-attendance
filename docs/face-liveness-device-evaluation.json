@@ -1,0 +1,448 @@
+{
+  "version": 1,
+  "status": "experimental_evaluation_only",
+  "attendance_eligible": false,
+  "production_ready": false,
+  "threshold": 0.8,
+  "coverage": {
+    "development": {
+      "samples": {
+        "live": 1,
+        "print": 1,
+        "screen": 1,
+        "video": 1
+      },
+      "sessions": {
+        "live": 1,
+        "print": 1,
+        "screen": 1,
+        "video": 1
+      },
+      "subjects": 1,
+      "devices": 1,
+      "lighting_conditions": 1,
+      "missing_kinds": []
+    },
+    "holdout": {
+      "samples": {},
+      "sessions": {
+        "live": 0,
+        "print": 0,
+        "screen": 0,
+        "video": 0
+      },
+      "subjects": 0,
+      "devices": 0,
+      "lighting_conditions": 0,
+      "missing_kinds": [
+        "live",
+        "print",
+        "screen",
+        "video"
+      ]
+    }
+  },
+  "results": {
+    "development": {
+      "live": {
+        "samples": 1,
+        "scored": 1,
+        "quality_rejections": 0,
+        "accepted_samples": 1,
+        "accepted_sample_rate": 1.0,
+        "sessions": 1,
+        "sessions_with_any_acceptance": 1,
+        "session_any_acceptance_rate": 1.0
+      },
+      "print": {
+        "samples": 1,
+        "scored": 1,
+        "quality_rejections": 0,
+        "accepted_samples": 1,
+        "accepted_sample_rate": 1.0,
+        "sessions": 1,
+        "sessions_with_any_acceptance": 1,
+        "session_any_acceptance_rate": 1.0
+      },
+      "screen": {
+        "samples": 1,
+        "scored": 1,
+        "quality_rejections": 0,
+        "accepted_samples": 1,
+        "accepted_sample_rate": 1.0,
+        "sessions": 1,
+        "sessions_with_any_acceptance": 1,
+        "session_any_acceptance_rate": 1.0
+      },
+      "video": {
+        "samples": 1,
+        "scored": 1,
+        "quality_rejections": 0,
+        "accepted_samples": 1,
+        "accepted_sample_rate": 1.0,
+        "sessions": 1,
+        "sessions_with_any_acceptance": 1,
+        "session_any_acceptance_rate": 1.0
+      }
+    },
+    "holdout": {
+      "live": {
+        "samples": 0,
+        "scored": 0,
+        "quality_rejections": 0,
+        "accepted_samples": 0,
+        "accepted_sample_rate": null,
+        "sessions": 0,
+        "sessions_with_any_acceptance": 0,
+        "session_any_acceptance_rate": null
+      },
+      "print": {
+        "samples": 0,
+        "scored": 0,
+        "quality_rejections": 0,
+        "accepted_samples": 0,
+        "accepted_sample_rate": null,
+        "sessions": 0,
+        "sessions_with_any_acceptance": 0,
+        "session_any_acceptance_rate": null
+      },
+      "screen": {
+        "samples": 0,
+        "scored": 0,
+        "quality_rejections": 0,
+        "accepted_samples": 0,
+        "accepted_sample_rate": null,
+        "sessions": 0,
+        "sessions_with_any_acceptance": 0,
+        "session_any_acceptance_rate": null
+      },
+      "video": {
+        "samples": 0,
+        "scored": 0,
+        "quality_rejections": 0,
+        "accepted_samples": 0,
+        "accepted_sample_rate": null,
+        "sessions": 0,
+        "sessions_with_any_acceptance": 0,
+        "session_any_acceptance_rate": null
+      }
+    }
+  },
+  "development_sweep": [
+    {
+      "threshold": 0.5,
+      "results": {
+        "live": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "print": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "screen": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "video": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        }
+      }
+    },
+    {
+      "threshold": 0.6,
+      "results": {
+        "live": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "print": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "screen": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "video": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        }
+      }
+    },
+    {
+      "threshold": 0.7,
+      "results": {
+        "live": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "print": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "screen": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "video": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        }
+      }
+    },
+    {
+      "threshold": 0.8,
+      "results": {
+        "live": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "print": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "screen": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "video": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        }
+      }
+    },
+    {
+      "threshold": 0.9,
+      "results": {
+        "live": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "print": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "screen": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "video": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        }
+      }
+    },
+    {
+      "threshold": 0.95,
+      "results": {
+        "live": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "print": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "screen": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        },
+        "video": {
+          "samples": 1,
+          "scored": 1,
+          "quality_rejections": 0,
+          "accepted_samples": 1,
+          "accepted_sample_rate": 1.0,
+          "sessions": 1,
+          "sessions_with_any_acceptance": 1,
+          "session_any_acceptance_rate": 1.0
+        }
+      }
+    }
+  ],
+  "latency_ms": {
+    "median": 38.32,
+    "maximum": 73.21
+  },
+  "limits": [
+    "Human labels are not independently attested.",
+    "Frames within a session are correlated; sample counts are not independent trials.",
+    "Missing categories and small cohorts cannot establish spoof resistance.",
+    "Single-frame diagnostic does not validate camera origin or defeat injection.",
+    "No threshold is automatically promoted to production."
+  ],
+  "run_context": {
+    "date": "2026-10-21",
+    "device": "OPPO CPH2591",
+    "capture_target": "QA wrapper using enrollment FaceCapturePage",
+    "presentation_labels": "operator confirmed physical print, another screen and playing video",
+    "calibration": "not performed; one sample per category, no holdout",
+    "model_provenance": {
+      "repository": "opencv/opencv_zoo",
+      "commit": "47534e27c9851bb1128ccc0102f1145e27f23f98",
+      "models": {
+        "yunet": {
+          "filename": "face_detection_yunet_2023mar.onnx",
+          "sha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4"
+        },
+        "sface": {
+          "filename": "face_recognition_sface_2021dec.onnx",
+          "sha256": "0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79"
+        }
+      }
+    }
+  },
+  "cleanup": {
+    "phone_qa_samples_deleted": true,
+    "computer_private_samples_deleted": true,
+    "retained": "aggregate report only"
+  },
+  "conclusion": {
+    "status": "experimental_path_failed_initial_spoof_test",
+    "live_accepted": 1,
+    "spoof_samples_accepted": 3,
+    "spoof_samples_tested": 3,
+    "decision": "Do not integrate current experimental liveness with attendance; audit preprocessing and evaluate alternatives.",
+    "limitation": "One trial per category, one person/device, no holdout; not a population accuracy estimate."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "scope": "synthetic adapter/model execution audit, not spoof or accuracy validation",
+  "source_commit": "83329c97ba1153e2bbdd374dee1b5d33a7367dc7",
+  "crop_cases": 1005,
+  "checks": {
+    "crop_matches_pinned_cpp_oracle": true,
+    "bgr_tensor_order_and_unscaled_values": true,
+    "input_size_80x80": true,
+    "opencv_linear_resize_default": true,
+    "live_class_is_index_one": true,
+    "both_verified_models_executed": true,
+    "never_attendance_eligible": true
+  },
+  "passed": 7,
+  "production_ready": false,
+  "attendance_eligible": false,
+  "limitations": [
+    "C++ oracle covers crop arithmetic only, not independent full inference.",
+    "YuNet boxes and JPEG capture differ from upstream detector/NV21 pipeline.",
+    "Previous private camera photos were deleted; no before/after score comparison.",
+    "Physical spoof presentation must be tested again after this correction."
+  ]
+}
