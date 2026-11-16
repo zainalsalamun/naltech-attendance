@@ -1,0 +1,128 @@
+{
+  "device_model": "OPPO-CPH2591",
+  "android_version": "15",
+  "build_mode": "debug",
+  "scope": "single photo capture and ML Kit detection; no identity/liveness/upload",
+  "detector_lifetime": "new detector each sample",
+  "first_sample": {
+    "sample": 1,
+    "faces": 1,
+    "capture_ms": 696,
+    "detection_ms": 1179,
+    "total_ms": 1875
+  },
+  "subsequent_samples": {
+    "samples": 9,
+    "capture_ms": {
+      "median": 442,
+      "p95_nearest_rank": 452
+    },
+    "detection_ms": {
+      "median": 195,
+      "p95_nearest_rank": 217
+    },
+    "total_ms": {
+      "median": 637,
+      "p95_nearest_rank": 661
+    },
+    "one_face_samples": 9,
+    "zero_face_samples": 0,
+    "multiple_face_samples": 0
+  },
+  "all_samples": {
+    "samples": 10,
+    "capture_ms": {
+      "median": 443.0,
+      "p95_nearest_rank": 696
+    },
+    "detection_ms": {
+      "median": 195.5,
+      "p95_nearest_rank": 1179
+    },
+    "total_ms": {
+      "median": 637.5,
+      "p95_nearest_rank": 1875
+    },
+    "one_face_samples": 10,
+    "zero_face_samples": 0,
+    "multiple_face_samples": 0
+  },
+  "samples": [
+    {
+      "sample": 1,
+      "faces": 1,
+      "capture_ms": 696,
+      "detection_ms": 1179,
+      "total_ms": 1875
+    },
+    {
+      "sample": 2,
+      "faces": 1,
+      "capture_ms": 416,
+      "detection_ms": 191,
+      "total_ms": 607
+    },
+    {
+      "sample": 3,
+      "faces": 1,
+      "capture_ms": 444,
+      "detection_ms": 217,
+      "total_ms": 661
+    },
+    {
+      "sample": 4,
+      "faces": 1,
+      "capture_ms": 446,
+      "detection_ms": 192,
+      "total_ms": 638
+    },
+    {
+      "sample": 5,
+      "faces": 1,
+      "capture_ms": 444,
+      "detection_ms": 194,
+      "total_ms": 639
+    },
+    {
+      "sample": 6,
+      "faces": 1,
+      "capture_ms": 398,
+      "detection_ms": 210,
+      "total_ms": 608
+    },
+    {
+      "sample": 7,
+      "faces": 1,
+      "capture_ms": 442,
+      "detection_ms": 195,
+      "total_ms": 637
+    },
+    {
+      "sample": 8,
+      "faces": 1,
+      "capture_ms": 452,
+      "detection_ms": 196,
+      "total_ms": 649
+    },
+    {
+      "sample": 9,
+      "faces": 1,
+      "capture_ms": 439,
+      "detection_ms": 192,
+      "total_ms": 632
+    },
+    {
+      "sample": 10,
+      "faces": 1,
+      "capture_ms": 422,
+      "detection_ms": 206,
+      "total_ms": 628
+    }
+  ],
+  "limitations": [
+    "Single device and uncontrolled lighting; not an accuracy benchmark",
+    "First sample is first in this run, not proven fresh install/model cold start",
+    "Subsequent samples recreate detector; not a persistent-detector benchmark",
+    "No legacy streaming comparison, CPU/RAM profile or server verification"
+  ]
+}
