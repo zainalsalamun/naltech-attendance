@@ -1,0 +1,13 @@
+{
+  "completed": true,
+  "target_diagnostics": {
+    "lib/presentation/home/bloc/qr_scan/qr_scan_cubit.dart": [],
+    "lib/presentation/home/pages/attandences/scanner_page.dart": [],
+    "lib/presentation/home/pages/home_page.dart": [],
+    "lib/data/datasources/attendance_remote_datasource.dart": [],
+    "lib/presentation/home/bloc/workspace_home/workspace_home_cubit.dart": [],
+    "lib/data/models/response/attendance_context.dart": []
+  },
+  "project_errors": 0,
+  "scope": "H2 effective-shift production files; SDK analysis server via dartaotruntime"
+}

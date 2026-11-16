@@ -1,0 +1,95 @@
+{
+  "title": "Verifikasi Browser Alur Penugasan Shift Web & Penanganan Konflik H2",
+  "scope": "Disposable SQLite & Loopback Server 127.0.0.1:8018",
+  "timestamp": "2026-10-30T07:07:45.562Z",
+  "total_checks": 14,
+  "passed_checks": 14,
+  "failed_checks": 0,
+  "checks": [
+    {
+      "id": "B01-LOGIN",
+      "status": "lulus",
+      "description": "Login HR penguji berhasil ke Dashboard",
+      "details": ""
+    },
+    {
+      "id": "B02-CREATE-SHIFT",
+      "status": "lulus",
+      "description": "Master shift lintas tengah malam berhasil dibuat",
+      "details": "URL: http://127.0.0.1:8018/shifts"
+    },
+    {
+      "id": "B03-SELECT-EMPLOYEE",
+      "status": "lulus",
+      "description": "Form jadwal efektif karyawan termuat",
+      "details": ""
+    },
+    {
+      "id": "B04-SHIFT-OPTION-EXISTS",
+      "status": "lulus",
+      "description": "Opsi master shift Malam QA tersedia pada form",
+      "details": ""
+    },
+    {
+      "id": "B05-VALIDATE-REASON-REQUIRED",
+      "status": "lulus",
+      "description": "Form menolak membuka pratinjau jika alasan kosong",
+      "details": ""
+    },
+    {
+      "id": "B06-OPEN-PREVIEW-DIALOG",
+      "status": "lulus",
+      "description": "Dialog pratinjau penugasan jadwal terbuka",
+      "details": ""
+    },
+    {
+      "id": "B07-PREVIEW-DATA-MATCH",
+      "status": "lulus",
+      "description": "Data sebelum/sesudah dan alasan pada dialog pratinjau akurat",
+      "details": ""
+    },
+    {
+      "id": "B08-PREVIEW-COPY-ACCURATE",
+      "status": "lulus",
+      "description": "Copy teks dampak shift malam telah diselaraskan persis sesuai arahan pengguna",
+      "details": "Aktual: \"Jadwal baru akan aktif mulai tanggal mendatang (2026-10-31). Sesi kehadiran hari ini dan catatan lampau tetap menggunakan jadwal sebelumnya (tidak diubah). Catatan: Jam pulang berada pada hari berikutnya. Tanggal kerja mengikuti jadwal yang ditentukan server dan dapat berbeda dari tanggal kalender saat check-in.\""
+    },
+    {
+      "id": "B09-BACK-NO-MUTATION",
+      "status": "lulus",
+      "description": "Tombol Kembali mengedit menutup dialog tanpa mutasi data dan mempertahankan seluruh isian form",
+      "details": ""
+    },
+    {
+      "id": "B10-CONFIRM-LOCK-ACTIVE",
+      "status": "lulus",
+      "description": "Tombol konfirmasi terkunci (disabled) mencegah mutasi ganda",
+      "details": ""
+    },
+    {
+      "id": "B11-MUTATION-SUCCESS",
+      "status": "lulus",
+      "description": "Penugasan jadwal baru berhasil disimpan dan riwayat tampil di tabel",
+      "details": "URL=http://127.0.0.1:8018/effective-shifts?user_id=4, notice=\"Jadwal efektif disimpan. Riwayat dan absensi yang sudah tercatat dipertahankan.\""
+    },
+    {
+      "id": "B12-CONFLICT-NOTICE-DISPLAYED",
+      "status": "lulus",
+      "description": "Kotak pemberitahuan konflik konkurensi (HTTP 409) tampil membawa pesan informatif",
+      "details": ""
+    },
+    {
+      "id": "B13-INPUTS-PRESERVED-ON-CONFLICT",
+      "status": "lulus",
+      "description": "Seluruh input form (alasan, tanggal) dipulihkan utuh melalui old() dan expected_id ter-refresh otomatis",
+      "details": ""
+    },
+    {
+      "id": "B14-LEGACY-SHIFT-LOCKED",
+      "status": "lulus",
+      "description": "Selector shift lama di form karyawan terkunci disabled dan menyediakan tautan ke jadwal efektif",
+      "details": ""
+    }
+  ],
+  "screenshots_dir": "docs/screenshots/effective-shifts"
+}
