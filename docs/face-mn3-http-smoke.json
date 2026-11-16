@@ -1,0 +1,14 @@
+{
+  "scope": "real MN3 HTTP smoke with public fixture; not camera/spoof accuracy",
+  "checks": {
+    "authentication_required": true,
+    "actual_mn3_preview": true,
+    "production_liveness_still_unavailable": true,
+    "matching_does_not_authorize": true,
+    "bad_photo_rejected": true,
+    "client_proof_rejected": true
+  },
+  "passed": 6,
+  "production_ready": false,
+  "attendance_eligible": false
+}
