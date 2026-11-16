@@ -1,0 +1,13 @@
+{
+  "device_model": "OPPO-CPH2591",
+  "android_version": "15",
+  "build_mode": "profile",
+  "phase": "first profile attempt startup; camera permission not yet active; not the passing timing run",
+  "measurement": "single Android dumpsys meminfo snapshot; not peak, average or baseline comparison",
+  "values": {
+    "total_pss_kb": 114394,
+    "total_rss_kb": 148844,
+    "java_heap_pss_kb": 2264,
+    "native_heap_pss_kb": 24064
+  }
+}
