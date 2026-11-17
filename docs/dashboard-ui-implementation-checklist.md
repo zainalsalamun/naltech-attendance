@@ -81,7 +81,8 @@ Palet pada preview berfungsi untuk review desain; strip kode warna tidak perlu d
 - [x] Buat layout utama: ringkasan di atas, tabel di kiri, pengajuan/informasi kantor di kanan.
 - [x] Sesuaikan layout desktop, tablet, dan layar sempit; sediakan navigasi yang tetap dapat digunakan.
 - [x] Periksa judul/nama perusahaan panjang, keyboard navigation, fokus, dan label kontrol ikon.
-- [ ] Pastikan profil dan keluar akun tetap dapat diakses sesuai alur aplikasi yang ada.
+- [x] Pastikan profil dan keluar akun tetap dapat diakses sesuai alur aplikasi yang ada.
+- [x] Restrukturisasi navigasi sidebar menjadi 6 grup accordion bertingkat dengan preferensi isolasi akun/perusahaan dan drawer mobile responsif ([dokumentasi](sidebar-navigation-restructuring.md)).
 
 **Selesai ketika:** kerangka Dashboard mengikuti Workspace dan seluruh navigasi yang ditampilkan berfungsi.
 
@@ -219,3 +220,7 @@ Home bukan keseluruhan Dashboard web. Status halaman lain kini ditrack pada [tim
 ## Status lintas web — 20 Oktober 2026
 
 Modul W0–W11 sudah tersedia; status historis “Karyawan berikutnya” di atas menggambarkan tahap awal. Acuan terkini adalah [timeline web](web-ui-timeline.md) dan [laporan review W12](web-ui-qa-review.md). Review teknis lanjutan sudah memperbaiki fokus menu akun, akses keyboard tabel dan indikator fokus form. Login/logout memakai sesi fixture nyata telah diperiksa pada W11. Persetujuan visual pengguna dan batas aturan bisnis tetap terpisah dari kelulusan QA lokal.
+
+## Pembaruan jadwal efektif H2 — 21 Oktober 2026
+
+[Jadwal efektif dan checkout lintas malam](hris-h2-effective-shifts.md) tersedia dan diuji terisolasi. Dashboard memakai salinan jadwal catatan baru; Beranda mobile memakai tanggal kerja/sesi dari server. Sepuluh pemeriksaan Chrome light/dark desktop/sempit lulus. Migrasi database utama, review pengguna dan QA native perubahan H2 masih terbuka; QA OPPO H4 sebelumnya bukan bukti H2.
