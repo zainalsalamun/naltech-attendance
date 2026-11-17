@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-21",
+  "scope": "Review fixes; no main database migrations or seeds",
+  "sqlite": {
+    "tests": 140,
+    "assertions": 1819,
+    "passed": true
+  },
+  "mysql": {
+    "version": "9.3.0",
+    "engine": "InnoDB",
+    "tests": 18,
+    "assertions": 194,
+    "errors": 0,
+    "failures": 0,
+    "seconds": 56.371142,
+    "isolated_database": true,
+    "restricted_user": true,
+    "scenarios": [
+      "recap rate, employment boundaries, archived employees and range limit",
+      "initial setup password validation and preservation",
+      "leave balance lifecycle and edge cases",
+      "two submissions compete for last day: one 200, one 422, one reserve",
+      "two approvals: one 200, one 409, one use",
+      "two cancellation approvals: one 200, one 409, one restore_used"
+    ],
+    "cleanup_completed": true
+  },
+  "browser": {
+    "checks": 10,
+    "passed": true,
+    "report": "recap-review-browser-qa.json"
+  },
+  "limitations": [
+    "MySQL 8 and MariaDB not tested in this run",
+    "No full mobile or release regression in this slice",
+    "Employment period gaps/reactivations cannot be reconstructed from joined_on/left_on alone"
+  ]
+}
