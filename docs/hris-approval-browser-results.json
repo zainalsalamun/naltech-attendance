@@ -1,0 +1,355 @@
+{
+  "timestamp": "2026-10-29T07:26:24.129Z",
+  "total_checks": 58,
+  "passed_checks": 58,
+  "results": [
+    {
+      "id": "B01",
+      "status": "lulus",
+      "description": "Supervisor actionable permission filter returns active reviewable rows",
+      "details": ""
+    },
+    {
+      "id": "B01",
+      "status": "lulus",
+      "description": "Actionable permission row renders primary Tinjau button",
+      "details": ""
+    },
+    {
+      "id": "B01",
+      "status": "lulus",
+      "description": "Permission waiting_others queue contains pending non-actionable rows",
+      "details": ""
+    },
+    {
+      "id": "B01",
+      "status": "lulus",
+      "description": "Overtime actionable filter loads correctly",
+      "details": ""
+    },
+    {
+      "id": "B01",
+      "status": "lulus",
+      "description": "Overtime waiting_others queue contains supervisor own request",
+      "details": ""
+    },
+    {
+      "id": "B01",
+      "status": "lulus",
+      "description": "Reimbursement without workflow is actionable for direct supervisor",
+      "details": ""
+    },
+    {
+      "id": "B02",
+      "status": "lulus",
+      "description": "Pagination summary reflects >10 items",
+      "details": ""
+    },
+    {
+      "id": "B02",
+      "status": "lulus",
+      "description": "Pagination has next page link",
+      "details": ""
+    },
+    {
+      "id": "B02",
+      "status": "lulus",
+      "description": "Next page URL preserves action_context filter in query string",
+      "details": ""
+    },
+    {
+      "id": "B02",
+      "status": "lulus",
+      "description": "Page 2 renders remaining candidates without loss or duplicates",
+      "details": ""
+    },
+    {
+      "id": "B03",
+      "status": "lulus",
+      "description": "HR cannot see decision form on stage 1 pending permission",
+      "details": ""
+    },
+    {
+      "id": "B03",
+      "status": "lulus",
+      "description": "Stage 1 active reviewer clearly displayed to HR",
+      "details": ""
+    },
+    {
+      "id": "B04",
+      "status": "lulus",
+      "description": "Self-approval strictly forbidden: no decision form for owner",
+      "details": ""
+    },
+    {
+      "id": "B04",
+      "status": "lulus",
+      "description": "Clear notice explaining owner submission review policy",
+      "details": ""
+    },
+    {
+      "id": "B05",
+      "status": "lulus",
+      "description": "Fallback reviewer receives actionable task when primary reviewer is archived",
+      "details": ""
+    },
+    {
+      "id": "B05",
+      "status": "lulus",
+      "description": "Fallback reviewer can decide when primary reviewer is archived",
+      "details": ""
+    },
+    {
+      "id": "B06",
+      "status": "lulus",
+      "description": "Submission with empty reviewers is NOT dropped by SQL NULL in waiting_others",
+      "details": ""
+    },
+    {
+      "id": "B06",
+      "status": "lulus",
+      "description": "Notice clearly indicates reviewer is unavailable",
+      "details": ""
+    },
+    {
+      "id": "B06",
+      "status": "lulus",
+      "description": "Reimbursement with empty workflow [] treated as single-decision for direct manager",
+      "details": ""
+    },
+    {
+      "id": "B07",
+      "status": "lulus",
+      "description": "Legacy needs_review does not render normal decision form",
+      "details": ""
+    },
+    {
+      "id": "B07",
+      "status": "lulus",
+      "description": "Legacy reconciliation notice displayed",
+      "details": ""
+    },
+    {
+      "id": "B07",
+      "status": "lulus",
+      "description": "Direct decision endpoint returns 409 Conflict for legacy needs_review (got 409)",
+      "details": ""
+    },
+    {
+      "id": "B08",
+      "status": "lulus",
+      "description": "Decision review dialog opens upon clicking Tinjau Keputusan",
+      "details": ""
+    },
+    {
+      "id": "B08",
+      "status": "lulus",
+      "description": "Dialog displays correct applicant name",
+      "details": ""
+    },
+    {
+      "id": "B08",
+      "status": "lulus",
+      "description": "Dialog displays module and date range",
+      "details": ""
+    },
+    {
+      "id": "B08",
+      "status": "lulus",
+      "description": "Dialog displays exact user reason",
+      "details": ""
+    },
+    {
+      "id": "B08",
+      "status": "lulus",
+      "description": "Dialog displays stage 1 leave impact preview",
+      "details": ""
+    },
+    {
+      "id": "B09",
+      "status": "lulus",
+      "description": "Kembali mengedit closes dialog without mutation",
+      "details": ""
+    },
+    {
+      "id": "B09",
+      "status": "lulus",
+      "description": "Inputs preserved after closing dialog",
+      "details": ""
+    },
+    {
+      "id": "B09",
+      "status": "lulus",
+      "description": "Focus correctly restored to trigger button after back",
+      "details": ""
+    },
+    {
+      "id": "B09",
+      "status": "lulus",
+      "description": "Escape key cleanly closes dialog",
+      "details": ""
+    },
+    {
+      "id": "B10",
+      "status": "lulus",
+      "description": "Confirm button is initially enabled",
+      "details": ""
+    },
+    {
+      "id": "B10",
+      "status": "lulus",
+      "description": "Exactly one POST request dispatched despite rapid multiple clicks",
+      "details": "got 1 requests"
+    },
+    {
+      "id": "B10",
+      "status": "lulus",
+      "description": "Exactly one approval event recorded in database",
+      "details": "before 0, after 1"
+    },
+    {
+      "id": "B10",
+      "status": "lulus",
+      "description": "Approval version incremented exactly once",
+      "details": "before 0, after 1"
+    },
+    {
+      "id": "B10",
+      "status": "lulus",
+      "description": "No duplicate or premature ledger entry created at stage 1",
+      "details": "before 1, after 1"
+    },
+    {
+      "id": "B11",
+      "status": "lulus",
+      "description": "Stage 1 approval advances progress to Stage 2",
+      "details": ""
+    },
+    {
+      "id": "B11",
+      "status": "lulus",
+      "description": "Active approver transitioned to HR Manager",
+      "details": ""
+    },
+    {
+      "id": "B11",
+      "status": "lulus",
+      "description": "Final stage option labeled Setujui Pengajuan (Final)",
+      "details": ""
+    },
+    {
+      "id": "B11",
+      "status": "lulus",
+      "description": "Final impact preview describes quota conversion to used days",
+      "details": ""
+    },
+    {
+      "id": "B11",
+      "status": "lulus",
+      "description": "Final approval grants Disetujui status",
+      "details": ""
+    },
+    {
+      "id": "B12",
+      "status": "lulus",
+      "description": "Form Keputusan Pembatalan rendered for cancellation_requested",
+      "details": ""
+    },
+    {
+      "id": "B12",
+      "status": "lulus",
+      "description": "Notice explains leave remains active until cancellation approved",
+      "details": ""
+    },
+    {
+      "id": "B13",
+      "status": "lulus",
+      "description": "Rejection preview specifies leave remains approved and balance remains used",
+      "details": ""
+    },
+    {
+      "id": "B13",
+      "status": "lulus",
+      "description": "Rejected cancellation returns status to Disetujui and logs cancellation_rejected event",
+      "details": ""
+    },
+    {
+      "id": "B14",
+      "status": "lulus",
+      "description": "Form Keputusan Pembatalan rendered for cancel approval row",
+      "details": ""
+    },
+    {
+      "id": "B14",
+      "status": "lulus",
+      "description": "Approve cancellation preview specifies status cancelled and balance restoration",
+      "details": ""
+    },
+    {
+      "id": "B14",
+      "status": "lulus",
+      "description": "Approved cancellation sets status to Dibatalkan and logs cancellation_approved event",
+      "details": ""
+    },
+    {
+      "id": "B15",
+      "status": "lulus",
+      "description": "Non-balance leave intermediate approval does not claim quota deduction",
+      "details": ""
+    },
+    {
+      "id": "B15",
+      "status": "lulus",
+      "description": "Non-balance leave rejection explicitly specifies no quota impact",
+      "details": ""
+    },
+    {
+      "id": "B15",
+      "status": "lulus",
+      "description": "Overtime does not offer leave cancellation form",
+      "details": ""
+    },
+    {
+      "id": "B16",
+      "status": "lulus",
+      "description": "Server rejects stale approval_version with 409 Conflict",
+      "details": ""
+    },
+    {
+      "id": "B16",
+      "status": "lulus",
+      "description": "Conflict message warns user about version change",
+      "details": ""
+    },
+    {
+      "id": "B17",
+      "status": "lulus",
+      "description": "Foreign tenant user denied access to other company submissions",
+      "details": ""
+    },
+    {
+      "id": "B17",
+      "status": "lulus",
+      "description": "Inactive account authentication rejected by server",
+      "details": ""
+    },
+    {
+      "id": "B18",
+      "status": "lulus",
+      "description": "HTML/XSS characters rendered as escaped text",
+      "details": ""
+    },
+    {
+      "id": "B18",
+      "status": "lulus",
+      "description": "XSS tags properly entity-encoded",
+      "details": ""
+    },
+    {
+      "id": "B18",
+      "status": "lulus",
+      "description": "No horizontal page overflow on desktop 1440",
+      "details": ""
+    }
+  ]
+}
