@@ -1,0 +1,303 @@
+{
+  "executed_at": "2026-10-29T15:47:38.501Z",
+  "environment": "QA Disposable SQLite + Puppeteer CDP Chrome 156",
+  "total_scenarios": 12,
+  "passed_scenarios": 12,
+  "failed_scenarios": 0,
+  "checks": [
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Attendance edit page loaded successfully",
+      "details": ""
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Correction preview dialog opens upon clicking Tinjau koreksi",
+      "details": ""
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Preview dialog displays updated time_in 08:00",
+      "details": ""
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Preview dialog displays exact trimmed reason",
+      "details": ""
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Kembali mengedit cleanly closes dialog without mutation",
+      "details": ""
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Inputs preserved after closing dialog",
+      "details": ""
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Keyboard focus restored to trigger button after back",
+      "details": ""
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Exactly one submission request dispatched despite rapid clicks",
+      "details": ""
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Exactly one audit event recorded in database",
+      "details": "before 0, after 1"
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Attendance version incremented exactly once",
+      "details": "before 0, after 1"
+    },
+    {
+      "id": "H5-01",
+      "status": "lulus",
+      "description": "Database time_in updated accurately to 08:00:00",
+      "details": ""
+    },
+    {
+      "id": "H5-02",
+      "status": "lulus",
+      "description": "Client blocks review when reason is empty",
+      "details": ""
+    },
+    {
+      "id": "H5-02",
+      "status": "lulus",
+      "description": "Dialog remains closed when reason is empty",
+      "details": ""
+    },
+    {
+      "id": "H5-02",
+      "status": "lulus",
+      "description": "No-op submission displays info message",
+      "details": ""
+    },
+    {
+      "id": "H5-02",
+      "status": "lulus",
+      "description": "No-op does not insert duplicate fake audit event",
+      "details": ""
+    },
+    {
+      "id": "H5-03",
+      "status": "lulus",
+      "description": "Stale version submission rejected with 409 Conflict (got 409)",
+      "details": ""
+    },
+    {
+      "id": "H5-03",
+      "status": "lulus",
+      "description": "Conflict attempt does not write to audit log",
+      "details": ""
+    },
+    {
+      "id": "H5-04",
+      "status": "lulus",
+      "description": "Original work date remains untouched across midnight",
+      "details": ""
+    },
+    {
+      "id": "H5-04",
+      "status": "lulus",
+      "description": "Checkin UTC accurately converted (22:00 WIB = 15:00 UTC)",
+      "details": ""
+    },
+    {
+      "id": "H5-04",
+      "status": "lulus",
+      "description": "Checkout next day UTC accurately converted (06:00 WIB next day = 23:00 UTC)",
+      "details": ""
+    },
+    {
+      "id": "H5-05",
+      "status": "lulus",
+      "description": "Audit table lists correct actor",
+      "details": ""
+    },
+    {
+      "id": "H5-05",
+      "status": "lulus",
+      "description": "Audit table lists accurate reason",
+      "details": ""
+    },
+    {
+      "id": "H5-05",
+      "status": "lulus",
+      "description": "Audit table displays accurate before/after snapshot",
+      "details": ""
+    },
+    {
+      "id": "H5-05",
+      "status": "lulus",
+      "description": "Attendance preserves historical shift snapshot",
+      "details": ""
+    },
+    {
+      "id": "H5-06",
+      "status": "lulus",
+      "description": "Cancellation_requested recognized as effective leave in recap",
+      "details": "Row text: \n                        \n                            \n                                QA\n                                \n                                    QA Subordinate Staff\n                                    Staff\n                                \n                            \n                        \n                        \n                            Engineering\n                        \n                        1 hari\n                        0\n                        0\n                        0\n                        0 hari\n                        1 hari\n                        \n                            0 hari\n                                                    \n                        \n                            0,0 jam\n                        \n                        \n                            \n                                Detail Harian \n                            \n                        \n                    "
+    },
+    {
+      "id": "H5-06",
+      "status": "lulus",
+      "description": "Approved cancellation drops leave to 0 hari",
+      "details": ""
+    },
+    {
+      "id": "H5-06",
+      "status": "lulus",
+      "description": "Reading recap does not write to leave balance ledgers",
+      "details": ""
+    },
+    {
+      "id": "H5-07",
+      "status": "lulus",
+      "description": "Leave range overlap with attendance prioritizes presence without doubling scheduled days",
+      "details": "Row: \n                        \n                            \n                                QA\n                                \n                                    QA Subordinate Staff\n                                    Staff\n                                \n                            \n                        \n                        \n                            Engineering\n                        \n                        3 hari\n                        1\n                        0\n                        0\n                        1 hari\n                        2 hari\n                        \n                            0 hari\n                                                    \n                        \n                            9,0 jam\n                        \n                        \n                            \n                                Detail Harian \n                            \n                        \n                    "
+    },
+    {
+      "id": "H5-08",
+      "status": "lulus",
+      "description": "Future dates are not counted as alpa (absent)",
+      "details": ""
+    },
+    {
+      "id": "H5-09",
+      "status": "lulus",
+      "description": "Recap table paginates when total records exceed limit",
+      "details": ""
+    },
+    {
+      "id": "H5-09",
+      "status": "lulus",
+      "description": "Engineering unit filter contains subordinate",
+      "details": ""
+    },
+    {
+      "id": "H5-09",
+      "status": "lulus",
+      "description": "Marketing staff excluded by unit filter",
+      "details": ""
+    },
+    {
+      "id": "H5-09",
+      "status": "lulus",
+      "description": "Daily drilldown view loaded successfully",
+      "details": ""
+    },
+    {
+      "id": "H5-09",
+      "status": "lulus",
+      "description": "Daily drilldown displays attendance row with status",
+      "details": ""
+    },
+    {
+      "id": "H5-09",
+      "status": "lulus",
+      "description": "Daily drilldown displays leave status and cancellation requested notice",
+      "details": ""
+    },
+    {
+      "id": "H5-09",
+      "status": "lulus",
+      "description": "Return link cleanly preserves active filters",
+      "details": ""
+    },
+    {
+      "id": "H5-10",
+      "status": "lulus",
+      "description": "Date range > 90 days rejected with validation message",
+      "details": ""
+    },
+    {
+      "id": "H5-10",
+      "status": "lulus",
+      "description": "CSV export returns 200 OK (got 200)",
+      "details": ""
+    },
+    {
+      "id": "H5-10",
+      "status": "lulus",
+      "description": "CSV starts with UTF-8 BOM byte sequence 0xEF 0xBB 0xBF",
+      "details": ""
+    },
+    {
+      "id": "H5-10",
+      "status": "lulus",
+      "description": "CSV includes filtered employees across pages",
+      "details": ""
+    },
+    {
+      "id": "H5-10",
+      "status": "lulus",
+      "description": "CSV includes employees across pagination limit",
+      "details": ""
+    },
+    {
+      "id": "H5-11",
+      "status": "lulus",
+      "description": "Supervisor can access their subordinate attendance edit page",
+      "details": ""
+    },
+    {
+      "id": "H5-11",
+      "status": "lulus",
+      "description": "Supervisor accessing non-subordinate denied with 403 Forbidden (got 403)",
+      "details": ""
+    },
+    {
+      "id": "H5-11",
+      "status": "lulus",
+      "description": "Inactive account web login rejected and redirected to login with error",
+      "details": ""
+    },
+    {
+      "id": "H5-11",
+      "status": "lulus",
+      "description": "Inactive account API authentication returns 401 with Akun nonaktif",
+      "details": ""
+    },
+    {
+      "id": "H5-12",
+      "status": "lulus",
+      "description": "Preview dialog opened",
+      "details": ""
+    },
+    {
+      "id": "H5-12",
+      "status": "lulus",
+      "description": "Escape key cleanly dismisses preview dialog",
+      "details": ""
+    },
+    {
+      "id": "H5-12",
+      "status": "lulus",
+      "description": "Script tags not evaluated as HTML",
+      "details": ""
+    },
+    {
+      "id": "H5-12",
+      "status": "lulus",
+      "description": "XSS characters properly entity-escaped in preview",
+      "details": ""
+    }
+  ]
+}
