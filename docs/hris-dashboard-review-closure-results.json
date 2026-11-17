@@ -1,0 +1,253 @@
+[
+  {
+    "id": "C01",
+    "status": "lulus",
+    "description": "H1 daftar/edit/status/arsip pada tema terang dan gelap, desktop 1440x1000 dan sempit 390x844, termasuk retensi unit/atasan organisasi nonaktif lama.",
+    "criteria_verified": [
+      "Status aktif, nonaktif, dan arsip terpetakan jelas pada tampilan daftar dengan badge status semantik.",
+      "Unit organisasi dan manajer nonaktif historis dipertahankan pada formulir edit dengan label '(nonaktif)'.",
+      "Pilihan baru unit dan manajer nonaktif diblokir dari pilihan formulir.",
+      "Modal dialog arsip mewajibkan alasan sebelum konfirmasi dan mencabut sesi/token aktif.",
+      "Karyawan terarsip dapat direaktivasi dengan aksi eksplisit reactivated dan alasan wajib."
+    ],
+    "evidence": {
+      "screenshots": [
+        "docs/screenshots/web-visual-review/01-h1-users-index-light-desktop.png",
+        "docs/screenshots/web-visual-review/01-h1-users-index-dark-desktop.png",
+        "docs/screenshots/web-visual-review/01-h1-users-index-dark-narrow.png",
+        "docs/screenshots/web-visual-review/02-h1-users-create-desktop.png",
+        "docs/screenshots/web-visual-review/03-h1-users-edit-desktop.png",
+        "docs/screenshots/web-visual-review/04-h1-users-archive-dialog.png",
+        "docs/screenshots/employee-lifecycle/archive-dialog-dark.png"
+      ],
+      "tests": [
+        "apps/backend/tests/Feature/H1FlowRefinementTest.php::test_r02_role_scoping_and_cross_tenant_isolation",
+        "apps/backend/tests/Feature/H1FlowRefinementTest.php::test_r03_employee_number_dates_and_relations_validation",
+        "apps/backend/tests/Feature/H1FlowRefinementTest.php::test_r04_preview_modal_reason_trimming_and_archive_flow",
+        "apps/backend/tests/Feature/H1FlowRefinementTest.php::test_r05_deactivation_archived_reactivation_and_credential_invalidation",
+        "apps/backend/tests/Feature/H1FlowRefinementTest.php::test_r07_manager_cycles_cross_tenant_and_inactive_retention",
+        "apps/backend/tests/Feature/H1FlowRefinementTest.php::test_r10_historical_listing_and_read_only_integrity"
+      ],
+      "browser_checks": [
+        "H1-01", "H1-02", "H1-03", "H1-04", "H1-05", "H1-06"
+      ],
+      "verification_notes": "Verifikasi unit/atasan nonaktif lama tetap terpilih dan tersaji tanpa crash, penolakan saat unit baru nonaktif disubmit, dan penonaktifan kredensial saat arsip tervalidasi via assertions."
+    }
+  },
+  {
+    "id": "C02",
+    "status": "lulus",
+    "description": "H1 penanganan konflik update dan arsip: notice amber 409 tampil jelas, input pulih via old() pada target yang tepat, dan data tidak termutasi pada penolakan.",
+    "criteria_verified": [
+      "Pembaruan konkuren dengan token version usang mengembalikan HTTP 409 Conflict.",
+      "Notice amber #user-conflict-notice tampil pada halaman formulir edit karyawan.",
+      "Seluruh isian pengguna (nama, telepon, alasan perubahan) dipulihkan otomatis oleh helper old().",
+      "Konflik arsipkan karyawan membuka kembali modal dialog arsip target karyawan yang tepat (<dialog id=\"archive-user-{id}\">).",
+      "Isian textarea alasan arsip sasaran berhasil dipulihkan tanpa merusak baris atau karyawan lain.",
+      "Database tidak mengalami mutasi (0 perubahan kolom, version tidak naik) saat konflik ditolak."
+    ],
+    "evidence": {
+      "screenshots": [
+        "docs/screenshots/web-review-closure/P1-h1-conflict-update-recovered.png",
+        "docs/screenshots/web-review-closure/P1-h1-conflict-archive.png"
+      ],
+      "tests": [
+        "apps/backend/tests/Feature/H1FlowRefinementTest.php::test_r09_audit_noop_concurrency_conflict_and_rollback"
+      ],
+      "browser_checks": [
+        "P1-01", "P1-02", "P1-03", "P1-04", "P1-05", "P1-06", "P1-07", "P1-08", "P1-09",
+        "P1-10", "P1-10b", "P1-11", "P1-12", "P1-12b", "P1-13"
+      ],
+      "verification_notes": "Divalidasi via Chrome live loopback QA: P1-07 (nama pulih 'Deni Pratama Input Pulih'), P1-08 (telepon pulih '081299998888'), P1-09 (alasan pulih), P1-12b (alasan arsip pulih pada ID 25), P1-13 (karyawan tidak terarsip). Dialog arsip pasca-konflik dibuka via showModal() sehingga ::backdrop aktif menggelapkan halaman belakang dan fokus terkunci pada textarea."
+    }
+  },
+  {
+    "id": "C03",
+    "status": "lulus",
+    "description": "H2 modal pratinjau tanggal mendatang dan revisi tanggal sama: baseline sebelum/sesudah sesuai resolver tanggal target, bukan sekadar jadwal hari ini.",
+    "criteria_verified": [
+      "Modal dialog #shift-assignment-preview-dialog memuat baseline jadwal berdasarkan tanggal efektif target (effective_from).",
+      "Penugasan tanggal mendatang membandingkan jadwal aktif pada target date (effective_from <= target), bukan jadwal hari ini.",
+      "Revisi penugasan pada tanggal sama membandingkan penugasan revisi terakhir pada tanggal tersebut.",
+      "Jam kerja, nama shift, dan tanggal mulai berlaku sebelum vs sesudah tertera presisi.",
+      "Zona waktu perusahaan dan alasan perubahan ditampilkan pada modal dialog pratinjau."
+    ],
+    "evidence": {
+      "screenshots": [
+        "docs/screenshots/web-review-closure/P3-h2-baseline-future-date.png",
+        "docs/screenshots/web-review-closure/P3-h2-baseline-same-date-revision.png",
+        "docs/screenshots/effective-shifts/preview-dialog-light-desktop.png",
+        "docs/screenshots/effective-shifts/preview-dialog-dark-desktop.png"
+      ],
+      "tests": [
+        "apps/backend/tests/Feature/EffectiveShiftTest.php::test_assignments_are_versioned_scoped_and_copy_master_times",
+        "apps/backend/tests/Feature/EffectiveShiftTest.php::test_effective_shifts_index_renders_preview_dialog_and_modal_attributes"
+      ],
+      "browser_checks": [
+        "P3-01", "P3-02", "P3-03", "P3-03b", "P3-04", "P3-05", "P3-06", "P3-07", "P3-08", "P3-09", "P3-10",
+        "P3-10b", "P3-11", "P3-12", "P3-13", "P3-14", "P3-15", "P3-16", "P3-17"
+      ],
+      "verification_notes": "Skenario A (P3-05 s/d P3-09) membuktikan baseline masa depan 2026-11-05 mengambil Shift Siang dari 2026-11-01. Skenario B (P3-12 s/d P3-16) membuktikan revisi tanggal sama mengambil Malam dari revisi 2026-11-05."
+    }
+  },
+  {
+    "id": "C04",
+    "status": "lulus",
+    "description": "H2 tombol kembali tanpa mutasi, konfirmasi satu kali (anti double-click), konflik expected_id dengan input pulih, copy shift malam dan tanpa shift benar.",
+    "criteria_verified": [
+      "Tombol 'Kembali mengedit' menutup dialog modal tanpa mutasi basis data (0 penambahan record).",
+      "Tombol konfirmasi simpan mengunci form dari pengiriman ganda via status disabled.",
+      "Konflik konkurensi token expected_id kadaluarsa mengembalikan HTTP 409 dengan notice amber.",
+      "Seluruh isian (shift_id, effective_from, reason) dipulihkan utuh via old().",
+      "Copy dampak shift malam persis: 'Jam pulang berada pada hari berikutnya. Tanggal kerja mengikuti jadwal yang ditentukan server dan dapat berbeda dari tanggal kalender saat check-in.'",
+      "Status tanpa shift tidak dianggap sebagai hari libur perusahaan."
+    ],
+    "evidence": {
+      "screenshots": [
+        "docs/screenshots/effective-shifts/conflict-preserved-light-desktop.png",
+        "docs/screenshots/effective-shifts/conflict-preserved-dark-desktop.png",
+        "docs/screenshots/effective-shifts/preview-dialog-dark-mobile.png"
+      ],
+      "tests": [
+        "apps/backend/tests/Feature/EffectiveShiftTest.php::test_web_form_stale_expected_id_redirects_with_conflict_preserving_inputs_and_zero_mutation",
+        "apps/backend/tests/Feature/EffectiveShiftTest.php::test_overnight_checkout_uses_original_workday_and_snapshot_lateness",
+        "apps/backend/tests/Feature/EffectiveShiftTest.php::test_after_midnight_first_checkin_has_previous_anchor_and_utc_comparison"
+      ],
+      "browser_checks": [
+        "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B10", "B11", "B12", "B13", "B14"
+      ],
+      "verification_notes": "Divalidasi via EffectiveShiftConcurrencyMySqlTest (balapan 2 proses menghasilkan tepat 1 lulus dan 1 status 409) dan test_web_form_stale_expected_id_redirects_with_conflict_preserving_inputs_and_zero_mutation."
+    }
+  },
+  {
+    "id": "C05",
+    "status": "lulus",
+    "description": "H5 formulir edit koreksi absensi: preview diff badges, bantuan tanggal checkout shift malam, audit trail before/after, penolakan no-op dan alasan kosong.",
+    "criteria_verified": [
+      "Indikator diff badge semantik hijau 'Diubah' dan abu-abu 'Tidak berubah' terpampang jelas untuk setiap field kehadiran.",
+      "Teks bantuan checkout shift malam tertera: 'Isi tanggal pulang sesuai kejadian sebenarnya; pada shift malam biasanya hari berikutnya.'",
+      "Modal koreksi mewajibkan alasan non-kosong setelah di-trim (ditolak 422 jika kosong).",
+      "Penyimpanan tanpa perubahan nilai (no-op) terdeteksi dan tidak menambahkan event audit fiktif.",
+      "Kartu audit trail mencatat rekaman before/after yang dapat ditelusuri per pengelola."
+    ],
+    "evidence": {
+      "screenshots": [
+        "docs/screenshots/web-review-closure/P2-h5-diff-badges.png",
+        "docs/screenshots/web-visual-review/10-h5-correction-modal-diff-badges.png",
+        "docs/screenshots/h5-flow-refinement/H5-01-correction-preview-dialog-light-desktop.png",
+        "docs/screenshots/h5-flow-refinement/H5-01-correction-preview-dialog-dark-desktop.png",
+        "docs/screenshots/web-visual-review/11-h5-attendance-corrections-light-desktop.png",
+        "docs/screenshots/web-visual-review/12-h5-attendance-corrections-dark-desktop.png"
+      ],
+      "tests": [
+        "apps/backend/tests/Feature/H5FlowRefinementTest.php::test_attendance_correction_records_audit_trail_validates_reason_and_detects_noop",
+        "apps/backend/tests/Feature/H5FlowRefinementTest.php::test_concurrency_conflict_returns_409_and_prevents_lost_update",
+        "apps/backend/tests/Feature/AttendanceCorrectionRecapTest.php::test_attendance_edit_view_renders_helper_text_and_preview_diff_indicators",
+        "apps/backend/tests/Feature/AttendanceCorrectionRecapTest.php::test_attendance_correction_records_audit_trail_and_displays_on_edit_page"
+      ],
+      "browser_checks": [
+        "P2-01", "P2-02", "P2-03", "P2-04", "P2-05", "P2-06", "P2-07", "P2-08", "P2-09", "P2-10", "P2-11",
+        "H5-01", "H5-02", "H5-03", "H5-04", "H5-05"
+      ],
+      "verification_notes": "Verifikasi browser CDP P2-06 s/d P2-10 membuktikan evaluasi badge diff akurat pada live UI, dan P2-04 memverifikasi teks bantuan shift malam."
+    }
+  },
+  {
+    "id": "C06",
+    "status": "lulus",
+    "description": "H5 rekapitulasi kehadiran dan drilldown: hari libur tetap status utama, izin menunggu pembatalan tetap efektif, konsistensi filter/kembali, dan ekspor streaming CSV dengan BOM.",
+    "criteria_verified": [
+      "Pada breakdown harian dan rekap agregat, hari libur dalam rentang cuti diklasifikasikan sebagai status utama 'holiday' (sinkron 1:1 antara rekap dan rincian).",
+      "Status cuti menunggu pembatalan (cancellation_requested) diakui penuh sebagai cuti efektif (1 hari kerja).",
+      "Pembacaan rekapitulasi, show detail, dan ekspor CSV terbukti secara atomik tidak memutasi ledger saldo cuti.",
+      "Tombol kembali dari drilldown harian (/attendance-recap/{user}) mempertahankan filter aktif (rentang tanggal, nama, unit, page) secara aman.",
+      "Filter rentang tanggal dibatasi maksimal 90 hari inklusif untuk menjamin performa query.",
+      "Ekspor CSV diawali UTF-8 BOM (\\xEF\\xBB\\xBF), diproses secara streaming chunked, dan diproteksi dari CSV formula injection."
+    ],
+    "evidence": {
+      "screenshots": [
+        "docs/screenshots/web-visual-review/14-h5-attendance-recap-light-desktop.png",
+        "docs/screenshots/web-visual-review/15-h5-attendance-recap-dark-desktop.png",
+        "docs/screenshots/web-visual-review/16-h5-attendance-recap-dark-narrow.png",
+        "docs/screenshots/web-visual-review/16b-h5-attendance-recap-drawer-open-dark-narrow.png",
+        "docs/screenshots/h5-flow-refinement/H5-06-recap-cancellation-requested-light-desktop.png",
+        "docs/screenshots/h5-flow-refinement/H5-09-daily-breakdown-light-desktop.png",
+        "docs/screenshots/h5-flow-refinement/H5-09-recap-filtered-table-light-desktop.png"
+      ],
+      "tests": [
+        "apps/backend/tests/Feature/H5FlowRefinementTest.php::test_recap_recognizes_cancellation_requested_and_does_not_mutate_balance_ledger",
+        "apps/backend/tests/Feature/H5FlowRefinementTest.php::test_daily_breakdown_holiday_with_leave_range_shows_holiday_as_primary_status_and_matches_recap_aggregate",
+        "apps/backend/tests/Feature/H5FlowRefinementTest.php::test_recap_summary_and_export_stream_in_chunks_without_materializing_full_population",
+        "apps/backend/tests/Feature/AttendanceCorrectionRecapTest.php::test_recap_limits_inclusive_range_on_page_and_export",
+        "apps/backend/tests/Feature/AttendanceCorrectionRecapTest.php::test_attendance_periodic_recap_and_csv_export"
+      ],
+      "browser_checks": [
+        "H5-06", "H5-07", "H5-08", "H5-09", "H5-10", "H5-11"
+      ],
+      "verification_notes": "Divalidasi via assertion test_daily_breakdown_holiday_with_leave_range_shows_holiday_as_primary_status_and_matches_recap_aggregate dan pengecekan streaming chunk 100 karyawan."
+    }
+  },
+  {
+    "id": "C07",
+    "status": "lulus",
+    "description": "Aksesibilitas dasar dan ketahanan UI: keyboard focus trap/restore pada dialog modal, scrolling tabel horizontal dalam kontainer tanpa body overflow, serta penanganan teks panjang.",
+    "criteria_verified": [
+      "Dialog modal HTML5 <dialog> menangani focus trapping, ESC key close, dan pemulihan fokus ke trigger button saat ditutup.",
+      "Tabel data panjang terbungkus dalam kontainer .table-scroll sehingga dapat bergulir horizontal tanpa memicu horizontal body overflow.",
+      "Teks panjang pada nama, email, alasan, dan catatan tidak merusak layout (text-overflow / break-words terjaga).",
+      "Sanitasi XSS pada modal dan notifikasi menggunakan textContent aman tanpa unescaped innerHTML."
+    ],
+    "evidence": {
+      "screenshots": [
+        "docs/screenshots/web-visual-review/01-h1-users-index-dark-narrow.png",
+        "docs/screenshots/effective-shifts/preview-dialog-dark-mobile.png",
+        "docs/screenshots/h5-flow-refinement/H5-12-xss-dialog-safe-light-desktop.png",
+        "docs/screenshots/h5-flow-refinement/H5-12-xss-dialog-safe-dark-desktop.png"
+      ],
+      "tests": [
+        "apps/backend/tests/Feature/H1FlowRefinementTest.php::test_r11_xss_safety_and_long_text_limits",
+        "apps/backend/tests/Feature/H5FlowRefinementTest.php::test_attendance_correction_records_audit_trail_validates_reason_and_detects_noop"
+      ],
+      "browser_checks": [
+        "H1-11", "H5-12", "B14"
+      ],
+      "verification_notes": "Pengujian Browser CDP memverifikasi payload uji XSS (<script>alert(1)</script>) dirender aman sebagai plain text pada modal dan notifikasi, serta scrollbar tabel terisolasi di dalam elemen pembungkus."
+    }
+  },
+  {
+    "id": "C08",
+    "status": "lulus",
+    "description": "Paket review visual pengguna lengkap dan siap dibuka: dokumen Markdown terstruktur dengan tautan gambar lokal aktual, penjelasan skenario/viewport/tema, dan tabel evaluasi keputusan pengguna.",
+    "criteria_verified": [
+      "Dokumen paket review pengguna tersedia di docs/hris-dashboard-user-review.md.",
+      "Setiap skenario dilengkapi rujukan file screenshot PNG nyata yang dapat dibuka langsung.",
+      "Perbedaan tema terang/gelap serta resolusi desktop (1440x1000) vs layar sempit (390x844) disajikan lengkap.",
+      "Tabel keputusan pengguna tersedia dengan kolom evaluasi [Setuju / Revisi].",
+      "Status review web dicatat dengan jujur sebagai 'Menunggu Review Pengguna'."
+    ],
+    "evidence": {
+      "documents": [
+        "docs/hris-dashboard-user-review.md"
+      ],
+      "verification_notes": "Seluruh screenshot (38 file di web-visual-review, 5 di web-review-closure, 12 di effective-shifts, 20 di h5-flow-refinement) telah diverifikasi keberadaannya di repositori lokal."
+    }
+  },
+  {
+    "id": "C09",
+    "status": "lulus",
+    "description": "Dokumen pembekuan batas cakupan fitur (feature scope freeze) memisahkan secara tegas modul yang telah disetujui pengguna, selesai teknis menunggu review web, ditunda (deferred), dan backlog opsional.",
+    "criteria_verified": [
+      "Detail pengajuan mobile (Izin, Lembur, Reimbursement) dicatat telah disetujui pengguna per 4 November 2026.",
+      "Dashboard web (H1, H2, H5, Approval, Cuti, Lembur, Reimbursement) dicatat selesai secara teknis dan menunggu review pengguna.",
+      "Absensi wajah produksi, commit git, push, deployment, dan pengemasan komersial dicatat sebagai ditunda (deferred).",
+      "Fitur sekunder (rotasi shift otomatis, bulk assignment per unit, pencarian karyawan dropdown, visual calendar grid, split shift) dicatat sebagai backlog opsional non-blocking.",
+      "Dokumen batas cakupan fitur tersedia di docs/hris-feature-scope-status.md."
+    ],
+    "evidence": {
+      "documents": [
+        "docs/hris-feature-scope-status.md"
+      ],
+      "verification_notes": "Pemisahan status disusun berdasarkan arahan PRD penutupan review dan timeline operasional proyek."
+    }
+  }
+]
