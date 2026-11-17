@@ -1,0 +1,15 @@
+{
+  "scope": "Disposable SQLite/storage and synthetic reference photo; no user biometric data",
+  "checks": [
+    "fixture employee API login",
+    "private reference submission",
+    "authorized reference image renders",
+    "light mobile page has no document overflow",
+    "dark mobile page has no document overflow",
+    "HR approval reflected in own API",
+    "employee withdrawal",
+    "withdrawn reference no longer served"
+  ],
+  "passed": 8,
+  "screenshots": "docs/screenshots/face-enrollment"
+}
