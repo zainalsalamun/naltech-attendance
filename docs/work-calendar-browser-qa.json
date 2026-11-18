@@ -1,0 +1,22 @@
+{
+  "scope": "Disposable SQLite and synthetic companies; no main database changes",
+  "checks": [
+    "unknown calendar initial state",
+    "company timezone saved",
+    "configuration light desktop no overflow",
+    "configuration light mobile no overflow",
+    "configuration dark desktop no overflow",
+    "configuration dark mobile no overflow",
+    "weekly rule saved",
+    "holiday override visible",
+    "dashboard shows holiday policy",
+    "dashboard employees have holiday status",
+    "holiday-dashboard light desktop no overflow",
+    "holiday-dashboard light mobile no overflow",
+    "holiday-dashboard dark desktop no overflow",
+    "holiday-dashboard dark mobile no overflow",
+    "working date replaces override"
+  ],
+  "passed": 15,
+  "screenshots": "docs/screenshots/work-calendar"
+}

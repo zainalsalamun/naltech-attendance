@@ -169,3 +169,7 @@ Timeline memakai urutan milestone; belum ada tenggat kalender yang disepakati. S
 ### Transisi ke mobile — 20 Oktober 2026
 
 Pengguna mengarahkan “Oke lanjutkan nextnya” setelah hasil review teknis W12. Pengerjaan mobile dimulai: fondasi tema/Login dan audit awal, dengan batas pemeriksaan web yang sudah tercatat tetap berlaku. Ini mencatat izin melanjutkan tahap, bukan mengklaim persetujuan atas fitur bisnis yang belum tersedia. [Status dan urutan mobile](mobile-ui-timeline.md).
+
+## Pembaruan jadwal efektif H2 — 21 Oktober 2026
+
+[Jadwal efektif dan checkout lintas malam](hris-h2-effective-shifts.md) tersedia dan diuji terisolasi. Dashboard memakai salinan jadwal catatan baru; Beranda mobile memakai tanggal kerja/sesi dari server. Sepuluh pemeriksaan Chrome light/dark desktop/sempit lulus. Migrasi database utama, review pengguna dan QA native perubahan H2 masih terbuka; QA OPPO H4 sebelumnya bukan bukti H2.

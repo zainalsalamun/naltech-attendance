@@ -1,0 +1,128 @@
+{
+  "date": "2026-11-02",
+  "scope": "Full Web Workspace Visual Review (H1, H2, H5, Overtime, Reimbursement)",
+  "viewports": [
+    "1440x1000 Desktop",
+    "390x844 Narrow"
+  ],
+  "themes": [
+    "Light",
+    "Dark"
+  ],
+  "total_checks": 16,
+  "passed": 16,
+  "findings": [
+    {
+      "section": "H1",
+      "item": "Tabel Karyawan & Status Badges",
+      "status": "Lulus",
+      "detail": "Daftar karyawan responsif di desktop & mobile, memuat badge status (5 terdeteksi)",
+      "screenshot": "docs/screenshots/web-visual-review/01-h1-users-index-light-desktop.png"
+    },
+    {
+      "section": "H1",
+      "item": "Form Tambah Karyawan",
+      "status": "Lulus",
+      "detail": "Dropdown unit organisasi hanya memuat unit aktif (Divisi Rekayasa & IT)",
+      "screenshot": "docs/screenshots/web-visual-review/02-h1-users-create-desktop.png"
+    },
+    {
+      "section": "H1",
+      "item": "Form Edit Karyawan",
+      "status": "Lulus",
+      "detail": "Form edit karyawan memuat snapshot versioning dan hierarki manager",
+      "screenshot": "docs/screenshots/web-visual-review/03-h1-users-edit-desktop.png"
+    },
+    {
+      "section": "H1",
+      "item": "Dialog Arsip Karyawan",
+      "status": "Lulus",
+      "detail": "Dialog modal arsip menyajikan textarea alasan pembekuan dan konfirmasi aksi",
+      "screenshot": "docs/screenshots/web-visual-review/04-h1-users-archive-dialog.png"
+    },
+    {
+      "section": "H2",
+      "item": "Modal Pratinjau Jadwal & Baseline Pembanding",
+      "status": "Lulus",
+      "detail": "Pratinjau sebelum vs sesudah memuat copy tanggal kerja shift malam (true) dan catatan baseline target (true)",
+      "screenshot": "docs/screenshots/web-visual-review/08-h2-shift-assignment-preview-modal.png"
+    },
+    {
+      "section": "H5",
+      "item": "Daftar Kehadiran Harian",
+      "status": "Lulus",
+      "detail": "Tabel kehadiran menyajikan jam masuk/pulang, badge status Hadir/Terlambat, dan filter tanggal",
+      "screenshot": "docs/screenshots/web-visual-review/09-h5-attendances-desktop.png"
+    },
+    {
+      "section": "H5",
+      "item": "Modal Koreksi Kehadiran & Diff Badges",
+      "status": "Lulus",
+      "detail": "Indikator membedakan Jam Masuk (\"Diubah\") vs Jam Pulang (\"Tidak berubah\") dengan akurat",
+      "screenshot": "docs/screenshots/web-visual-review/10-h5-correction-modal-diff-badges.png"
+    },
+    {
+      "section": "H5",
+      "item": "Riwayat Koreksi Kehadiran (Audit Trail)",
+      "status": "Lulus",
+      "detail": "Audit log menampilkan waktu koreksi, pengubah (QA HR Manager), dan alasan perubahan",
+      "screenshot": "docs/screenshots/web-visual-review/11-h5-attendance-corrections-light-desktop.png"
+    },
+    {
+      "section": "H5",
+      "item": "Rekap Kehadiran & Drilldown Harian",
+      "status": "Lulus",
+      "detail": "Kartu metrik agregat, tabel rincian per karyawan, dan tombol Ekspor CSV tersedia",
+      "screenshot": "docs/screenshots/web-visual-review/14-h5-attendance-recap-light-desktop.png"
+    },
+    {
+      "section": "Lembur",
+      "item": "Daftar Pengajuan Lembur",
+      "status": "Lulus",
+      "detail": "Daftar pengajuan lembur menampilkan durasi (menit), status badge Menunggu & Disetujui, dan filter",
+      "screenshot": "docs/screenshots/web-visual-review/17-overtime-index-light-desktop.png"
+    },
+    {
+      "section": "Lembur",
+      "item": "Form Tambah Lembur & Batas 1.440 Menit",
+      "status": "Lulus",
+      "detail": "Input durasi membatasi min=1 max=1440 ({\"min\":\"1\",\"max\":\"1440\"}); Akun nonaktif disaring keluar (true)",
+      "screenshot": "docs/screenshots/web-visual-review/20-overtime-create-desktop.png"
+    },
+    {
+      "section": "Lembur",
+      "item": "Detail Pengajuan Lembur",
+      "status": "Lulus",
+      "detail": "Menampilkan durasi menit, catatan pekerjaan, dan riwayat audit keputusan persetujuan",
+      "screenshot": "docs/screenshots/web-visual-review/21-overtime-detail-desktop.png"
+    },
+    {
+      "section": "Reimbursement",
+      "item": "Daftar Reimbursement",
+      "status": "Lulus",
+      "detail": "Menampilkan nominal Rupiah terformat (Rp 150.000,50 & Rp 350.000,00) serta status",
+      "screenshot": "docs/screenshots/web-visual-review/22-reimbursement-index-light-desktop.png"
+    },
+    {
+      "section": "Reimbursement",
+      "item": "Form Tambah Reimbursement",
+      "status": "Lulus",
+      "detail": "Form memuat upload kuitansi privat (maks 2MB) dan menyaring akun nonaktif (true)",
+      "screenshot": "docs/screenshots/web-visual-review/25-reimbursement-create-desktop.png"
+    },
+    {
+      "section": "Reimbursement",
+      "item": "Form Edit Reimbursement (Pemilik Readonly)",
+      "status": "Lulus",
+      "detail": "Karyawan berstatus readonly (\"QA Subordinate Staff\"), dropdown ditiadakan (true), hidden user_id disertakan (28)",
+      "screenshot": "docs/screenshots/web-visual-review/26-reimbursement-edit-readonly-desktop.png"
+    },
+    {
+      "section": "Reimbursement",
+      "item": "Detail Reimbursement & Bukti Privat",
+      "status": "Lulus",
+      "detail": "Detail menyajikan bukti privat via /api/submission-attachments/reimbursement/1 (true) dan alur approval",
+      "screenshot": "docs/screenshots/web-visual-review/27-reimbursement-detail-desktop.png"
+    }
+  ]
+}
