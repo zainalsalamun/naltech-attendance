@@ -1,0 +1,16 @@
+{
+  "passed": 10,
+  "checks": [
+    "archived employee visible in historical period",
+    "holiday attendance does not inflate attendance rate",
+    "working-day numerator and denominator explained",
+    "all four actual attendance days preserved",
+    "light desktop no page overflow",
+    "light mobile no page overflow",
+    "dark desktop no page overflow",
+    "dark mobile no page overflow",
+    "page rejects 91 days with clear feedback",
+    "CSV rejects 91 days"
+  ],
+  "scope": "Disposable SQLite browser fixture; MySQL tests reported separately"
+}
