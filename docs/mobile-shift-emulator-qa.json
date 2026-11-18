@@ -1,0 +1,27 @@
+{
+  "stage": "complete",
+  "checks": [
+    "Native login and server effective shift loaded",
+    "Production confirmation records checkin at server local time",
+    "Home refresh and HTTP retain prior workday after midnight",
+    "Production Home cubit allows checkout despite different device date",
+    "Previous date QR rejected",
+    "Server rejects outside-radius coordinates",
+    "Production QR confirmation closes original workday next morning",
+    "Duplicate checkout rejected",
+    "Expired session disables Home and displays HR correction instruction",
+    "Expired session also blocks direct HTTP checkin",
+    "Network error renders cloud off and retry action without showing attendance card",
+    "Tapping Coba lagi recovers home context when network is restored"
+  ],
+  "screenshots": [
+    "shift-checkin.png",
+    "shift-checkout.png",
+    "shift-expired.png",
+    "shift-midnight.png",
+    "shift-network-offline.png",
+    "shift-network-recovered.png"
+  ],
+  "device": "emulator-5554",
+  "scope": "Android emulator; synthetic coordinates and server clock; no QR camera"
+}
