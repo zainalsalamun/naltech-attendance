@@ -1,0 +1,31 @@
+{
+  "device_model": "OPPO CPH2591",
+  "android_version": "15",
+  "abi": "arm64-v8a",
+  "build_mode": "debug",
+  "package": "com.naltech.attendance.approvalqa",
+  "native_test_suites_passed": 1,
+  "suite_runtime": "03:56",
+  "scenarios": [
+    "Native fixture login",
+    "Permission form and HTTP submission",
+    "Overtime minutes form and HTTP submission",
+    "Reimbursement exact amount form and HTTP submission",
+    "Dashboard approval of permission and overtime visible on phone",
+    "Dashboard rejection of reimbursement visible on phone",
+    "Native owner cancellation with reason",
+    "List refresh after cancellation",
+    "Backend stopped: detail unconfirmed and mutation unavailable",
+    "Backend restarted: detail recovers",
+    "Fixture sessions revoked: private routes removed and login shown"
+  ],
+  "evidence": "Device cache progress observed through awaiting_expiry, then full native test pass with final session assertions; runner log retained",
+  "dashboard_web_decisions": 4,
+  "main_database_changed": false,
+  "main_app_overwritten": false,
+  "limitations": [
+    "Dedicated QA entry point excludes Firebase messaging",
+    "No biometric attendance, QR, gallery upload or iOS coverage",
+    "Test runner automatically uninstalled QA package and its internal screenshot cache on completion; no retained approval screenshot is presented as native evidence"
+  ]
+}
