@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-21",
+  "scope": "Mobile active leave picker, attachment requirements, historical policy and approval display",
+  "flutter_tests": 77,
+  "new_tests": 8,
+  "http_checks": 25,
+  "visual_export_tests": 1,
+  "widget_screenshots": 8,
+  "analysis": {
+    "completed": true,
+    "project_errors": 0,
+    "related_files_without_diagnostics": 7
+  },
+  "native_device_detected": false,
+  "native_tested": false,
+  "main_database_changed": false,
+  "user_mobile_url_changed": false,
+  "qa_server_stopped": true,
+  "report": "hris-h4-mobile-leave.md"
+}
