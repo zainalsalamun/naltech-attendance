@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-21",
+  "scope": "Dashboard leave type master and single-date typed permission integration",
+  "backend": {
+    "passed": 117,
+    "assertions": 1542,
+    "new_tests": 6,
+    "database": "isolated SQLite"
+  },
+  "chrome": {
+    "passed": 25,
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "widths": [
+      1440,
+      390
+    ],
+    "synthetic_attachment": true
+  },
+  "blade": {
+    "compiled": true,
+    "compiled_php_syntax_checked": true,
+    "isolated_cache_cleared": true
+  },
+  "main_database_migrated": false,
+  "mobile_changed": false,
+  "employee_balance_implemented": false,
+  "date_range_implemented": false,
+  "qa_server_stopped": true,
+  "report": "hris-h4-leave-types.md"
+}

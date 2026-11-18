@@ -1,0 +1,21 @@
+{
+  "scope": "Disposable SQLite and synthetic fixtures",
+  "passed": 14,
+  "checks": [
+    "review blocked until preview exists",
+    "working days and skipped holiday visible",
+    "three balance components visible",
+    "calendar labels rendered as text, not HTML",
+    "network failure invalidates old preview and disables review",
+    "review dialog opens before submission",
+    "review contains actual days",
+    "review light desktop no page overflow",
+    "review light mobile no page overflow",
+    "review dark desktop no page overflow",
+    "review dark mobile no page overflow",
+    "return to editing retains inputs",
+    "confirmation submits through actual form",
+    "detail distinguishes current aggregate balance"
+  ],
+  "screenshots": "docs/screenshots/leave-flow-adjustment"
+}

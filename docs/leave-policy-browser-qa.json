@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-21",
+  "scope": "Isolated SQLite/storage, synthetic accounts, real Chrome forms and HTTP, no main database changes",
+  "checks": [
+    "empty master is explicit",
+    "code is normalized",
+    "creation event shows actor reason",
+    "policy light desktop no page overflow",
+    "policy light narrow no page overflow",
+    "policy dark desktop no page overflow",
+    "policy dark narrow no page overflow",
+    "active company type appears in employee API",
+    "required attachment enforced by server",
+    "web create persists selected policy",
+    "quota is not represented as employee balance",
+    "submission light desktop no page overflow",
+    "submission light narrow no page overflow",
+    "submission dark desktop no page overflow",
+    "submission dark narrow no page overflow",
+    "update creates audit event",
+    "inactive type removed from selection API",
+    "old submission retains original type name",
+    "old submission retains original quota",
+    "typed submission uses existing final approval guard",
+    "supervisor master is read only",
+    "list light desktop no page overflow",
+    "list light narrow no page overflow",
+    "list dark desktop no page overflow",
+    "list dark narrow no page overflow"
+  ],
+  "passed": 25,
+  "screenshots": "docs/screenshots/leave-policies"
+}
