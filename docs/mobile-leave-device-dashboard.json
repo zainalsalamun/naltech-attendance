@@ -1,0 +1,20 @@
+{
+  "scope": "Synthetic native requests, real Dashboard forms and CSRF in isolated QA",
+  "phases": {
+    "manager": {
+      "checks": [
+        "manager decision through Dashboard for native leave 1",
+        "manager decision through Dashboard for native leave 2"
+      ],
+      "passed": 2
+    },
+    "hr": {
+      "checks": [
+        "HR updates master policy after native submission",
+        "hr decision through Dashboard for native leave 1",
+        "hr decision through Dashboard for native leave 2"
+      ],
+      "passed": 3
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "stage": "complete",
+  "checks": [
+    "Native fixture login",
+    "Active company catalog loaded on Android",
+    "Required proof blocks native submission before upload",
+    "Native typed form and HTTP create 1",
+    "Native typed form and HTTP create 2",
+    "Manager approval stays pending at HR for 1",
+    "Manager approval stays pending at HR for 2",
+    "Final decision and original policy retained for 1",
+    "Final decision and original policy retained for 2",
+    "Native typed form and HTTP create 3",
+    "Native typed cancellation and parent list refresh"
+  ],
+  "records": [
+    {
+      "id": 1,
+      "type_id": 1
+    },
+    {
+      "id": 2,
+      "type_id": 2
+    }
+  ],
+  "screenshots": [
+    "leave-cancelled.png",
+    "leave-final-0.png",
+    "leave-final-1.png",
+    "leave-proof.png",
+    "leave-type-1.png",
+    "leave-type-2.png",
+    "leave-type-3.png",
+    "leave-waiting-hr-1.png",
+    "leave-waiting-hr-2.png"
+  ]
+}
