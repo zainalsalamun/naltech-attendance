@@ -1,0 +1,233 @@
+{
+  "timestamp": "2026-10-30T03:35:36.542Z",
+  "scope": "Web Dashboard H1 Employee Lifecycle & H5 Visual Review Verification",
+  "environment": "Isolated Loopback QA Server (127.0.0.1:8018) + Disposable SQLite Fixture",
+  "total_checks": 37,
+  "passed": 37,
+  "failed": 0,
+  "matrix": [
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "User edit page loaded successfully",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Form contains concurrency token version = 0",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Lifecycle preview dialog opens upon status change",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Preview dialog displays initial status Aktif",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Preview dialog displays target status Nonaktif",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Preview dialog displays trimmed reason without whitespace padding",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Preview dialog displays access and session revocation impact notice",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Kembali mengedit cleanly closes dialog without mutation",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Input fields preserved after closing dialog",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Keyboard focus restored to trigger button after back",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "User employment_status successfully transitioned to inactive in DB",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Exactly one lifecycle event created (double-click guarded)",
+      "details": ""
+    },
+    {
+      "id": "H1-01",
+      "status": "lulus",
+      "description": "Version incremented by exactly 1 on update",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Archive action button exists on active employee rows",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Archive confirmation dialog opens on clicking Arsipkan",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Dialog title indicates archive action",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Dialog displays status transition Aktif -> Diarsipkan",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Dialog displays access revocation warning",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Dialog displays historical preservation notice",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Archive dialog contains hidden concurrency token version",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Batal button cleanly closes archive dialog without mutation",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Keyboard focus restored to archive trigger button",
+      "details": ""
+    },
+    {
+      "id": "H1-04",
+      "status": "lulus",
+      "description": "Employee successfully archived in DB with archived_at timestamp",
+      "details": ""
+    },
+    {
+      "id": "H1-07",
+      "status": "lulus",
+      "description": "Historical inactive unit option is present in select dropdown",
+      "details": ""
+    },
+    {
+      "id": "H1-07",
+      "status": "lulus",
+      "description": "Inactive unit is clearly labeled with (nonaktif)",
+      "details": ""
+    },
+    {
+      "id": "H1-07",
+      "status": "lulus",
+      "description": "Historical inactive unit remains selected for existing employee",
+      "details": ""
+    },
+    {
+      "id": "H1-07",
+      "status": "lulus",
+      "description": "Deactivated manager is excluded from selectable supervisor options",
+      "details": ""
+    },
+    {
+      "id": "H1-10",
+      "status": "lulus",
+      "description": "Archived status filter displays archived employees",
+      "details": ""
+    },
+    {
+      "id": "H1-10",
+      "status": "lulus",
+      "description": "Historical archived employee QA-002 is listed",
+      "details": ""
+    },
+    {
+      "id": "H1-10",
+      "status": "lulus",
+      "description": "Status badge clearly indicates archived status",
+      "details": ""
+    },
+    {
+      "id": "H1-10",
+      "status": "lulus",
+      "description": "Status=all filter displays both active and non-active employees",
+      "details": ""
+    },
+    {
+      "id": "H1-11",
+      "status": "lulus",
+      "description": "No XSS alert dialog was triggered on table render",
+      "details": ""
+    },
+    {
+      "id": "H1-11",
+      "status": "lulus",
+      "description": "Raw HTML/script tags are properly escaped in table listing",
+      "details": ""
+    },
+    {
+      "id": "H1-11",
+      "status": "lulus",
+      "description": "Value in name input is preserved as string literal",
+      "details": ""
+    },
+    {
+      "id": "H1-11",
+      "status": "lulus",
+      "description": "Preview dialog opens safely with XSS & formatted strings",
+      "details": ""
+    },
+    {
+      "id": "H1-11",
+      "status": "lulus",
+      "description": "No XSS alert dialog triggered from preview dialog render",
+      "details": ""
+    },
+    {
+      "id": "H1-11",
+      "status": "lulus",
+      "description": "Reason text is properly escaped with textContent in preview dialog",
+      "details": ""
+    }
+  ],
+  "screenshots_dir": "docs/screenshots/web-review-h1-refinement"
+}
