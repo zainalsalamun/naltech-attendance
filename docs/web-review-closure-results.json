@@ -1,0 +1,272 @@
+[
+  {
+    "id": "P1-01",
+    "status": "lulus",
+    "description": "Login Admin H1 berhasil",
+    "details": ""
+  },
+  {
+    "id": "P1-02",
+    "status": "lulus",
+    "description": "ID Deni Pratama: 9",
+    "details": ""
+  },
+  {
+    "id": "P1-03",
+    "status": "lulus",
+    "description": "Halaman edit karyawan terbuka",
+    "details": ""
+  },
+  {
+    "id": "P1-04",
+    "status": "lulus",
+    "description": "Simulasi konflik: versi di DB (1) > versi form (0)",
+    "details": ""
+  },
+  {
+    "id": "P1-05",
+    "status": "lulus",
+    "description": "Redirect kembali ke form edit: http://127.0.0.1:8018/users/9/edit",
+    "details": ""
+  },
+  {
+    "id": "P1-06",
+    "status": "lulus",
+    "description": "Notice amber konflik data (#user-conflict-notice) ditampilkan jelas",
+    "details": ""
+  },
+  {
+    "id": "P1-07",
+    "status": "lulus",
+    "description": "Isian nama berhasil dipulihkan: \"Deni Pratama Input Pulih\"",
+    "details": ""
+  },
+  {
+    "id": "P1-08",
+    "status": "lulus",
+    "description": "Isian nomor telepon berhasil dipulihkan: \"081299998888\"",
+    "details": ""
+  },
+  {
+    "id": "P1-09",
+    "status": "lulus",
+    "description": "Isian alasan lifecycle berhasil dipulihkan: \"Alasan perubahan yang tidak boleh hilang saat konflik\"",
+    "details": ""
+  },
+  {
+    "id": "P1-10",
+    "status": "lulus",
+    "description": "Halaman daftar karyawan terbuka",
+    "details": ""
+  },
+  {
+    "id": "P1-10b",
+    "status": "lulus",
+    "description": "Target arsip di halaman 1: ID 25",
+    "details": ""
+  },
+  {
+    "id": "P1-11",
+    "status": "lulus",
+    "description": "Modal dialog arsipkan karyawan terbuka",
+    "details": ""
+  },
+  {
+    "id": "P1-12",
+    "status": "lulus",
+    "description": "Notice konflik arsip ditampilkan dan ditolak sebelum mutasi",
+    "details": ""
+  },
+  {
+    "id": "P1-12b",
+    "status": "lulus",
+    "description": "Textarea alasan arsip berhasil dipulihkan: \"Alasan arsip staff halaman 1\"",
+    "details": ""
+  },
+  {
+    "id": "P1-13",
+    "status": "lulus",
+    "description": "Karyawan tidak terarsip karena konflik versi",
+    "details": ""
+  },
+  {
+    "id": "P2-01",
+    "status": "lulus",
+    "description": "Login HR H5 Utama berhasil",
+    "details": ""
+  },
+  {
+    "id": "P2-02",
+    "status": "lulus",
+    "description": "ID Absensi subordinate: 4",
+    "details": ""
+  },
+  {
+    "id": "P2-03",
+    "status": "lulus",
+    "description": "Halaman koreksi absensi terbuka",
+    "details": ""
+  },
+  {
+    "id": "P2-04",
+    "status": "lulus",
+    "description": "Teks bantuan checkout sesuai: \"Isi tanggal pulang sesuai kejadian sebenarnya; pada shift malam biasanya hari berikutnya.\"",
+    "details": ""
+  },
+  {
+    "id": "P2-05",
+    "status": "lulus",
+    "description": "Modal dialog koreksi absensi terbuka",
+    "details": ""
+  },
+  {
+    "id": "P2-06",
+    "status": "lulus",
+    "description": "Badge Jam Masuk: \"Diubah\" (benar: Diubah)",
+    "details": ""
+  },
+  {
+    "id": "P2-07",
+    "status": "lulus",
+    "description": "Badge Jam Pulang: \"Tidak berubah\" (benar: Tidak berubah)",
+    "details": ""
+  },
+  {
+    "id": "P2-08",
+    "status": "lulus",
+    "description": "Badge Tanggal: \"Diubah\" (benar: Diubah)",
+    "details": ""
+  },
+  {
+    "id": "P2-09",
+    "status": "lulus",
+    "description": "Badge Koordinat Masuk: \"Tidak berubah\" (benar: Tidak berubah)",
+    "details": ""
+  },
+  {
+    "id": "P2-10",
+    "status": "lulus",
+    "description": "Badge Koordinat Pulang: \"Diubah\" (benar: Diubah)",
+    "details": ""
+  },
+  {
+    "id": "P2-11",
+    "status": "lulus",
+    "description": "Dialog koreksi dapat ditutup kembali tanpa mutasi",
+    "details": ""
+  },
+  {
+    "id": "P3-01",
+    "status": "lulus",
+    "description": "ID Night Staff: 38",
+    "details": ""
+  },
+  {
+    "id": "P3-02",
+    "status": "lulus",
+    "description": "Shift Siang ID: 8",
+    "details": ""
+  },
+  {
+    "id": "P3-03",
+    "status": "lulus",
+    "description": "Halaman jadwal efektif nightStaff termuat",
+    "details": ""
+  },
+  {
+    "id": "P3-03b",
+    "status": "lulus",
+    "description": "Option Malam di dropdown: ID 2",
+    "details": ""
+  },
+  {
+    "id": "P3-04",
+    "status": "lulus",
+    "description": "Modal pratinjau penugasan jadwal terbuka untuk Skenario A",
+    "details": ""
+  },
+  {
+    "id": "P3-05",
+    "status": "lulus",
+    "description": "Baseline Sebelum (Nama): \"Shift Siang\" (tepat: Shift Siang dari penugasan 2026-11-01)",
+    "details": ""
+  },
+  {
+    "id": "P3-06",
+    "status": "lulus",
+    "description": "Baseline Sebelum (Jam): \"15:00:00–23:00:00\"",
+    "details": ""
+  },
+  {
+    "id": "P3-07",
+    "status": "lulus",
+    "description": "Baseline Sebelum (Efektif Asal): \"Mulai 2026-11-01\"",
+    "details": ""
+  },
+  {
+    "id": "P3-08",
+    "status": "lulus",
+    "description": "Sesudah (Nama Baru): \"Malam\"",
+    "details": ""
+  },
+  {
+    "id": "P3-09",
+    "status": "lulus",
+    "description": "Sesudah (Tanggal Baru): \"2026-11-05\"",
+    "details": ""
+  },
+  {
+    "id": "P3-10",
+    "status": "lulus",
+    "description": "Penugasan 2026-11-05 berhasil disimpan",
+    "details": ""
+  },
+  {
+    "id": "P3-10b",
+    "status": "lulus",
+    "description": "Option Reguler di dropdown: ID 1",
+    "details": ""
+  },
+  {
+    "id": "P3-11",
+    "status": "lulus",
+    "description": "Modal pratinjau penugasan jadwal terbuka untuk Skenario B (Revisi tanggal sama)",
+    "details": ""
+  },
+  {
+    "id": "P3-12",
+    "status": "lulus",
+    "description": "Revisi Tanggal Sama: Baseline Sebelum (Nama): \"Malam\" (tepat: Malam dari revisi sebelumnya pada 2026-11-05)",
+    "details": ""
+  },
+  {
+    "id": "P3-13",
+    "status": "lulus",
+    "description": "Revisi Tanggal Sama: Baseline Sebelum (Jam): \"22:00:00–06:00:00\"",
+    "details": ""
+  },
+  {
+    "id": "P3-14",
+    "status": "lulus",
+    "description": "Revisi Tanggal Sama: Baseline Sebelum (Efektif): \"Mulai 2026-11-05\"",
+    "details": ""
+  },
+  {
+    "id": "P3-15",
+    "status": "lulus",
+    "description": "Revisi Tanggal Sama: Sesudah (Nama Baru): \"Reguler\"",
+    "details": ""
+  },
+  {
+    "id": "P3-16",
+    "status": "lulus",
+    "description": "Revisi Tanggal Sama: Sesudah (Tanggal): \"2026-11-05\"",
+    "details": ""
+  },
+  {
+    "id": "P3-17",
+    "status": "lulus",
+    "description": "Revisi penugasan tanggal sama berhasil disimpan",
+    "details": ""
+  }
+]
