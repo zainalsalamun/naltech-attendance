@@ -1,0 +1,28 @@
+{
+  "scope": "Disposable SQLite/storage, synthetic submissions, no outbound notification",
+  "checks": [
+    "employee fixture login",
+    "permission fixture submission",
+    "overtime fixture submission",
+    "reimbursement fixture submission",
+    "permission-review light desktop no overflow",
+    "permission-review light mobile no overflow",
+    "permission-review dark desktop no overflow",
+    "permission-review dark mobile no overflow",
+    "decision reason renders",
+    "reviewer history renders",
+    "final permission has no decision form",
+    "duplicate stale decision rejected",
+    "permission-final light desktop no overflow",
+    "permission-final light mobile no overflow",
+    "permission-final dark desktop no overflow",
+    "permission-final dark mobile no overflow",
+    "edit increments version before decision",
+    "approved overtime fields locked",
+    "rejected reimbursement upload locked",
+    "owner cancellation retained",
+    "cancelled filter renders"
+  ],
+  "passed": 21,
+  "screenshots": "docs/screenshots/submission-approval"
+}
