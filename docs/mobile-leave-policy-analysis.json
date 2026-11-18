@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-21",
+  "completed": true,
+  "project_errors": 0,
+  "target_diagnostics": {
+    "submission_form_page.dart": [],
+    "leave_policy_record.dart": [],
+    "submission_cubit.dart": [],
+    "submission_remote_datasource.dart": [],
+    "leave_policy_summary.dart": [],
+    "submission_list_page.dart": [],
+    "submission_record.dart": []
+  }
+}

@@ -1,0 +1,32 @@
+Initial install attempt (USB disconnect; test did not start):
+00:00 +0: loading [disposable-checkout]/integration_test/leave_device_test.dart
+Running Gradle task 'assembleDebug'...                          
+Note: /Users/macbookpro/.pub-cache/hosted/pub.dev/google_mlkit_commons-0.11.1/android/src/main/java/com/google_mlkit_commons/InputImageConverter.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Note: /Users/macbookpro/.pub-cache/hosted/pub.dev/google_mlkit_face_detection-0.13.2/android/src/main/java/com/google_mlkit_face_detection/FaceDetector.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Running Gradle task 'assembleDebug'...                            126.0s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+Installing build/app/outputs/flutter-apk/app-debug.apk...          64.0s
+Error: ADB exited with exit code 1
+Performing Streamed Install
+
+adb: failed to install [disposable-checkout]/build/app/outputs/flutter-apk/app-debug.apk:
+00:00 +0 -1: loading [disposable-checkout]/integration_test/leave_device_test.dart [E]
+  Failed to load "[disposable-checkout]/integration_test/leave_device_test.dart": Unable to start the app on the device.
+00:00 +0 -1: Some tests failed.
+adb: device '[qa-device]' not found
+adb uninstall failed: ProcessException: Process exited abnormally with exit code 1:
+adb: device '[qa-device]' not found
+  Command: /Users/macbookpro/Library/Android/sdk/platform-tools/adb -s [qa-device] uninstall com.naltech.attendance
+
+Successful retry:
+00:00 +0: loading [disposable-checkout]/integration_test/leave_device_test.dart
+Running Gradle task 'assembleDebug'...                             41.2s
+✓ Built build/app/outputs/flutter-apk/app-debug.apk
+Installing build/app/outputs/flutter-apk/app-debug.apk...          67.1s
+00:00 +0: Native typed leave proof two stage Dashboard and cancellation
+02:04 +1: (tearDownAll)
+02:05 +1: All tests passed!

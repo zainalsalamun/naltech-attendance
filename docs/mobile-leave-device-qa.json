@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-21",
+  "device": {
+    "model": "OPPO CPH2591",
+    "android": "15"
+  },
+  "package": "com.naltech.attendance.leaveqa",
+  "build_mode": "debug",
+  "native_suite": {
+    "passed": 1,
+    "duration": "02:05",
+    "checks": 11
+  },
+  "dashboard": {
+    "checks": 5,
+    "manager_decisions": 2,
+    "hr_decisions": 2,
+    "master_policy_updates": 1
+  },
+  "native_flutter_surface_screenshots": 9,
+  "first_install_attempt": "USB disconnected; native test did not start",
+  "retry": "Passed after USB recovered and QA namespace aligned",
+  "main_database_migrated": false,
+  "production_source_changed": false,
+  "committed": false,
+  "qa_server_stopped": true,
+  "adb_reverse_removed": true,
+  "qa_package_removed_by_runner": true,
+  "limitations": [
+    "Synthetic proof supplied via picker callback; Android gallery UI not exercised",
+    "QA entry excludes Firebase transport",
+    "No iOS, release signing, store deployment, payroll or leave balance coverage"
+  ],
+  "report": "hris-h4-mobile-device.md"
+}
