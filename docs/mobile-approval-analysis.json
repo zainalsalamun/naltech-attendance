@@ -1,0 +1,7 @@
+{
+  "runtime": "Same Flutter SDK analysis server via dartaotruntime; flutter analyze wrapper failed on AOT runtime",
+  "completed": true,
+  "files_checked": 5,
+  "changed_file_diagnostics": 0,
+  "project_errors": 0
+}

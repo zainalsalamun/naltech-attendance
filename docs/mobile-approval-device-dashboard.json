@@ -1,0 +1,11 @@
+{
+  "scope": "QA Dashboard session with CSRF, native-created synthetic requests",
+  "checks": [
+    "permission native-created request decided through web form",
+    "reimbursement native-created request decided through web form",
+    "overtime native-created request decided through web form",
+    "overtime native-created request decided through web form"
+  ],
+  "passed": 4,
+  "note": "An initial interrupted native run left an overtime fixture; both same-date overtime fixtures were reviewed through Dashboard. The harness now adds a run-specific description."
+}
