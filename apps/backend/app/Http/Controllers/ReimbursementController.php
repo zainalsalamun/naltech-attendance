@@ -55,7 +55,7 @@ class ReimbursementController extends Controller
             'date' => ['required', 'date_format:Y-m-d'],
             'description' => ['required', 'string', 'max:10000'],
             'amount' => ['required', 'numeric', 'decimal:0,2', 'min:0.01', 'max:9999999999.99'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image' => ['nullable', 'file', 'mimes:jpeg,png,jpg,gif,pdf', 'max:2048'],
         ];
     }
 
