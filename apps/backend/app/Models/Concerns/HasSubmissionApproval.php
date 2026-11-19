@@ -3,15 +3,28 @@
 namespace App\Models\Concerns;
 
 use App\Models\User;
+use App\Services\ApprovalNotificationService;
 use App\Services\ApprovalWorkflow;
 use App\Services\SubmissionApproval;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\DB;
 
 trait HasSubmissionApproval
 {
     public static function bootHasSubmissionApproval(): void
     {
         static::creating(fn ($row) => app(ApprovalWorkflow::class)->attach($row));
+        static::created(function ($row) {
+            $kind = match ($row->getTable()) {
+                'permissions' => 'permission',
+                'overtimes' => 'overtime',
+                'reimbursements' => 'reimbursement',
+                default => null,
+            };
+            if ($kind) {
+                DB::afterCommit(fn () => app(ApprovalNotificationService::class)->notifySubmitted($kind, $row));
+            }
+        });
     }
 
     public function initializeHasSubmissionApproval(): void
