@@ -34,7 +34,7 @@ class PermissionController extends Controller
             'end_date' => 'nullable|date_format:Y-m-d|after_or_equal:start_date',
             'leave_type_id' => 'nullable|integer|min:1',
             'reason' => 'required|string|max:5000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
 
         if (empty($data['start_date']) && ! empty($data['date'])) {
