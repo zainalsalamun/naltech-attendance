@@ -77,7 +77,8 @@
 
             <div class="field" style="margin-bottom:20px">
                 <label for="image">Bukti Pendukung / Lampiran <span id="attachment-note" class="muted">(Opsional / Wajib sesuai jenis)</span></label>
-                <input id="image" name="image" type="file" accept="image/jpeg,image/png">
+                <input id="image" name="image" type="file" accept="image/jpeg,image/png,application/pdf">
+                <span class="muted" style="font-size:12px">Format JPG, PNG, atau PDF, maksimal 2 MB.</span>
                 <span class="muted" style="display:block;margin-top:4px">Format JPG atau PNG maksimal 2 MB. Wajib diunggah bila jenis cuti mensyaratkan lampiran.</span>
                 @error('image')<span class="error">{{ $message }}</span>@enderror
             </div>
