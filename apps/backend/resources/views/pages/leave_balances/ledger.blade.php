@@ -29,7 +29,7 @@
         </div>
         <div class="field">
             <label for="filter-user">Karyawan</label>
-            <select id="filter-user" name="user_id">
+            <select id="filter-user" name="user_id" data-searchable-select="true" data-search-placeholder="Cari nama karyawan...">
                 <option value="">Semua karyawan</option>
                 @foreach($employees as $emp)
                     <option value="{{ $emp->id }}" @selected($userId === $emp->id)>{{ $emp->name }}</option>
