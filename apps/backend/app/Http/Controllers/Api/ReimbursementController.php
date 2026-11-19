@@ -35,7 +35,7 @@ class ReimbursementController extends Controller
             'date' => 'required|date_format:Y-m-d',
             'description' => 'required|string|max:5000',
             'amount' => 'required|numeric|gt:0|max:9999999999.99|decimal:0,2',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
         $row = app(\App\Services\SubmissionAttachment::class)->save(new Reimbursement, [
             'user_id' => $request->user()->id,
