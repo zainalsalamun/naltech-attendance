@@ -407,6 +407,7 @@ class SubmissionApproval
                     ]);
                     $row->save();
                     $this->event($actor, $kind, $row, $before, 'Permintaan pembatalan oleh pemohon: '.trim($reason), $beforeSnapshot);
+                    DB::afterCommit(fn () => app(ApprovalNotificationService::class)->notifyCancellationRequested($kind, $row, trim($reason)));
 
                     return $row;
                 }
@@ -452,6 +453,7 @@ class SubmissionApproval
                     }
                     $row->save();
                     $this->event($actor, $kind, $row, $before, 'Pembatalan disetujui HR: '.trim($reason), $beforeSnapshot);
+                    DB::afterCommit(fn () => app(ApprovalNotificationService::class)->notifyCancellationDecided($kind, $row, 'cancelled', trim($reason)));
 
                     return $row;
                 } elseif ($status === 'rejected') {
@@ -468,6 +470,7 @@ class SubmissionApproval
                     }
                     $row->save();
                     $this->event($actor, $kind, $row, $before, 'Permintaan pembatalan ditolak HR: '.trim($reason), $beforeSnapshot);
+                    DB::afterCommit(fn () => app(ApprovalNotificationService::class)->notifyCancellationDecided($kind, $row, 'approved', trim($reason)));
 
                     return $row;
                 }
@@ -526,6 +529,14 @@ class SubmissionApproval
 
             $row->save();
             $this->event($actor, $kind, $row, $before, trim($reason), $beforeSnapshot);
+            DB::afterCommit(function () use ($kind, $row, $actor, $status, $reason) {
+                $notifier = app(ApprovalNotificationService::class);
+                if ($status === 'pending') {
+                    $notifier->notifyStageAdvanced($kind, $row, $actor);
+                } else {
+                    $notifier->notifyDecided($kind, $row, $status, trim($reason));
+                }
+            });
 
             return $row;
         }, 3);
