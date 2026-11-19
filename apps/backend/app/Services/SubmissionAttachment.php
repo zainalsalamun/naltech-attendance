@@ -56,7 +56,7 @@ class SubmissionAttachment
 
     public function privatePath(?string $image): ?string
     {
-        return is_string($image) && preg_match('/^private:(permissions|reimbursements)\/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|gif)$/D', $image)
+        return is_string($image) && preg_match('/^private:(permissions|reimbursements)\/[a-zA-Z0-9_-]+\.(jpg|jpeg|png|gif|pdf)$/D', $image)
             ? substr($image, 8) : null;
     }
 
@@ -73,11 +73,17 @@ class SubmissionAttachment
         abort_unless($path, 409, 'Lampiran lama menunggu pemindahan privat oleh pengelola.');
         $disk = Storage::disk('submission_private');
         abort_unless($disk->exists($path), 404);
-        abort_unless(in_array($disk->mimeType($path), ['image/jpeg', 'image/png', 'image/gif'], true), 404);
+        $mime = $disk->mimeType($path);
+        abort_unless(in_array($mime, ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'], true), 404);
 
-        return $disk->response($path, 'bukti.'.pathinfo($path, PATHINFO_EXTENSION), [
-            'Cache-Control' => 'private, no-store', 'X-Content-Type-Options' => 'nosniff',
-            'Content-Security-Policy' => "default-src 'none'; sandbox",
-        ]);
+        $headers = [
+            'Cache-Control' => 'private, no-store',
+            'X-Content-Type-Options' => 'nosniff',
+        ];
+        if ($mime !== 'application/pdf') {
+            $headers['Content-Security-Policy'] = "default-src 'none'; sandbox";
+        }
+
+        return $disk->response($path, 'bukti.'.pathinfo($path, PATHINFO_EXTENSION), $headers, 'inline');
     }
 }
