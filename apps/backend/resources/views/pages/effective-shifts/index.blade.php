@@ -9,7 +9,7 @@
 </div>
 @endif
 
-<section class="panel record-form-panel"><form class="record-form" method="get"><div class="field"><label for="employee">Karyawan</label><select id="employee" name="user_id">@foreach($users as $employee)<option value="{{ $employee->id }}" @selected($selected?->id===$employee->id)>{{ $employee->name }}</option>@endforeach</select></div><button class="secondary">Lihat jadwal</button></form></section>
+<section class="panel record-form-panel"><form class="record-form" method="get"><div class="field"><label for="employee">Karyawan</label><select id="employee" name="user_id" data-searchable-select="true" data-search-placeholder="Cari nama karyawan...">@foreach($users as $employee)<option value="{{ $employee->id }}" @selected($selected?->id===$employee->id)>{{ $employee->name }}</option>@endforeach</select></div><button class="secondary">Lihat jadwal</button></form></section>
 @if($selected)
 <section class="panel record-form-panel"><div class="panel-heading"><h2>{{ $selected->name }}</h2></div><div class="record-form"><p>Jadwal hari ini: <span id="current-schedule-name">{{ $schedule['scheduled_name'] ?? 'Belum ada shift' }}</span> · <span id="current-schedule-times">{{ $schedule['scheduled_in'] ?? '—' }}–{{ $schedule['scheduled_out'] ?? '—' }}</span> · <span id="current-schedule-tz">{{ $schedule['attendance_timezone'] ?? $today }}</span>.</p><p class="muted">{{ $schedule['schedule_source']==='legacy' ? 'Masih memakai penempatan lama tanpa riwayat efektif.' : 'Mengikuti riwayat tanggal efektif.' }} Checkout sesi baru dibatasi maksimal 24 jam setelah check-in. Sesi yang lewat batas perlu koreksi HR.</p>
 @if(in_array(auth()->user()->role,['admin','super admin','hrd'],true))
