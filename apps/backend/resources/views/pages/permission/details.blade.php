@@ -120,8 +120,9 @@
 <div class="permission-copy">
     <h2>Bukti Pendukung</h2>
     @if($permission->image)
+        @php $isPdf = str_ends_with(strtolower($permission->image), '.pdf'); @endphp
         <a class="secondary" href="{{ route('submission-attachments.show', ['kind' => 'permission', 'id' => $permission->id]) }}" target="_blank" rel="noopener">
-            <i class="ion-ios-paper" aria-hidden="true"></i> Buka bukti pendukung <span class="sr-only">di tab baru</span>
+            <i class="ion-ios-paper" aria-hidden="true"></i> {{ $isPdf ? 'Buka lampiran PDF' : 'Buka bukti pendukung' }} <span class="sr-only">di tab baru</span>
         </a>
     @else
         <p class="muted">Tidak ada bukti pendukung.</p>
