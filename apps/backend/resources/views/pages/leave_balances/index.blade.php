@@ -147,7 +147,7 @@
                 @csrf
                 <div class="field" style="margin-bottom:12px">
                     <label for="alloc-user">Pilih Karyawan</label>
-                    <select id="alloc-user" name="user_id" required>
+                    <select id="alloc-user" name="user_id" required data-searchable-select="true" data-search-placeholder="Cari nama karyawan...">
                         <option value="">-- Pilih karyawan aktif --</option>
                         @foreach($employees as $emp)
                             <option value="{{ $emp->id }}">{{ $emp->name }} ({{ $emp->department ?: 'Tanpa departemen' }})</option>
