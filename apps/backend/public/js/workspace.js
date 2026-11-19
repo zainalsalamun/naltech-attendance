@@ -209,3 +209,156 @@
         });
     });
 })();
+
+(() => {
+    const selects = document.querySelectorAll('select[data-searchable-select="true"]');
+    if (!selects.length) return;
+
+    selects.forEach((select) => {
+        if (select.dataset.searchableInitialized === '1') return;
+        select.dataset.searchableInitialized = '1';
+
+        const placeholder = select.dataset.searchPlaceholder || 'Cari...';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'searchable-select';
+        select.parentNode.insertBefore(wrapper, select);
+        wrapper.appendChild(select);
+        select.classList.add('searchable-select-native');
+        select.tabIndex = -1;
+
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'searchable-select-trigger';
+        trigger.setAttribute('aria-haspopup', 'listbox');
+        trigger.setAttribute('aria-expanded', 'false');
+
+        const labelSpan = document.createElement('span');
+        labelSpan.className = 'searchable-select-label';
+        const chevron = document.createElement('span');
+        chevron.className = 'searchable-select-chevron';
+        chevron.setAttribute('aria-hidden', 'true');
+        chevron.textContent = '▾';
+        trigger.append(labelSpan, chevron);
+
+        const dropdown = document.createElement('div');
+        dropdown.className = 'searchable-select-dropdown';
+        dropdown.hidden = true;
+
+        const searchInput = document.createElement('input');
+        searchInput.type = 'search';
+        searchInput.className = 'searchable-select-search';
+        searchInput.placeholder = placeholder;
+        searchInput.setAttribute('aria-label', placeholder);
+        searchInput.autocomplete = 'off';
+
+        const list = document.createElement('ul');
+        list.className = 'searchable-select-list';
+        list.setAttribute('role', 'listbox');
+
+        const emptyMsg = document.createElement('div');
+        emptyMsg.className = 'searchable-select-empty';
+        emptyMsg.textContent = 'Tidak ada data yang cocok.';
+        emptyMsg.hidden = true;
+
+        dropdown.append(searchInput, list, emptyMsg);
+        wrapper.append(trigger, dropdown);
+
+        let activeIndex = -1;
+        let visibleOptions = [];
+
+        const syncLabel = () => {
+            const selected = select.options[select.selectedIndex];
+            labelSpan.textContent = selected ? selected.textContent.trim() : placeholder;
+        };
+
+        const renderOptions = (query = '') => {
+            const q = query.trim().toLowerCase();
+            list.innerHTML = '';
+            visibleOptions = [];
+            activeIndex = -1;
+
+            Array.from(select.options).forEach((opt) => {
+                const text = opt.textContent.trim();
+                if (q && !text.toLowerCase().includes(q)) return;
+
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'searchable-select-option';
+                btn.setAttribute('role', 'option');
+                btn.setAttribute('aria-selected', String(opt.value === select.value));
+                btn.textContent = text;
+                btn.dataset.value = opt.value;
+
+                btn.addEventListener('click', () => {
+                    select.value = opt.value;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    syncLabel();
+                    close();
+                    trigger.focus();
+                });
+
+                li.appendChild(btn);
+                list.appendChild(li);
+                visibleOptions.push(btn);
+            });
+
+            emptyMsg.hidden = visibleOptions.length > 0;
+        };
+
+        const open = () => {
+            dropdown.hidden = false;
+            trigger.setAttribute('aria-expanded', 'true');
+            searchInput.value = '';
+            renderOptions('');
+            searchInput.focus();
+        };
+
+        const close = () => {
+            dropdown.hidden = true;
+            trigger.setAttribute('aria-expanded', 'false');
+            activeIndex = -1;
+        };
+
+        trigger.addEventListener('click', () => {
+            if (dropdown.hidden) open();
+            else close();
+        });
+
+        searchInput.addEventListener('input', () => {
+            renderOptions(searchInput.value);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                close();
+                trigger.focus();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (!visibleOptions.length) return;
+                activeIndex = Math.min(activeIndex + 1, visibleOptions.length - 1);
+                visibleOptions.forEach((b, i) => b.classList.toggle('is-active', i === activeIndex));
+                visibleOptions[activeIndex]?.scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (!visibleOptions.length) return;
+                activeIndex = Math.max(activeIndex - 1, 0);
+                visibleOptions.forEach((b, i) => b.classList.toggle('is-active', i === activeIndex));
+                visibleOptions[activeIndex]?.scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter' && activeIndex >= 0 && visibleOptions[activeIndex]) {
+                e.preventDefault();
+                visibleOptions[activeIndex].click();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target) && !dropdown.hidden) {
+                close();
+            }
+        });
+
+        select.addEventListener('change', syncLabel);
+        syncLabel();
+    });
+})();
