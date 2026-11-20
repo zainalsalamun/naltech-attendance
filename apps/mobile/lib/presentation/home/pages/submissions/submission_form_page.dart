@@ -190,10 +190,10 @@ class _SubmissionFormPageState extends State<SubmissionFormPage> {
               source: ImageSource.gallery, maxWidth: 1600, imageQuality: 85));
       if (image == null) return;
       final ext = image.name.toLowerCase().split('.').last;
-      if (!['jpg', 'jpeg', 'png'].contains(ext)) {
+      if (!['jpg', 'jpeg', 'png', 'pdf'].contains(ext)) {
         if (mounted) {
           setState(() =>
-              _attachmentError = 'Gunakan lampiran dengan format JPG atau PNG.');
+              _attachmentError = 'Gunakan lampiran dengan format JPG, PNG, atau PDF.');
         }
         return;
       }
@@ -682,25 +682,81 @@ class _SubmissionFormPageState extends State<SubmissionFormPage> {
                                         ?.copyWith(
                                             fontWeight: FontWeight.w700)),
                                 const SizedBox(height: 8),
-                                Text('JPG/PNG, maksimal 2 MB.',
+                                Text('JPG, PNG, atau PDF, maksimal 2 MB.',
                                     style: TextStyle(
                                         color:
                                             theme.colorScheme.onSurfaceVariant,
                                         fontSize: 12)),
                                 const SizedBox(height: 12),
                                 if (_preview != null) ...[
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.memory(_preview!,
-                                          height: 160,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) =>
-                                              const Padding(
-                                                  padding: EdgeInsets.all(20),
-                                                  child: Text(
-                                                      'Pratinjau tidak tersedia. Pilih kembali lampiran bila diperlukan.')))),
+                                  if (_image!.name.toLowerCase().endsWith('.pdf') ||
+                                      (_preview!.length >= 4 &&
+                                          _preview![0] == 0x25 &&
+                                          _preview![1] == 0x50 &&
+                                          _preview![2] == 0x44 &&
+                                          _preview![3] == 0x46))
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.surfaceVariant
+                                            .withOpacity(0.3),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: theme.colorScheme.outlineVariant
+                                              .withOpacity(0.5),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.picture_as_pdf,
+                                            size: 40,
+                                            color: theme.colorScheme.primary,
+                                          ),
+                                          const SizedBox(width: 14),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  _image!.name,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 13,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  'Dokumen PDF (${(_preview!.length / 1024).toStringAsFixed(1)} KiB)',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: theme.colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  else
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.memory(_preview!,
+                                            height: 160,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (_, __, ___) =>
+                                                const Padding(
+                                                    padding: EdgeInsets.all(20),
+                                                    child: Text(
+                                                        'Pratinjau tidak tersedia. Pilih kembali lampiran bila diperlukan.')))),
                                   const SizedBox(height: 8),
-                                  Text(_image!.name),
+                                  if (!_image!.name.toLowerCase().endsWith('.pdf'))
+                                    Text(_image!.name),
                                 ],
                                 Wrap(spacing: 12, children: [
                                   OutlinedButton.icon(
