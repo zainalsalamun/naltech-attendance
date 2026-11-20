@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'core/helper/app_navigator.dart';
 import 'core/session/session_events.dart';
 import 'presentation/auth/pages/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -64,7 +65,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _navigator = GlobalKey<NavigatorState>();
+  final _navigator = AppNavigator.navigatorKey;
   StreamSubscription<void>? _subscription;
   bool _redirecting = false;
   ThemeController get themeController => widget.themeController;
