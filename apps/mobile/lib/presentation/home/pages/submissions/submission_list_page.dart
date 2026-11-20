@@ -1,12 +1,10 @@
 import 'dart:typed_data';
-import 'package:dartz/dartz.dart' show Either;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/constants/variables.dart';
 import '../../../../data/datasources/submission_remote_datasource.dart';
 import '../../../../data/models/response/submission_record.dart';
 import '../../bloc/submissions/submission_cubit.dart';
-import '../../models/history_presentation.dart';
 import 'submission_form_page.dart';
 import 'leave_policy_summary.dart';
 
@@ -305,6 +303,19 @@ String? submissionImageUrl(SubmissionRecord record) {
       '${Variables.baseUrl}/api/submission-attachments/$kind/${record.id}';
   final uri = Uri.tryParse(raw);
   return uri != null && ['http', 'https'].contains(uri.scheme) ? raw : null;
+}
+
+bool isPdfAttachment(Uint8List? bytes, String? url) {
+  if (url != null && url.toLowerCase().endsWith('.pdf')) return true;
+  if (bytes != null &&
+      bytes.length >= 4 &&
+      bytes[0] == 0x25 &&
+      bytes[1] == 0x50 &&
+      bytes[2] == 0x44 &&
+      bytes[3] == 0x46) {
+    return true;
+  }
+  return false;
 }
 
 class SubmissionDetailPage extends StatefulWidget {
@@ -695,16 +706,97 @@ class _SubmissionDetailPageState extends State<SubmissionDetailPage> {
                     ),
                   ),
                 )
-              else if (_attachmentBytes != null)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.memory(
-                    _attachmentBytes!,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) =>
-                        const Text('Lampiran belum dapat ditampilkan.'),
+              else if (_attachmentBytes != null) ...[
+                if (isPdfAttachment(_attachmentBytes, submissionImageUrl(record)))
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surfaceVariant
+                          .withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .outlineVariant
+                            .withOpacity(0.5),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.picture_as_pdf,
+                                size: 36,
+                                color: Theme.of(context).colorScheme.primary),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Dokumen PDF',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 14)),
+                                  Text(
+                                    'Ukuran: ${(_attachmentBytes!.length / 1024).toStringAsFixed(1)} KiB',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Row(
+                                  children: [
+                                    Icon(Icons.picture_as_pdf, color: Colors.red),
+                                    SizedBox(width: 8),
+                                    Text('Dokumen PDF'),
+                                  ],
+                                ),
+                                content: Text(
+                                  'Lampiran PDF resmi (${(_attachmentBytes!.length / 1024).toStringAsFixed(1)} KiB) terverifikasi dari server privat Naltech HRIS.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(ctx),
+                                    child: const Text('Tutup'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.description, size: 18),
+                          label: const Text('Buka info dokumen PDF'),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.memory(
+                      _attachmentBytes!,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) =>
+                          const Text('Lampiran belum dapat ditampilkan.'),
+                    ),
                   ),
-                )
+              ]
               else if (_attachmentError != null) ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
