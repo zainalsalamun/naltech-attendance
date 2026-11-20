@@ -10,7 +10,10 @@ import 'package:http/testing.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:flutter_absensi_app/core/helper/app_navigator.dart';
+import 'package:flutter_absensi_app/core/theme/theme_controller.dart';
 import 'package:flutter_absensi_app/data/datasources/auth_local_datasource.dart';
+import 'package:flutter_absensi_app/data/datasources/firebase_messanging_remote_datasource.dart';
 import 'package:flutter_absensi_app/data/datasources/submission_remote_datasource.dart';
 import 'package:flutter_absensi_app/data/models/response/auth_response_model.dart';
 import 'package:flutter_absensi_app/data/models/response/leave_policy_record.dart';
@@ -43,7 +46,9 @@ void main() {
     testWidgets(
         'Tolak file > 2.048 KiB (2.097.152 byte) dan pertahankan pilihan valid sebelumnya',
         (tester) async {
-      tester.view.physicalSize = const Size(390, 1000);
+      AuthLocalDatasource.resetForTesting();
+      SharedPreferences.setMockInitialValues({});
+      tester.view.physicalSize = const Size(390, 1800);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
@@ -54,7 +59,7 @@ void main() {
       final oversized2048KiBPlus1 =
           XFile.fromData(Uint8List(2097153), name: 'too_large.png', path: 'too_large.png');
       final invalidExt =
-          XFile.fromData(Uint8List(100), name: 'document.pdf', path: 'document.pdf');
+          XFile.fromData(Uint8List(100), name: 'document.docx', path: 'document.docx');
 
       XFile? nextImage = valid2048KiB;
 
@@ -87,6 +92,7 @@ void main() {
 
       // 2. Ganti lampiran dengan file melebihi 2.048 KiB (2.097.153 byte)
       nextImage = oversized2048KiBPlus1;
+      await tester.ensureVisible(find.text('Ganti lampiran'));
       await tester.tap(find.text('Ganti lampiran'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -99,18 +105,33 @@ void main() {
       // Pilihan valid sebelumnya tetap dipertahankan
       expect(find.text('valid_exact_2mb.png'), findsOneWidget);
 
-      // 3. Ganti lampiran dengan format tidak valid (PDF)
+      // 3. Ganti lampiran dengan format tidak valid (DOCX)
       nextImage = invalidExt;
+      await tester.ensureVisible(find.text('Ganti lampiran'));
       await tester.tap(find.text('Ganti lampiran'));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      expect(find.text('Gunakan lampiran dengan format JPG atau PNG.'),
+      expect(find.text('Gunakan lampiran dengan format JPG, PNG, atau PDF.'),
           findsOneWidget);
       // Pilihan valid sebelumnya tetap dipertahankan
       expect(find.text('valid_exact_2mb.png'), findsOneWidget);
 
-      // 4. Kirim form dan pastikan file valid sebelumnya yang dikirim
+      // 4. Ganti lampiran dengan file PDF valid (<= 2 MB)
+      final pdfBytes =
+          Uint8List.fromList([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34]);
+      final validPdf = XFile.fromData(pdfBytes,
+          name: 'surat_tugas.pdf', path: 'surat_tugas.pdf', length: pdfBytes.length);
+      nextImage = validPdf;
+      await tester.ensureVisible(find.text('Ganti lampiran'));
+      await tester.tap(find.text('Ganti lampiran'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(find.text('surat_tugas.pdf'), findsOneWidget);
+      expect(find.textContaining('Dokumen PDF'), findsOneWidget);
+
+      // 5. Kirim form dan pastikan file valid PDF yang dikirim
       await tester.tap(find.byType(TextFormField).first);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -123,7 +144,7 @@ void main() {
       await tester.pump();
 
       expect(formSource.sends, 1);
-      expect(formSource.sentImage?.name, 'valid_exact_2mb.png');
+      expect(formSource.sentImage?.name, 'surat_tugas.pdf');
       formSource.sent.complete(Right(SubmissionRecord(
         id: 10,
         userId: 7,
@@ -136,6 +157,50 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets(
+        'Render dokumen PDF pada detail pengajuan dengan dialog info resmi',
+        (tester) async {
+      AuthLocalDatasource.resetForTesting();
+      SharedPreferences.setMockInitialValues({});
+      tester.view.physicalSize = const Size(390, 1800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await loginAs(id: 7);
+      final pdfBytes =
+          Uint8List.fromList([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34]);
+
+      final pdfRecord = SubmissionRecord(
+        id: 77,
+        userId: 7,
+        date: '2026-10-20',
+        description: 'Invoice tiket dinas',
+        kind: SubmissionKind.reimbursement,
+        amount: '250000.00',
+        status: 'approved',
+        image:
+            'http://localhost/api/submission-attachments/reimbursement/77.pdf',
+      );
+      final detailSource = _TestSubmissionFixture()
+        ..attachmentResult = Right(pdfBytes);
+
+      final theme = await controller();
+      await tester.pumpWidget(app(
+        theme,
+        SubmissionDetailPage(record: pdfRecord, source: detailSource),
+      ));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+      await tester.pump(const Duration(milliseconds: 200));
+
+      expect(find.text('Dokumen PDF'), findsOneWidget);
+      expect(find.text('Buka info dokumen PDF'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 100));
     });
   });
 
@@ -970,6 +1035,57 @@ void main() {
       });
     }
   });
+
+  group('7. Handler Notifikasi FCM & Navigasi Terarah', () {
+    test(
+        'Tap notifikasi approval menyiarkan event pada stream dan memicu navigasi detail saat login',
+        () async {
+      AuthLocalDatasource.resetForTesting();
+      SharedPreferences.setMockInitialValues({
+        'auth_data':
+            AuthResponseModel(user: User(id: 7), token: 'token-7').toJson(),
+      });
+
+      final payload = {
+        'type': 'submission_approval',
+        'kind': 'reimbursement',
+        'submission_id': '301',
+        'status': 'approved',
+      };
+
+      final futureReceived =
+          FirebaseMessangingRemoteDatasource.onNotificationTap.first;
+
+      SubmissionRecord? targetRecord;
+      await FirebaseMessangingRemoteDatasource.handleNotificationData(
+        payload,
+        onNavigate: (record) => targetRecord = record,
+      );
+
+      final received = await futureReceived;
+
+      expect(received, isNotNull);
+      expect(received['submission_id'], '301');
+      expect(received['status'], 'approved');
+
+      expect(targetRecord, isNotNull);
+      expect(targetRecord!.id, 301);
+      expect(targetRecord!.userId, 7);
+      expect(targetRecord!.kind, SubmissionKind.reimbursement);
+      expect(targetRecord!.status, 'approved');
+    });
+  });
+}
+
+class _TestNavigatorObserver extends NavigatorObserver {
+  _TestNavigatorObserver({required this.onPushed});
+  final void Function(Route<dynamic> route) onPushed;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    onPushed(route);
+  }
 }
 
 class _TestSubmissionFixture extends SubmissionRemoteDatasource {
